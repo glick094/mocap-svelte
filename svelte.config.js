@@ -5,12 +5,12 @@ export default {
     adapter: adapter({
       pages: 'build',
       assets: 'build',
-      fallback: 'index.html', // Add fallback for SPA
+      fallback: undefined, //'index.html', // Add fallback for SPA
       precompress: false,
       strict: false // Allow missing routes
     }),
     paths: {
-      base: process.env.NODE_ENV === 'production' ? '/your-repo-name' : ''
+      base: process.env.NODE_ENV === 'production' ? '/mocap-svelte' : ''
     }
   }
 };
