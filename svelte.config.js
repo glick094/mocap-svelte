@@ -16,7 +16,7 @@ const config = {
 	}
 };
 
-export export default {
+export default {
   kit: {
     adapter: adapter({
       pages: 'build',
