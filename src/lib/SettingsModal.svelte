@@ -5,7 +5,8 @@
     username: '',
     theme: 'dark',
     quality: 'high',
-    enableAudio: true
+    enableAudio: true,
+    fps: 15
   };
 
   const dispatch = createEventDispatcher();
@@ -26,7 +27,8 @@
       username: '',
       theme: 'dark',
       quality: 'high',
-      enableAudio: true
+      enableAudio: true,
+      fps: 15
     };
   }
 
@@ -94,6 +96,18 @@
               <option value="high">High (Better Quality)</option>
               <option value="ultra">Ultra (Best Quality)</option>
             </select>
+          </div>
+          <div class="form-group">
+            <label for="fps">MediaPipe FPS:</label>
+            <input 
+              id="fps"
+              type="number" 
+              bind:value={localSettings.fps}
+              min="5"
+              max="30"
+              step="5"
+            />
+            <small>Higher FPS = more responsive but uses more CPU</small>
           </div>
         </section>
 

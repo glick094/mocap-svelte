@@ -19,7 +19,8 @@
     username: '',
     theme: 'dark',
     quality: 'high',
-    enableAudio: true
+    enableAudio: true,
+    fps: 15
   };
 
   function openSettings() {
@@ -88,6 +89,7 @@
         <WebcamPanel 
           active={isWebcamActive}
           settings={userSettings}
+          fps={userSettings.fps}
         />
       </section>
 

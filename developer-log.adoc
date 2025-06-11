@@ -65,3 +65,7 @@
 
 * `npm install three`
 * `npm install -D @types/three`
+
+=== Install Mediapipe
+
+* `npm install @mediapipe/holistic @mediapipe/camera_utils @mediapipe/drawing_utils`

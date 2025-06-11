@@ -3,17 +3,20 @@
 
   export let active = false;
   export let settings = {};
+  export let fps = 15;
 
   let videoElement;
   let canvasElement;
   let stream = null;
   let error = null;
   let holistic = null;
-  let camera = null;
   let isMediaPipeLoaded = false;
 
   // MediaPipe results
   let currentResults = null;
+  let isProcessing = false;
+  let frameCount = 0;
+  let lastProcessTime = 0;
 
   onMount(async () => {
     await loadMediaPipe();
@@ -39,13 +42,12 @@
     try {
       // Import MediaPipe modules
       const { Holistic } = await import('@mediapipe/holistic');
-      const { Camera } = await import('@mediapipe/camera_utils');
       const { drawConnectors, drawLandmarks } = await import('@mediapipe/drawing_utils');
       
-      // Store drawing utils globally for use in other functions
+      // Store drawing utils globally
       window.mpDrawing = { drawConnectors, drawLandmarks };
 
-      // Initialize Holistic
+      // Initialize Holistic with performance-optimized settings
       holistic = new Holistic({
         locateFile: (file) => {
           return `https://cdn.jsdelivr.net/npm/@mediapipe/holistic/${file}`;
@@ -53,12 +55,12 @@
       });
 
       holistic.setOptions({
-        modelComplexity: 1,
+        modelComplexity: 0, // Reduced for performance
         smoothLandmarks: true,
         enableSegmentation: false,
-        smoothSegmentation: true,
-        refineFaceLandmarks: true,
-        minDetectionConfidence: 0.5,
+        smoothSegmentation: false,
+        refineFaceLandmarks: false, // Disabled for performance
+        minDetectionConfidence: 0.7,
         minTrackingConfidence: 0.5
       });
 
@@ -73,64 +75,93 @@
 
   function onResults(results) {
     currentResults = results;
-    drawResults(results);
+    frameCount++;
+    drawLandmarks(results);
+    isProcessing = false;
   }
 
-  function drawResults(results) {
+  function setupCanvas() {
     if (!canvasElement || !videoElement) return;
+    
+    console.log('Setting up canvas - Video dimensions:', videoElement.videoWidth, 'x', videoElement.videoHeight);
+    
+    if (videoElement.videoWidth && videoElement.videoHeight) {
+      // Set canvas internal resolution to match video
+      canvasElement.width = videoElement.videoWidth;
+      canvasElement.height = videoElement.videoHeight;
+      
+      // Make canvas transparent
+      const ctx = canvasElement.getContext('2d');
+      ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+      
+      console.log('Canvas setup complete:', canvasElement.width, 'x', canvasElement.height);
+    }
+  }
+
+  function drawLandmarks(results) {
+    if (!canvasElement || !results) return;
 
     const ctx = canvasElement.getContext('2d');
-    const { drawConnectors, drawLandmarks } = window.mpDrawing;
+    const { drawConnectors, drawLandmarks } = window.mpDrawing || {};
+    
+    if (!drawConnectors || !drawLandmarks) return;
 
-    // Clear canvas
+    // Clear canvas but keep it transparent
     ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+    
+    // Draw test indicator to verify overlay is working
+    ctx.fillStyle = '#FF00FF';
+    ctx.fillRect(5, 5, 15, 15);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '10px Arial';
+    ctx.fillText(`${frameCount}`, 25, 15);
 
-    // Set up drawing styles
+    // Set drawing style
     ctx.globalCompositeOperation = 'source-over';
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
 
-    // Import pose connections
-    import('@mediapipe/holistic').then(({ POSE_CONNECTIONS, HAND_CONNECTIONS, FACEMESH_TESSELATION }) => {
+    // Import connections asynchronously
+    import('@mediapipe/holistic').then(({ POSE_CONNECTIONS, HAND_CONNECTIONS }) => {
       // Draw pose landmarks
-      if (results.poseLandmarks) {
+      if (results.poseLandmarks && results.poseLandmarks.length > 0) {
+        // Draw connections first (behind landmarks)
         drawConnectors(ctx, results.poseLandmarks, POSE_CONNECTIONS, {
           color: '#00FF88',
           lineWidth: 2
         });
+        
+        // Draw landmark points on top
         drawLandmarks(ctx, results.poseLandmarks, {
           color: '#FF0040',
-          radius: 3
+          radius: 3,
+          fillColor: '#FF0040'
         });
       }
 
-      // Draw left hand landmarks
-      if (results.leftHandLandmarks) {
+      // Draw left hand
+      if (results.leftHandLandmarks && results.leftHandLandmarks.length > 0) {
         drawConnectors(ctx, results.leftHandLandmarks, HAND_CONNECTIONS, {
           color: '#00CCFF',
-          lineWidth: 2
+          lineWidth: 1
         });
         drawLandmarks(ctx, results.leftHandLandmarks, {
-          color: '#FF0040',
-          radius: 2
+          color: '#00CCFF',
+          radius: 2,
+          fillColor: '#00CCFF'
         });
       }
 
-      // Draw right hand landmarks
-      if (results.rightHandLandmarks) {
+      // Draw right hand
+      if (results.rightHandLandmarks && results.rightHandLandmarks.length > 0) {
         drawConnectors(ctx, results.rightHandLandmarks, HAND_CONNECTIONS, {
-          color: '#00CCFF',
-          lineWidth: 2
+          color: '#FFCC00',
+          lineWidth: 1
         });
         drawLandmarks(ctx, results.rightHandLandmarks, {
-          color: '#FF0040',
-          radius: 2
-        });
-      }
-
-      // Draw face landmarks (simplified)
-      if (results.faceLandmarks) {
-        drawLandmarks(ctx, results.faceLandmarks, {
-          color: '#FFFF00',
-          radius: 1
+          color: '#FFCC00',
+          radius: 2,
+          fillColor: '#FFCC00'
         });
       }
     });
@@ -141,43 +172,32 @@
       error = null;
       stream = await navigator.mediaDevices.getUserMedia({ 
         video: { 
-          width: 320, 
-          height: 240,
-          facingMode: 'user'
+          width: { ideal: 320, max: 640 },
+          height: { ideal: 240, max: 480 },
+          facingMode: 'user',
+          frameRate: { ideal: 15, max: 30 } // Reduced for performance
         },
-        audio: settings.enableAudio || false
+        audio: false
       });
       
       if (videoElement) {
         videoElement.srcObject = stream;
         
-        // Wait for video to load
         videoElement.onloadedmetadata = () => {
-          // Set canvas dimensions to match video
-          if (canvasElement) {
-            canvasElement.width = videoElement.videoWidth;
-            canvasElement.height = videoElement.videoHeight;
-          }
-
-          // Start MediaPipe camera if holistic is loaded
-          if (holistic && isMediaPipeLoaded) {
-            const { Camera } = window.mpCamera || {};
-            if (Camera) {
-              camera = new Camera(videoElement, {
-                onFrame: async () => {
-                  if (holistic) {
-                    await holistic.send({ image: videoElement });
-                  }
-                },
-                width: 320,
-                height: 240
-              });
-              camera.start();
-            } else {
-              // Fallback: manually process frames
-              processFrames();
+          console.log('Video metadata loaded');
+          setupCanvas();
+        };
+        
+        videoElement.onplay = () => {
+          console.log('Video started playing');
+          setupCanvas();
+          
+          // Start MediaPipe processing with delay
+          setTimeout(() => {
+            if (holistic && isMediaPipeLoaded) {
+              startMediaPipeProcessing();
             }
-          }
+          }, 1000);
         };
       }
     } catch (err) {
@@ -186,23 +206,44 @@
     }
   }
 
-  // Fallback frame processing
-  function processFrames() {
-    if (!active || !holistic || !videoElement) return;
+  function startMediaPipeProcessing() {
+    if (!videoElement || !videoElement.videoWidth || !holistic) {
+      console.log('Cannot start MediaPipe - video not ready');
+      return;
+    }
     
-    holistic.send({ image: videoElement }).then(() => {
-      if (active) {
-        requestAnimationFrame(processFrames);
-      }
-    });
+    console.log('Starting MediaPipe processing');
+    processFrames();
+  }
+
+  function processFrames() {
+    if (!active || !holistic || !videoElement || !videoElement.videoWidth) {
+      return;
+    }
+    
+    const now = Date.now();
+    
+    const frameInterval = 1000 / fps; // Convert FPS to milliseconds
+    
+    // Process at user-defined FPS rate
+    if (!isProcessing && (now - lastProcessTime > frameInterval)) {
+      isProcessing = true;
+      lastProcessTime = now;
+      
+      holistic.send({ image: videoElement })
+        .catch((err) => {
+          console.error('MediaPipe processing error:', err);
+          isProcessing = false;
+        });
+    }
+    
+    // Continue processing
+    if (active) {
+      requestAnimationFrame(processFrames);
+    }
   }
 
   function stopWebcam() {
-    if (camera) {
-      camera.stop();
-      camera = null;
-    }
-    
     if (stream) {
       stream.getTracks().forEach(track => track.stop());
       stream = null;
@@ -216,17 +257,10 @@
       const ctx = canvasElement.getContext('2d');
       ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
     }
+    
+    currentResults = null;
+    frameCount = 0;
   }
-
-  // Store Camera class globally when imported
-  onMount(async () => {
-    try {
-      const { Camera } = await import('@mediapipe/camera_utils');
-      window.mpCamera = { Camera };
-    } catch (err) {
-      console.log('Camera utils not available, using fallback');
-    }
-  });
 </script>
 
 <div class="webcam-panel">
@@ -253,6 +287,7 @@
           playsinline
           class="webcam-video"
         />
+        <!-- Transparent overlay canvas -->
         <canvas 
           bind:this={canvasElement}
           class="landmark-overlay"
@@ -293,10 +328,14 @@
       </span>
     </div>
     <div class="info-row">
-      <span>Resolution:</span>
-      <span>320×240</span>
+      <span>FPS:</span>
+      <span>{fps}</span>
     </div>
     {#if currentResults}
+      <div class="info-row">
+        <span>Frames:</span>
+        <span>{frameCount}</span>
+      </div>
       <div class="info-row">
         <span>Pose:</span>
         <span class:detected={currentResults.poseLandmarks}>
@@ -382,12 +421,16 @@
     position: relative;
     width: 100%;
     height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .webcam-video {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    background: #000;
   }
 
   .landmark-overlay {
@@ -397,12 +440,16 @@
     width: 100%;
     height: 100%;
     pointer-events: none;
+    z-index: 10;
+    /* Ensure transparency */
+    background: transparent;
   }
 
   .video-overlay {
     position: absolute;
     top: 8px;
     right: 8px;
+    z-index: 20;
   }
 
   .recording-indicator {

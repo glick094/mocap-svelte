@@ -109,6 +109,20 @@
     </div>
 
     <div class="control-group">
+      <label for="fps-setting">MediaPipe FPS:</label>
+      <input 
+        id="fps-setting"
+        type="range"
+        min="5"
+        max="30"
+        step="5"
+        bind:value={userSettings.fps}
+        class="fps-slider"
+      />
+      <span class="fps-value">{userSettings.fps} FPS</span>
+    </div>
+
+    <div class="control-group">
       <label for="frame-color">Frame Color:</label>
       <input 
         id="frame-color"
@@ -169,6 +183,10 @@
     <div class="status-item">
       <span class="status-label">Quality:</span>
       <span class="status-value">{userSettings.quality || 'high'}</span>
+    </div>
+    <div class="status-item">
+      <span class="status-label">FPS:</span>
+      <span class="status-value">{userSettings.fps || 15}</span>
     </div>
     <div class="status-item">
       <span class="status-label">Canvas:</span>
@@ -343,6 +361,39 @@
     color: white;
     border-radius: 3px;
     font-size: 0.75rem;
+  }
+
+  .fps-slider {
+    width: 100%;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    outline: none;
+    margin: 0.25rem 0;
+  }
+
+  .fps-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    background: #00ff88;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  .fps-slider::-moz-range-thumb {
+    width: 15px;
+    height: 15px;
+    background: #00ff88;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+  }
+
+  .fps-value {
+    font-size: 0.7rem;
+    color: #00ff88;
+    font-weight: 500;
   }
 
   .status-section {
