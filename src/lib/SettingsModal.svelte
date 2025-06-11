@@ -49,7 +49,7 @@
 
 <svelte:window on:keydown={handleKeydown} />
 
-<div class="modal-backdrop" on:click={handleBackdropClick}>
+<div class="modal-backdrop" on:click={handleBackdropClick} on:keydown={handleKeydown} role="dialog" aria-modal="true" tabindex="-1">
   <div class="modal-container">
     <div class="modal-header">
       <h2>⚙️ Settings</h2>

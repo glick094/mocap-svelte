@@ -94,7 +94,7 @@
     <h4>Canvas Settings</h4>
     
     <div class="control-group">
-      <label>Size Presets:</label>
+      <span class="control-group-label">Size Presets:</span>
       <div class="preset-buttons">
         {#each canvasPresets as preset}
           <button 
@@ -134,8 +134,9 @@
 
     <div class="size-controls">
       <div class="size-input">
-        <label>Width:</label>
+        <label for="canvas-width">Width:</label>
         <input 
+          id="canvas-width"
           type="number" 
           bind:value={canvasSettings.width}
           min="200"
@@ -144,8 +145,9 @@
         />
       </div>
       <div class="size-input">
-        <label>Height:</label>
+        <label for="canvas-height">Height:</label>
         <input 
+          id="canvas-height"
           type="number" 
           bind:value={canvasSettings.height}
           min="200"
@@ -296,6 +298,13 @@
   }
 
   .control-group label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.75rem;
+    color: #ccc;
+  }
+
+  .control-group-label {
     display: block;
     margin-bottom: 0.25rem;
     font-size: 0.75rem;

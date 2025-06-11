@@ -177,7 +177,7 @@
           facingMode: 'user',
           frameRate: { ideal: 15, max: 30 } // Reduced for performance
         },
-        audio: false
+        audio: settings?.enableAudio || false
       });
       
       if (videoElement) {
@@ -286,12 +286,12 @@
           muted
           playsinline
           class="webcam-video"
-        />
+        ></video>
         <!-- Transparent overlay canvas -->
         <canvas 
           bind:this={canvasElement}
           class="landmark-overlay"
-        />
+        ></canvas>
         <div class="video-overlay">
           <div class="recording-indicator">
             <span class="pulse"></span>
