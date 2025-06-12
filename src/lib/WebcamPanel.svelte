@@ -5,31 +5,26 @@
   export let settings = {};
   export let fps = 15;
 
-  let videoElement;
-  let canvasElement;
+  let videoElement; // Hidden video for capture
+  let displayCanvas; // Main display canvas
+  let videoContainer;
   let stream = null;
   let error = null;
   let holistic = null;
   let isMediaPipeLoaded = false;
 
-  // MediaPipe results
+  // Processing state
   let currentResults = null;
-  let isProcessing = false;
   let frameCount = 0;
-  let lastProcessTime = 0;
+  let isRunning = false;
+  let animationId = null;
 
   onMount(async () => {
     await loadMediaPipe();
-    if (active) {
-      startWebcam();
-    }
   });
 
   onDestroy(() => {
-    stopWebcam();
-    if (holistic) {
-      holistic.close();
-    }
+    cleanup();
   });
 
   $: if (active && isMediaPipeLoaded) {
@@ -38,16 +33,25 @@
     stopWebcam();
   }
 
+  function cleanup() {
+    stopWebcam();
+    if (holistic) {
+      holistic.close();
+      holistic = null;
+    }
+    if (animationId) {
+      cancelAnimationFrame(animationId);
+      animationId = null;
+    }
+  }
+
   async function loadMediaPipe() {
     try {
-      // Import MediaPipe modules
       const { Holistic } = await import('@mediapipe/holistic');
       const { drawConnectors, drawLandmarks } = await import('@mediapipe/drawing_utils');
       
-      // Store drawing utils globally
       window.mpDrawing = { drawConnectors, drawLandmarks };
 
-      // Initialize Holistic with performance-optimized settings
       holistic = new Holistic({
         locateFile: (file) => {
           return `https://cdn.jsdelivr.net/npm/@mediapipe/holistic/${file}`;
@@ -55,12 +59,12 @@
       });
 
       holistic.setOptions({
-        modelComplexity: 0, // Reduced for performance
+        modelComplexity: 0,
         smoothLandmarks: true,
         enableSegmentation: false,
         smoothSegmentation: false,
-        refineFaceLandmarks: false, // Disabled for performance
-        minDetectionConfidence: 0.7,
+        refineFaceLandmarks: false,
+        minDetectionConfidence: 0.5,
         minTrackingConfidence: 0.5
       });
 
@@ -76,106 +80,30 @@
   function onResults(results) {
     currentResults = results;
     frameCount++;
-    drawLandmarks(results);
-    isProcessing = false;
   }
 
   function setupCanvas() {
-    if (!canvasElement || !videoElement) return;
+    if (!displayCanvas || !videoContainer) return;
     
-    console.log('Setting up canvas - Video dimensions:', videoElement.videoWidth, 'x', videoElement.videoHeight);
+    const containerRect = videoContainer.getBoundingClientRect();
+    const width = Math.max(containerRect.width || 640, 320);
+    const height = Math.max(containerRect.height || 480, 240);
+
+    displayCanvas.width = width;
+    displayCanvas.height = height;
     
-    if (videoElement.videoWidth && videoElement.videoHeight) {
-      // Set canvas internal resolution to match video
-      canvasElement.width = videoElement.videoWidth;
-      canvasElement.height = videoElement.videoHeight;
-      
-      // Make canvas transparent
-      const ctx = canvasElement.getContext('2d');
-      ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-      
-      console.log('Canvas setup complete:', canvasElement.width, 'x', canvasElement.height);
-    }
-  }
-
-  function drawLandmarks(results) {
-    if (!canvasElement || !results) return;
-
-    const ctx = canvasElement.getContext('2d');
-    const { drawConnectors, drawLandmarks } = window.mpDrawing || {};
-    
-    if (!drawConnectors || !drawLandmarks) return;
-
-    // Clear canvas but keep it transparent
-    ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-    
-    // Draw test indicator to verify overlay is working
-    ctx.fillStyle = '#FF00FF';
-    ctx.fillRect(5, 5, 15, 15);
-    ctx.fillStyle = '#FFFFFF';
-    ctx.font = '10px Arial';
-    ctx.fillText(`${frameCount}`, 25, 15);
-
-    // Set drawing style
-    ctx.globalCompositeOperation = 'source-over';
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-
-    // Import connections asynchronously
-    import('@mediapipe/holistic').then(({ POSE_CONNECTIONS, HAND_CONNECTIONS }) => {
-      // Draw pose landmarks
-      if (results.poseLandmarks && results.poseLandmarks.length > 0) {
-        // Draw connections first (behind landmarks)
-        drawConnectors(ctx, results.poseLandmarks, POSE_CONNECTIONS, {
-          color: '#00FF88',
-          lineWidth: 2
-        });
-        
-        // Draw landmark points on top
-        drawLandmarks(ctx, results.poseLandmarks, {
-          color: '#FF0040',
-          radius: 3,
-          fillColor: '#FF0040'
-        });
-      }
-
-      // Draw left hand
-      if (results.leftHandLandmarks && results.leftHandLandmarks.length > 0) {
-        drawConnectors(ctx, results.leftHandLandmarks, HAND_CONNECTIONS, {
-          color: '#00CCFF',
-          lineWidth: 1
-        });
-        drawLandmarks(ctx, results.leftHandLandmarks, {
-          color: '#00CCFF',
-          radius: 2,
-          fillColor: '#00CCFF'
-        });
-      }
-
-      // Draw right hand
-      if (results.rightHandLandmarks && results.rightHandLandmarks.length > 0) {
-        drawConnectors(ctx, results.rightHandLandmarks, HAND_CONNECTIONS, {
-          color: '#FFCC00',
-          lineWidth: 1
-        });
-        drawLandmarks(ctx, results.rightHandLandmarks, {
-          color: '#FFCC00',
-          radius: 2,
-          fillColor: '#FFCC00'
-        });
-      }
-    });
+    console.log(`Canvas setup: ${width} x ${height}`);
   }
 
   async function startWebcam() {
     try {
       error = null;
+      
       stream = await navigator.mediaDevices.getUserMedia({ 
         video: { 
-          width: { ideal: 320, max: 640 },
-          height: { ideal: 240, max: 480 },
-          facingMode: 'user',
-          frameRate: { ideal: 15, max: 30 } // Reduced for performance
+          width: { ideal: 640, max: 1280 },
+          height: { ideal: 480, max: 720 },
+          facingMode: 'user'
         },
         audio: settings?.enableAudio || false
       });
@@ -184,20 +112,14 @@
         videoElement.srcObject = stream;
         
         videoElement.onloadedmetadata = () => {
-          console.log('Video metadata loaded');
+          console.log('Video loaded, setting up canvas...');
           setupCanvas();
         };
         
         videoElement.onplay = () => {
-          console.log('Video started playing');
-          setupCanvas();
-          
-          // Start MediaPipe processing with delay
-          setTimeout(() => {
-            if (holistic && isMediaPipeLoaded) {
-              startMediaPipeProcessing();
-            }
-          }, 1000);
+          console.log('Video playing, starting frame processing...');
+          isRunning = true;
+          processFrameLoop();
         };
       }
     } catch (err) {
@@ -206,44 +128,189 @@
     }
   }
 
-  function startMediaPipeProcessing() {
-    if (!videoElement || !videoElement.videoWidth || !holistic) {
-      console.log('Cannot start MediaPipe - video not ready');
+  function processFrameLoop() {
+    if (!isRunning || !active || !displayCanvas || !videoElement) {
       return;
     }
+
+    // Draw current video frame to canvas
+    drawVideoFrame();
     
-    console.log('Starting MediaPipe processing');
-    processFrames();
+    // Process with MediaPipe at specified FPS
+    const now = Date.now();
+    const frameInterval = 1000 / fps;
+    
+    if (!window.lastMPProcess || (now - window.lastMPProcess > frameInterval)) {
+      window.lastMPProcess = now;
+      
+      if (holistic && videoElement.videoWidth > 0) {
+        holistic.send({ image: videoElement }).catch(console.error);
+      }
+    }
+    
+    // Draw landmarks if we have results
+    if (currentResults) {
+      drawLandmarks();
+    }
+    
+    // Continue loop
+    animationId = requestAnimationFrame(processFrameLoop);
   }
 
-  function processFrames() {
-    if (!active || !holistic || !videoElement || !videoElement.videoWidth) {
+  function drawVideoFrame() {
+    if (!displayCanvas || !videoElement) return;
+    
+    const ctx = displayCanvas.getContext('2d');
+    const canvas = displayCanvas;
+    
+    // Ensure canvas matches video aspect ratio
+    if (videoElement.videoWidth && videoElement.videoHeight) {
+      const videoAspect = videoElement.videoWidth / videoElement.videoHeight;
+      const canvasAspect = canvas.width / canvas.height;
+      
+      let drawWidth = canvas.width;
+      let drawHeight = canvas.height;
+      let offsetX = 0;
+      let offsetY = 0;
+      
+      if (videoAspect > canvasAspect) {
+        // Video is wider
+        drawHeight = canvas.width / videoAspect;
+        offsetY = (canvas.height - drawHeight) / 2;
+      } else {
+        // Video is taller
+        drawWidth = canvas.height * videoAspect;
+        offsetX = (canvas.width - drawWidth) / 2;
+      }
+      
+      // Clear and draw video frame
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(videoElement, offsetX, offsetY, drawWidth, drawHeight);
+    }
+  }
+
+  function drawLandmarks() {
+    if (!displayCanvas || !currentResults) return;
+    
+    const ctx = displayCanvas.getContext('2d');
+    const { drawConnectors, drawLandmarks } = window.mpDrawing || {};
+
+    // Draw frame counter and debug info
+    ctx.fillStyle = '#FF00FF';
+    ctx.fillRect(10, 10, 20, 20);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '14px Arial';
+    ctx.fillText(`F:${frameCount}`, 40, 25);
+    
+    // Debug: Show if we have pose data
+    if (currentResults.poseLandmarks) {
+      ctx.fillStyle = '#00FF88';
+      ctx.fillText(`Pose: ${currentResults.poseLandmarks.length}`, 40, 45);
+    } else {
+      ctx.fillStyle = '#FF4444';
+      ctx.fillText('No Pose', 40, 45);
+    }
+    
+    // Debug: Show if we have drawing functions
+    if (!drawConnectors || !drawLandmarks) {
+      ctx.fillStyle = '#FF4444';
+      ctx.fillText('No Draw Utils', 40, 65);
       return;
     }
-    
-    const now = Date.now();
-    
-    const frameInterval = 1000 / fps; // Convert FPS to milliseconds
-    
-    // Process at user-defined FPS rate
-    if (!isProcessing && (now - lastProcessTime > frameInterval)) {
-      isProcessing = true;
-      lastProcessTime = now;
+
+    // Set drawing style
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    // Draw pose landmarks immediately without async import
+    if (currentResults.poseLandmarks && currentResults.poseLandmarks.length > 0) {
+      console.log('Drawing pose landmarks:', currentResults.poseLandmarks.length);
       
-      holistic.send({ image: videoElement })
-        .catch((err) => {
-          console.error('MediaPipe processing error:', err);
-          isProcessing = false;
+      // Draw simple circles first to test coordinate system
+      currentResults.poseLandmarks.forEach((landmark, index) => {
+        const x = landmark.x * displayCanvas.width;
+        const y = landmark.y * displayCanvas.height;
+        
+        ctx.fillStyle = '#FF0040';
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        // Draw landmark number for first few points
+        if (index < 5) {
+          ctx.fillStyle = '#FFFFFF';
+          ctx.font = '10px Arial';
+          ctx.fillText(index.toString(), x + 6, y + 6);
+        }
+      });
+      
+      // Try MediaPipe drawing functions with error handling
+      try {
+        // Use hardcoded connections for now
+        const POSE_CONNECTIONS = [
+          [11, 12], [11, 13], [13, 15], [12, 14], [14, 16], // Arms
+          [11, 23], [12, 24], [23, 24], // Torso
+          [23, 25], [25, 27], [24, 26], [26, 28] // Legs
+        ];
+        
+        // Draw connections
+        ctx.strokeStyle = '#00FF88';
+        ctx.lineWidth = 3;
+        POSE_CONNECTIONS.forEach(([start, end]) => {
+          if (start < currentResults.poseLandmarks.length && end < currentResults.poseLandmarks.length) {
+            const startPoint = currentResults.poseLandmarks[start];
+            const endPoint = currentResults.poseLandmarks[end];
+            
+            const x1 = startPoint.x * displayCanvas.width;
+            const y1 = startPoint.y * displayCanvas.height;
+            const x2 = endPoint.x * displayCanvas.width;
+            const y2 = endPoint.y * displayCanvas.height;
+            
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+          }
         });
+      } catch (err) {
+        console.error('Error drawing pose connections:', err);
+      }
     }
-    
-    // Continue processing
-    if (active) {
-      requestAnimationFrame(processFrames);
+
+    // Draw hand landmarks
+    if (currentResults.leftHandLandmarks) {
+      ctx.fillStyle = '#00CCFF';
+      currentResults.leftHandLandmarks.forEach(landmark => {
+        const x = landmark.x * displayCanvas.width;
+        const y = landmark.y * displayCanvas.height;
+        ctx.beginPath();
+        ctx.arc(x, y, 3, 0, 2 * Math.PI);
+        ctx.fill();
+      });
+    }
+
+    if (currentResults.rightHandLandmarks) {
+      ctx.fillStyle = '#FFCC00';
+      currentResults.rightHandLandmarks.forEach(landmark => {
+        const x = landmark.x * displayCanvas.width;
+        const y = landmark.y * displayCanvas.height;
+        ctx.beginPath();
+        ctx.arc(x, y, 3, 0, 2 * Math.PI);
+        ctx.fill();
+      });
     }
   }
 
   function stopWebcam() {
+    isRunning = false;
+    
+    if (animationId) {
+      cancelAnimationFrame(animationId);
+      animationId = null;
+    }
+    
     if (stream) {
       stream.getTracks().forEach(track => track.stop());
       stream = null;
@@ -253,19 +320,27 @@
       videoElement.srcObject = null;
     }
 
-    if (canvasElement) {
-      const ctx = canvasElement.getContext('2d');
-      ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+    if (displayCanvas) {
+      const ctx = displayCanvas.getContext('2d');
+      ctx.clearRect(0, 0, displayCanvas.width, displayCanvas.height);
     }
     
     currentResults = null;
     frameCount = 0;
   }
+
+  function handleResize() {
+    if (displayCanvas && videoContainer) {
+      setupCanvas();
+    }
+  }
 </script>
+
+<svelte:window on:resize={handleResize} />
 
 <div class="webcam-panel">
   <div class="panel-header">
-    <h3>📹 Webcam + MediaPipe</h3>
+    <h3>📹 Webcam + MediaPipe (Synchronized)</h3>
     <div class="status-indicators">
       <div class="status-indicator" class:active class:error={!!error}>
         {active ? (error ? '⚠️' : '🟢') : '⚫'}
@@ -273,29 +348,34 @@
       <div class="mediapipe-indicator" class:loaded={isMediaPipeLoaded}>
         {isMediaPipeLoaded ? '🧠' : '⏳'}
       </div>
+      <div class="processing-indicator" class:running={isRunning}>
+        {isRunning ? '▶️' : '⏸️'}
+      </div>
     </div>
   </div>
 
-  <div class="video-container">
+  <div class="video-container" bind:this={videoContainer}>
     {#if active && !error}
-      <div class="video-wrapper">
-        <!-- svelte-ignore a11y-media-has-caption -->
+      <div class="display-wrapper">
+        <!-- Hidden video element for capture -->
         <video 
           bind:this={videoElement}
           autoplay
           muted
           playsinline
-          class="webcam-video"
+          class="hidden-video"
         ></video>
-        <!-- Transparent overlay canvas -->
+        
+        <!-- Main display canvas -->
         <canvas 
-          bind:this={canvasElement}
-          class="landmark-overlay"
+          bind:this={displayCanvas}
+          class="display-canvas"
         ></canvas>
+        
         <div class="video-overlay">
           <div class="recording-indicator">
             <span class="pulse"></span>
-            LIVE + AI
+            SYNCHRONIZED
           </div>
         </div>
       </div>
@@ -308,8 +388,8 @@
     {:else}
       <div class="inactive-state">
         <div class="camera-icon">📷</div>
-        <p>Camera + AI Inactive</p>
-        <small>Click to activate webcam with pose detection</small>
+        <p>Synchronized Camera + AI</p>
+        <small>Click to activate synchronized webcam with pose detection</small>
       </div>
     {/if}
   </div>
@@ -328,7 +408,13 @@
       </span>
     </div>
     <div class="info-row">
-      <span>FPS:</span>
+      <span>Processing:</span>
+      <span class:running={isRunning}>
+        {isRunning ? 'Running' : 'Stopped'}
+      </span>
+    </div>
+    <div class="info-row">
+      <span>FPS Target:</span>
       <span>{fps}</span>
     </div>
     {#if currentResults}
@@ -378,7 +464,7 @@
     align-items: center;
   }
 
-  .status-indicator, .mediapipe-indicator {
+  .status-indicator, .mediapipe-indicator, .processing-indicator {
     width: 12px;
     height: 12px;
     border-radius: 50%;
@@ -405,6 +491,12 @@
     box-shadow: 0 0 10px rgba(0, 204, 255, 0.5);
   }
 
+  .processing-indicator.running {
+    background: #ffcc00;
+    box-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+    animation: pulse 1s infinite;
+  }
+
   .video-container {
     flex: 1;
     position: relative;
@@ -417,7 +509,7 @@
     justify-content: center;
   }
 
-  .video-wrapper {
+  .display-wrapper {
     position: relative;
     width: 100%;
     height: 100%;
@@ -426,23 +518,21 @@
     justify-content: center;
   }
 
-  .webcam-video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    background: #000;
+  .hidden-video {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
   }
 
-  .landmark-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
+  .display-canvas {
     width: 100%;
     height: 100%;
-    pointer-events: none;
-    z-index: 10;
-    /* Ensure transparency */
-    background: transparent;
+    object-fit: contain;
+    background: #000;
   }
 
   .video-overlay {
@@ -453,8 +543,8 @@
   }
 
   .recording-indicator {
-    background: rgba(0, 255, 136, 0.8);
-    color: white;
+    background: rgba(255, 204, 0, 0.9);
+    color: black;
     padding: 4px 8px;
     border-radius: 4px;
     font-size: 10px;
@@ -467,7 +557,7 @@
   .pulse {
     width: 6px;
     height: 6px;
-    background: white;
+    background: black;
     border-radius: 50%;
     animation: pulse 1s infinite;
   }
@@ -526,7 +616,7 @@
     color: #fff;
   }
 
-  .info-row span.active {
+  .info-row span.active, .info-row span.running {
     color: #00ff88;
   }
 

@@ -1,239 +1,296 @@
 <script>
   import { onMount } from 'svelte';
-  import ThreeJSCanvas from '$lib/ThreeJSCanvas.svelte';
-  import WebcamPanel from '$lib/WebcamPanel.svelte';
-  import ControlPanel from '$lib/ControlPanel.svelte';
-  import SettingsModal from '$lib/SettingsModal.svelte';
+  import WebcamPose from '$lib/WebcamPose.svelte';
 
-  // App state
-  let showSettings = false;
-  let isWebcamActive = false;
-  let canvasSettings = {
-    width: 800,
-    height: 600,
-    frameColor: '#333'
-  };
+  let showLandmarks = true;
+  let showConnections = true;
+  let isFullscreen = false;
+  let containerElement;
 
-  // Settings data
-  let userSettings = {
-    username: '',
-    theme: 'dark',
-    quality: 'high',
-    enableAudio: true,
-    fps: 15
-  };
+  // Calculate responsive dimensions
+  let windowWidth = 0;
+  let windowHeight = 0;
+  
+  $: videoWidth = isFullscreen ? windowWidth : Math.min(800, windowWidth * 0.9);
+  $: videoHeight = isFullscreen ? windowHeight : Math.min(600, windowHeight * 0.7);
 
-  function openSettings() {
-    showSettings = true;
+  function toggleFullscreen() {
+    if (!isFullscreen) {
+      if (containerElement.requestFullscreen) {
+        containerElement.requestFullscreen();
+      } else if (containerElement.webkitRequestFullscreen) {
+        containerElement.webkitRequestFullscreen();
+      } else if (containerElement.msRequestFullscreen) {
+        containerElement.msRequestFullscreen();
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+    }
   }
 
-  function closeSettings() {
-    showSettings = false;
-  }
-
-  function saveSettings(newSettings) {
-    userSettings = { ...userSettings, ...newSettings };
-    closeSettings();
-    // Here you could also save to localStorage or send to server
-    console.log('Settings saved:', userSettings);
-  }
-
-  function toggleWebcam() {
-    isWebcamActive = !isWebcamActive;
-  }
-
-  function handleCanvasUpdate(event) {
-    // Handle updates from the 3D canvas
-    console.log('Canvas update:', event.detail);
+  function handleFullscreenChange() {
+    isFullscreen = !!(
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.msFullscreenElement
+    );
   }
 
   onMount(() => {
-    // Load saved settings on app start
-    const saved = localStorage.getItem('userSettings');
-    if (saved) {
-      userSettings = JSON.parse(saved);
-    }
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('msfullscreenchange', handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('msfullscreenchange', handleFullscreenChange);
+    };
   });
 </script>
 
-<svelte:head>
-  <title>3D Webcam App</title>
-  <meta name="description" content="Interactive 3D experience with webcam integration" />
-</svelte:head>
+<svelte:window bind:innerWidth={windowWidth} bind:innerHeight={windowHeight} />
 
-<div class="app-container">
-  <!-- Header -->
-  <header class="app-header">
-    <h1>3D Interactive Studio</h1>
-    <button class="settings-btn" on:click={openSettings}>
-      ⚙️ Settings
-    </button>
+<div class="page-container" class:fullscreen={isFullscreen} bind:this={containerElement}>
+  <header class="header" class:hidden={isFullscreen}>
+    <h1>Pose Tracking with MediaPipe</h1>
+    <p>Real-time body, hand, and face landmark detection using your webcam</p>
   </header>
 
-  <!-- Main Content Area -->
-  <main class="main-content">
-    <!-- Primary 3D Canvas -->
-    <section class="canvas-section">
-      <ThreeJSCanvas 
-        width={canvasSettings.width}
-        height={canvasSettings.height}
-        frameColor={canvasSettings.frameColor}
-        on:update={handleCanvasUpdate}
+  <main class="main">
+    <div class="pose-viewer">
+      <WebcamPose 
+        width={videoWidth}
+        height={videoHeight}
+        {showLandmarks}
+        {showConnections}
       />
-    </section>
+    </div>
 
-    <!-- Side Panel -->
-    <aside class="side-panel">
-      <!-- Webcam Feed -->
-      <section class="webcam-section">
-        <WebcamPanel 
-          active={isWebcamActive}
-          settings={userSettings}
-          fps={userSettings.fps}
-        />
-      </section>
+    <div class="controls" class:overlay={isFullscreen}>
+      <div class="control-group">
+        <label class="checkbox-label">
+          <input 
+            type="checkbox" 
+            bind:checked={showLandmarks}
+          />
+          <span class="checkmark"></span>
+          Show Landmarks
+        </label>
 
-      <!-- Controls -->
-      <section class="controls-section">
-        <ControlPanel 
-          {userSettings}
-          on:toggleWebcam={toggleWebcam}
-          on:openSettings={openSettings}
-          bind:canvasSettings
-        />
-      </section>
-    </aside>
+        <label class="checkbox-label">
+          <input 
+            type="checkbox" 
+            bind:checked={showConnections}
+          />
+          <span class="checkmark"></span>
+          Show Connections
+        </label>
+      </div>
+
+      <button class="fullscreen-btn" on:click={toggleFullscreen}>
+        {isFullscreen ? '⚟ Exit Fullscreen' : '⛶ Enter Fullscreen'}
+      </button>
+    </div>
   </main>
 
-  <!-- Settings Modal/Popup -->
-  {#if showSettings}
-    <SettingsModal 
-      {userSettings}
-      on:close={closeSettings}
-      on:save={(e) => saveSettings(e.detail)}
-    />
+  {#if !isFullscreen}
+    <footer class="footer">
+      <div class="info">
+        <h3>Features</h3>
+        <ul>
+          <li><strong>Pose Detection:</strong> 33 body landmarks (green)</li>
+          <li><strong>Hand Tracking:</strong> 21 landmarks per hand (red/blue)</li>
+          <li><strong>Face Mesh:</strong> 468 facial landmarks (yellow)</li>
+          <li><strong>Real-time:</strong> Smooth tracking with MediaPipe</li>
+        </ul>
+      </div>
+      
+      <div class="info">
+        <h3>Controls</h3>
+        <ul>
+          <li>Toggle landmarks and connections visibility</li>
+          <li>Enter fullscreen mode for immersive experience</li>
+          <li>Automatic responsive sizing</li>
+          <li>Privacy-first: all processing happens locally</li>
+        </ul>
+      </div>
+    </footer>
   {/if}
 </div>
 
 <style>
-  .app-container {
+  .page-container {
     min-height: 100vh;
-    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-    color: white;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
-
-  .app-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 2rem;
-    background: rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  .app-header h1 {
-    margin: 0;
-    font-size: 1.5rem;
-    font-weight: 600;
-    background: linear-gradient(45deg, #00ff88, #00ccff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .settings-btn {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 0.9rem;
-  }
-
-  .settings-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-1px);
-  }
-
-  .main-content {
-    display: grid;
-    grid-template-columns: 1fr 300px;
-    gap: 2rem;
-    padding: 2rem;
-    min-height: calc(100vh - 80px);
-  }
-
-  .canvas-section {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 12px;
-    padding: 2rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  .side-panel {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    padding: 1rem;
+    color: white;
   }
 
-  .webcam-section,
-  .controls-section {
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 8px;
-    padding: 1.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+  .page-container.fullscreen {
+    padding: 0;
+    background: #000;
   }
 
-  .webcam-section {
+  .header {
+    text-align: center;
+    margin-bottom: 2rem;
+    transition: opacity 0.3s ease;
+  }
+
+  .header.hidden {
+    opacity: 0;
+    height: 0;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  .header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .header p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin: 0;
+  }
+
+  .main {
     flex: 1;
-    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
   }
 
-  .controls-section {
-    flex: 0 0 auto;
+  .pose-viewer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
   }
 
-  /* Responsive Design */
-  @media (max-width: 1024px) {
-    .main-content {
-      grid-template-columns: 1fr;
-      grid-template-rows: auto auto;
-    }
+  .controls {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+  }
 
-    .side-panel {
-      flex-direction: row;
-      gap: 1rem;
-    }
+  .controls.overlay {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.8);
+  }
 
-    .webcam-section,
-    .controls-section {
-      flex: 1;
-    }
+  .control-group {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 1rem;
+    user-select: none;
+  }
+
+  .checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #667eea;
+  }
+
+  .fullscreen-btn {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+  }
+
+  .fullscreen-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .footer {
+    margin-top: 3rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 2rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .info h3 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    color: #fff;
+  }
+
+  .info ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .info li {
+    padding: 0.5rem 0;
+    opacity: 0.9;
+    line-height: 1.5;
+  }
+
+  .info strong {
+    color: #667eea;
   }
 
   @media (max-width: 768px) {
-    .app-header {
-      padding: 1rem;
+    .header h1 {
+      font-size: 2rem;
     }
 
-    .app-header h1 {
-      font-size: 1.2rem;
-    }
-
-    .main-content {
-      padding: 1rem;
+    .control-group {
+      flex-direction: column;
       gap: 1rem;
     }
 
-    .side-panel {
-      flex-direction: column;
+    .controls.overlay {
+      top: 10px;
+      right: 10px;
+      left: 10px;
+      padding: 1rem;
+    }
+
+    .footer {
+      grid-template-columns: 1fr;
     }
   }
 </style>

@@ -1,0 +1,16 @@
+Error sending frame to MediaPipe: TypeError: NetworkError when attempting to fetch resource. WebcamPose.svelte:393:16
+    onFrame http://localhost:5173/src/lib/WebcamPose.svelte:393
+XHRGET
+https://unpkg.com/@mediapipe/holistic@0.5.1675471629/pose_landmark_lite.tflite
+[HTTP/3 500  17411ms]
+
+Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://unpkg.com/@mediapipe/holistic@0.5.1675471629/pose_landmark_lite.tflite. (Reason: CORS header ‘Access-Control-Allow-Origin’ missing). Status code: 500.
+Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://unpkg.com/@mediapipe/holistic@0.5.1675471629/pose_landmark_lite.tflite. (Reason: CORS header ‘Access-Control-Allow-Origin’ missing). Status code: 500.
+Error sending frame to MediaPipe: TypeError: NetworkError when attempting to fetch resource. WebcamPose.svelte:393:16
+XHRGET
+https://unpkg.com/@mediapipe/holistic@0.5.1675471629/pose_landmark_lite.tflite
+CORS Missing Allow Origin
+
+Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://unpkg.com/@mediapipe/holistic@0.5.1675471629/pose_landmark_lite.tflite. (Reason: CORS header ‘Access-Control-Allow-Origin’ missing). Status code: 500.
+Error sending frame to MediaPipe: TypeError: NetworkError when attempting to fetch resource. WebcamPose.svelte:393:16
+
