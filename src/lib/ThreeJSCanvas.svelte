@@ -1,9 +1,8 @@
 <script>
   import { onMount, onDestroy } from 'svelte';
-  import * as THREE from 'three';
 
   let canvasElement;
-  let scene, camera, renderer, cube;
+  let ctx;
   let animationId;
 
   // Component props
@@ -11,100 +10,190 @@
   export let height = 600;
   export let frameColor = '#333';
   export let frameWidth = '4px';
+  export let poseData = null;
 
   onMount(() => {
-    initThreeJS();
-    animate();
+    if (canvasElement) {
+      ctx = canvasElement.getContext('2d');
+      animate();
+    }
   });
 
   onDestroy(() => {
     if (animationId) {
       cancelAnimationFrame(animationId);
     }
-    if (renderer) {
-      renderer.dispose();
-    }
   });
-
-  function initThreeJS() {
-    // Create scene
-    scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x1a1a1a);
-
-    // Create camera
-    camera = new THREE.PerspectiveCamera(
-      75, 
-      width / height, 
-      0.1, 
-      1000
-    );
-    camera.position.z = 5;
-
-    // Create renderer
-    renderer = new THREE.WebGLRenderer({ 
-      canvas: canvasElement,
-      antialias: true 
-    });
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(window.devicePixelRatio);
-
-    // Create a cube
-    const geometry = new THREE.BoxGeometry(2, 2, 2);
-    const material = new THREE.MeshPhongMaterial({ 
-      color: 0x00ff88,
-      shininess: 100 
-    });
-    cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
-
-    // Add lighting
-    const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
-    scene.add(ambientLight);
-
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    directionalLight.position.set(10, 10, 5);
-    scene.add(directionalLight);
-
-    // Add some visual interest with wireframe overlay
-    const wireframeGeometry = new THREE.EdgesGeometry(geometry);
-    const wireframeMaterial = new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.3, transparent: true });
-    const wireframe = new THREE.LineSegments(wireframeGeometry, wireframeMaterial);
-    cube.add(wireframe);
-  }
 
   function animate() {
     animationId = requestAnimationFrame(animate);
+    drawFrame();
+  }
 
-    // Rotate the cube
-    if (cube) {
-      cube.rotation.x += 0.01;
-      cube.rotation.y += 0.01;
+  function drawFrame() {
+    if (!ctx) return;
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, width, height);
+    
+    // Draw background
+    ctx.fillStyle = '#1a1a1a';
+    ctx.fillRect(0, 0, width, height);
+    
+    // Draw pose data if available
+    if (poseData) {
+      drawPoseVisualization(poseData);
+    } else {
+      // Draw placeholder text
+      ctx.fillStyle = '#666';
+      ctx.font = '24px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('Waiting for pose data...', width / 2, height / 2);
     }
+  }
 
-    // Render the scene
-    if (renderer && scene && camera) {
-      renderer.render(scene, camera);
+  function drawPoseVisualization(data) {
+    if (!ctx) return;
+    
+    // Draw pose landmarks and connections
+    if (data.poseLandmarks) {
+      drawPoseLandmarks(data.poseLandmarks);
     }
+    
+    // Draw hand landmarks
+    if (data.leftHandLandmarks) {
+      drawHandLandmarks(data.leftHandLandmarks, 'left');
+    }
+    if (data.rightHandLandmarks) {
+      drawHandLandmarks(data.rightHandLandmarks, 'right');
+    }
+    
+    // Draw face landmarks (simplified)
+    if (data.faceLandmarks) {
+      drawFaceLandmarks(data.faceLandmarks);
+    }
+  }
+
+  function drawPoseLandmarks(landmarks) {
+    if (!landmarks || landmarks.length === 0) return;
+    
+    // MediaPipe pose connections (key body landmarks)
+    const connections = [
+      [11, 12], // shoulders
+      [11, 13], [13, 15], // left arm
+      [12, 14], [14, 16], // right arm
+      [11, 23], [12, 24], [23, 24], // torso
+      [23, 25], [25, 27], [27, 29], [29, 31], // left leg
+      [24, 26], [26, 28], [28, 30], [30, 32], // right leg
+    ];
+    
+    // Draw connections first (behind landmarks)
+    ctx.strokeStyle = '#00ff88';
+    ctx.lineWidth = 3;
+    
+    connections.forEach(([startIdx, endIdx]) => {
+      if (startIdx < landmarks.length && endIdx < landmarks.length) {
+        const start = landmarks[startIdx];
+        const end = landmarks[endIdx];
+        
+        if (start.visibility > 0.5 && end.visibility > 0.5) {
+          ctx.beginPath();
+          ctx.moveTo(start.x * width, start.y * height);
+          ctx.lineTo(end.x * width, end.y * height);
+          ctx.stroke();
+        }
+      }
+    });
+    
+    // Draw landmark points
+    ctx.fillStyle = '#00ff88';
+    landmarks.forEach((landmark) => {
+      if (landmark.visibility && landmark.visibility > 0.5) {
+        ctx.beginPath();
+        ctx.arc(landmark.x * width, landmark.y * height, 6, 0, 2 * Math.PI);
+        ctx.fill();
+      }
+    });
+  }
+
+  function drawHandLandmarks(landmarks, hand) {
+    if (!landmarks || landmarks.length === 0) return;
+    
+    const color = hand === 'left' ? '#ff0000' : '#0000ff';
+    
+    // Hand connections for better visualization
+    const handConnections = [
+      [0, 1], [1, 2], [2, 3], [3, 4], // Thumb
+      [0, 5], [5, 6], [6, 7], [7, 8], // Index finger
+      [0, 9], [9, 10], [10, 11], [11, 12], // Middle finger
+      [0, 13], [13, 14], [14, 15], [15, 16], // Ring finger
+      [0, 17], [17, 18], [18, 19], [19, 20], // Pinky
+      [5, 9], [9, 13], [13, 17] // Palm connections
+    ];
+    
+    // Draw connections
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    
+    handConnections.forEach(([startIdx, endIdx]) => {
+      if (startIdx < landmarks.length && endIdx < landmarks.length) {
+        const start = landmarks[startIdx];
+        const end = landmarks[endIdx];
+        
+        ctx.beginPath();
+        ctx.moveTo(start.x * width, start.y * height);
+        ctx.lineTo(end.x * width, end.y * height);
+        ctx.stroke();
+      }
+    });
+    
+    // Draw landmark points
+    ctx.fillStyle = color;
+    landmarks.forEach((landmark) => {
+      ctx.beginPath();
+      ctx.arc(landmark.x * width, landmark.y * height, 4, 0, 2 * Math.PI);
+      ctx.fill();
+    });
+  }
+
+  function drawFaceLandmarks(landmarks) {
+    if (!landmarks || landmarks.length === 0) return;
+    
+    // Draw key face landmarks (face outline)
+    const faceContourIndices = [10, 151, 9, 8, 168, 6, 148, 176, 149, 150, 136, 172, 58, 132, 93, 234, 127];
+    
+    ctx.fillStyle = '#ffff00';
+    faceContourIndices.forEach((index) => {
+      if (index < landmarks.length) {
+        const landmark = landmarks[index];
+        ctx.beginPath();
+        ctx.arc(landmark.x * width, landmark.y * height, 2, 0, 2 * Math.PI);
+        ctx.fill();
+      }
+    });
   }
 
   // Handle window resize
   function handleResize() {
-    if (camera && renderer) {
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
-      renderer.setSize(width, height);
+    if (canvasElement) {
+      canvasElement.width = width;
+      canvasElement.height = height;
     }
   }
 
   // Reactive statement to handle prop changes
-  $: if (renderer && camera) {
+  $: if (canvasElement) {
     handleResize();
   }
 </script>
 
-<div class="threejs-container" style="--frame-color: {frameColor}; --frame-width: {frameWidth};">
+<div class="canvas-container" style="--frame-color: {frameColor}; --frame-width: {frameWidth};">
   <div class="canvas-frame">
-    <canvas bind:this={canvasElement} {width} {height}></canvas>
+    <canvas 
+      bind:this={canvasElement} 
+      {width} 
+      {height}
+    ></canvas>
     <div class="frame-overlay">
       <div class="corner top-left"></div>
       <div class="corner top-right"></div>
@@ -113,14 +202,22 @@
     </div>
   </div>
   <div class="info-panel">
-    <h3>Three.js Canvas</h3>
-    <p>Size: {width} × {height}</p>
-    <p>Scene objects: {scene ? scene.children.length : 0}</p>
+    <h3>2D Pose Visualization</h3>
+    <p>Canvas: {width} × {height}</p>
+    {#if poseData}
+      <p class="pose-status active">✅ Live pose tracking</p>
+      <p>Body: {poseData.poseLandmarks ? poseData.poseLandmarks.length : 0} landmarks</p>
+      <p>Hands: {(poseData.leftHandLandmarks?.length || 0) + (poseData.rightHandLandmarks?.length || 0)} landmarks</p>
+      <p>Face: {poseData.faceLandmarks ? poseData.faceLandmarks.length : 0} landmarks</p>
+    {:else}
+      <p class="pose-status inactive">⭕ Waiting for pose data</p>
+      <p>Enable camera to start tracking</p>
+    {/if}
   </div>
 </div>
 
 <style>
-  .threejs-container {
+  .canvas-container {
     display: inline-block;
     font-family: 'Courier New', monospace;
     background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
@@ -208,5 +305,15 @@
     margin: 4px 0;
     color: #ccc;
     font-size: 12px;
+  }
+  
+  .pose-status.active {
+    color: #00ff88;
+    font-weight: bold;
+  }
+  
+  .pose-status.inactive {
+    color: #ff6b6b;
+    font-weight: bold;
   }
 </style>

@@ -26,6 +26,11 @@
   // WebcamPose dimensions
   let webcamWidth = 640;
   let webcamHeight = 480;
+  
+  // Pose data for 3D visualization
+  let currentPoseData = null;
+  let poseHistory = [];
+  const maxPoseHistory = 60; // Keep last 60 frames for smoothing
 
   function openSettings() {
     showSettings = true;
@@ -50,6 +55,19 @@
   function handleCanvasUpdate(event) {
     // Handle updates from the 3D canvas
     console.log('Canvas update:', event.detail);
+  }
+  
+  function handlePoseUpdate(event) {
+    // Receive pose data from WebcamPose component
+    currentPoseData = event.detail;
+    
+    // Add to history for smoothing
+    if (currentPoseData) {
+      poseHistory.push(currentPoseData);
+      if (poseHistory.length > maxPoseHistory) {
+        poseHistory.shift();
+      }
+    }
   }
 
   onMount(() => {
@@ -87,6 +105,7 @@
         width={canvasSettings.width}
         height={canvasSettings.height}
         frameColor={canvasSettings.frameColor}
+        poseData={currentPoseData}
         on:update={handleCanvasUpdate}
       />
     </section>
@@ -99,6 +118,7 @@
           <WebcamPose 
             width={webcamWidth}
             height={webcamHeight}
+            on:poseUpdate={handlePoseUpdate}
           />
         {:else}
           <div class="webcam-inactive">

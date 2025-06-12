@@ -1,5 +1,7 @@
 <script>
-  import { onMount, onDestroy } from 'svelte';
+  import { onMount, onDestroy, createEventDispatcher } from 'svelte';
+  
+  const dispatch = createEventDispatcher();
 
   export let width = 640;
   export let height = 480;
@@ -121,8 +123,17 @@
   function onPoseResults(results) {
     currentResults = results;
     
-    // Debug logging
+    // Emit pose data for 3D visualization
     if (results.poseLandmarks || results.leftHandLandmarks || results.rightHandLandmarks || results.faceLandmarks) {
+      dispatch('poseUpdate', {
+        poseLandmarks: results.poseLandmarks,
+        leftHandLandmarks: results.leftHandLandmarks,
+        rightHandLandmarks: results.rightHandLandmarks,
+        faceLandmarks: results.faceLandmarks,
+        timestamp: Date.now()
+      });
+      
+      // Debug logging
       console.log('MediaPipe results received:', {
         pose: !!results.poseLandmarks,
         leftHand: !!results.leftHandLandmarks,
