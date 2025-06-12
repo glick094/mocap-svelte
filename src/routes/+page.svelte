@@ -2,15 +2,14 @@
   import { onMount } from 'svelte';
   import ThreeJSCanvas from '$lib/ThreeJSCanvas.svelte';
   import WebcamPose from '$lib/WebcamPose.svelte';
-  import ControlPanel from '$lib/ControlPanel.svelte';
   import SettingsModal from '$lib/SettingsModal.svelte';
 
   // App state
   let showSettings = false;
   let isWebcamActive = true; // Start with webcam active
   let canvasSettings = {
-    width: 800,
-    height: 600,
+    width: window.innerWidth || 1920,
+    height: window.innerHeight - 80 || 1000, // Subtract header height
     frameColor: '#333'
   };
 
@@ -24,8 +23,8 @@
   };
 
   // WebcamPose dimensions
-  let webcamWidth = 640;
-  let webcamHeight = 480;
+  let webcamWidth = 300;
+  let webcamHeight = 225;
   
   // Pose data for 3D visualization
   let currentPoseData = null;
@@ -40,12 +39,17 @@
     showSettings = false;
   }
 
-  function saveSettings(newSettings) {
-    userSettings = { ...userSettings, ...newSettings };
+  function saveSettings(event) {
+    const { userSettings: newUserSettings, canvasSettings: newCanvasSettings } = event.detail;
+    userSettings = { ...userSettings, ...newUserSettings };
+    if (newCanvasSettings) {
+      canvasSettings = { ...canvasSettings, ...newCanvasSettings };
+    }
     closeSettings();
     // Save to localStorage
     localStorage.setItem('userSettings', JSON.stringify(userSettings));
-    console.log('Settings saved:', userSettings);
+    localStorage.setItem('canvasSettings', JSON.stringify(canvasSettings));
+    console.log('Settings saved:', { userSettings, canvasSettings });
   }
 
   function toggleWebcam() {
@@ -70,16 +74,40 @@
     }
   }
 
+  function updateCanvasSize() {
+    const sidePanelWidth = window.innerWidth > 768 ? 350 : 0; // Hide side panel on mobile
+    canvasSettings.width = window.innerWidth - sidePanelWidth;
+    canvasSettings.height = window.innerHeight - 80; // Subtract header height
+  }
+
   onMount(() => {
     // Load saved settings on app start
-    const saved = localStorage.getItem('userSettings');
-    if (saved) {
+    const savedUserSettings = localStorage.getItem('userSettings');
+    if (savedUserSettings) {
       try {
-        userSettings = JSON.parse(saved);
+        userSettings = JSON.parse(savedUserSettings);
       } catch (e) {
-        console.error('Error loading saved settings:', e);
+        console.error('Error loading saved user settings:', e);
       }
     }
+
+    const savedCanvasSettings = localStorage.getItem('canvasSettings');
+    if (savedCanvasSettings) {
+      try {
+        const saved = JSON.parse(savedCanvasSettings);
+        canvasSettings = { ...canvasSettings, ...saved };
+      } catch (e) {
+        console.error('Error loading saved canvas settings:', e);
+      }
+    }
+    
+    // Update canvas size on mount and window resize
+    updateCanvasSize();
+    window.addEventListener('resize', updateCanvasSize);
+    
+    return () => {
+      window.removeEventListener('resize', updateCanvasSize);
+    };
   });
 </script>
 
@@ -92,14 +120,22 @@
   <!-- Header -->
   <header class="app-header">
     <h1>Motion Capture Studio</h1>
-    <button class="settings-btn" on:click={openSettings}>
-      ⚙️ Settings
-    </button>
+    <div class="header-buttons">
+      <button class="header-btn" class:active={isWebcamActive} on:click={toggleWebcam}>
+        {isWebcamActive ? '📹 Stop Camera' : '📷 Start Camera'}
+      </button>
+      <button class="header-btn game-btn">
+        🎮 Start Game
+      </button>
+      <button class="header-btn settings-btn" on:click={openSettings}>
+        ⚙️ Settings
+      </button>
+    </div>
   </header>
 
   <!-- Main Content Area -->
   <main class="main-content">
-    <!-- Primary 3D Canvas -->
+    <!-- Fullscreen Canvas -->
     <section class="canvas-section">
       <ThreeJSCanvas 
         width={canvasSettings.width}
@@ -112,7 +148,7 @@
 
     <!-- Side Panel -->
     <aside class="side-panel">
-      <!-- Webcam Feed with MediaPipe -->
+      <!-- Webcam Feed -->
       <section class="webcam-section">
         {#if isWebcamActive}
           <WebcamPose 
@@ -124,19 +160,9 @@
           <div class="webcam-inactive">
             <div class="camera-icon">📷</div>
             <p>Camera Inactive</p>
-            <small>Enable camera to start pose tracking</small>
+            <small>Use the camera button in the header to start</small>
           </div>
         {/if}
-      </section>
-
-      <!-- Controls -->
-      <section class="controls-section">
-        <ControlPanel 
-          {userSettings}
-          on:toggleWebcam={toggleWebcam}
-          on:openSettings={openSettings}
-          bind:canvasSettings
-        />
       </section>
     </aside>
   </main>
@@ -145,8 +171,9 @@
   {#if showSettings}
     <SettingsModal 
       {userSettings}
+      {canvasSettings}
       on:close={closeSettings}
-      on:save={(e) => saveSettings(e.detail)}
+      on:save={saveSettings}
     />
   {/if}
 </div>
@@ -167,6 +194,13 @@
     background: rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    height: 80px;
+    box-sizing: border-box;
   }
 
   .app-header h1 {
@@ -179,7 +213,13 @@
     background-clip: text;
   }
 
-  .settings-btn {
+  .header-buttons {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .header-btn {
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: white;
@@ -190,53 +230,54 @@
     font-size: 0.9rem;
   }
 
-  .settings-btn:hover {
+  .header-btn:hover {
     background: rgba(255, 255, 255, 0.2);
     transform: translateY(-1px);
+  }
+
+  .header-btn.active {
+    background: rgba(0, 255, 136, 0.2);
+    border-color: rgba(0, 255, 136, 0.5);
+    color: #00ff88;
+  }
+
+  .game-btn {
+    background: rgba(255, 136, 0, 0.2);
+    border-color: rgba(255, 136, 0, 0.5);
+    color: #ff8800;
+  }
+
+  .game-btn:hover {
+    background: rgba(255, 136, 0, 0.3);
   }
 
   .main-content {
     display: grid;
     grid-template-columns: 1fr 350px;
-    gap: 2rem;
-    padding: 2rem;
+    gap: 0;
+    padding-top: 80px; /* Account for fixed header */
     min-height: calc(100vh - 80px);
+    overflow: hidden;
   }
 
   .canvas-section {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 12px;
-    padding: 2rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    background: #000;
   }
 
   .side-panel {
+    background: rgba(0, 0, 0, 0.3);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .webcam-section,
-  .controls-section {
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 8px;
-    padding: 1.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .webcam-section {
     flex: 1;
-    min-height: 350px;
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-
-  .controls-section {
-    flex: 0 0 auto;
+    padding: 1rem;
   }
 
   .webcam-inactive {
@@ -262,48 +303,37 @@
   }
 
   /* Responsive Design */
-  @media (max-width: 1024px) {
-    .main-content {
-      grid-template-columns: 1fr;
-      grid-template-rows: auto auto;
-    }
-
-    .side-panel {
-      flex-direction: row;
-      gap: 1rem;
-    }
-
-    .webcam-section,
-    .controls-section {
-      flex: 1;
-    }
-
-    .webcam-section {
-      min-height: 250px;
-    }
-  }
-
   @media (max-width: 768px) {
     .app-header {
-      padding: 1rem;
+      padding: 0.5rem 1rem;
     }
 
     .app-header h1 {
       font-size: 1.2rem;
     }
 
+    .header-buttons {
+      gap: 0.5rem;
+    }
+
+    .header-btn {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.8rem;
+    }
+
     .main-content {
-      padding: 1rem;
-      gap: 1rem;
       grid-template-columns: 1fr;
+      grid-template-rows: 1fr auto;
     }
 
     .side-panel {
-      flex-direction: column;
+      border-left: none;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      max-height: 300px;
     }
 
     .webcam-section {
-      min-height: 300px;
+      padding: 0.5rem;
     }
   }
 </style>

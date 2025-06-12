@@ -9,17 +9,41 @@
     fps: 15
   };
 
+  export let canvasSettings = {
+    width: 800,
+    height: 600,
+    frameColor: '#333'
+  };
+
   const dispatch = createEventDispatcher();
 
   // Local copy for editing
   let localSettings = { ...userSettings };
+  let localCanvasSettings = { ...canvasSettings };
+
+  // Canvas presets
+  const canvasPresets = [
+    { name: 'Small', width: 600, height: 400 },
+    { name: 'Medium', width: 800, height: 600 },
+    { name: 'Large', width: 1200, height: 800 },
+    { name: 'HD', width: 1920, height: 1080 }
+  ];
+
+  function applyCanvasPreset(preset) {
+    localCanvasSettings.width = preset.width;
+    localCanvasSettings.height = preset.height;
+    localCanvasSettings = { ...localCanvasSettings }; // Trigger reactivity
+  }
 
   function closeModal() {
     dispatch('close');
   }
 
   function saveSettings() {
-    dispatch('save', localSettings);
+    dispatch('save', { 
+      userSettings: localSettings,
+      canvasSettings: localCanvasSettings 
+    });
   }
 
   function resetToDefaults() {
@@ -29,6 +53,11 @@
       quality: 'high',
       enableAudio: true,
       fps: 15
+    };
+    localCanvasSettings = {
+      width: 800,
+      height: 600,
+      frameColor: '#333'
     };
   }
 
@@ -108,6 +137,62 @@
               step="5"
             />
             <small>Higher FPS = more responsive but uses more CPU</small>
+          </div>
+        </section>
+
+        <!-- Canvas Settings -->
+        <section class="settings-section">
+          <h3>🖼️ Canvas Settings</h3>
+          
+          <div class="form-group">
+            <label>Size Presets:</label>
+            <div class="preset-buttons">
+              {#each canvasPresets as preset}
+                <button 
+                  type="button"
+                  class="preset-btn"
+                  class:active={localCanvasSettings.width === preset.width && localCanvasSettings.height === preset.height}
+                  on:click={() => applyCanvasPreset(preset)}
+                >
+                  {preset.name}
+                </button>
+              {/each}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="frame-color">Frame Color:</label>
+            <input 
+              id="frame-color"
+              type="color" 
+              bind:value={localCanvasSettings.frameColor}
+              class="color-input"
+            />
+          </div>
+
+          <div class="size-controls">
+            <div class="size-input">
+              <label for="canvas-width">Width:</label>
+              <input 
+                id="canvas-width"
+                type="number" 
+                bind:value={localCanvasSettings.width}
+                min="200"
+                max="2000"
+                step="50"
+              />
+            </div>
+            <div class="size-input">
+              <label for="canvas-height">Height:</label>
+              <input 
+                id="canvas-height"
+                type="number" 
+                bind:value={localCanvasSettings.height}
+                min="200"
+                max="2000"
+                step="50"
+              />
+            </div>
           </div>
         </section>
 
@@ -397,5 +482,72 @@
 
   .modal-content::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.5);
+  }
+
+  /* Canvas Settings Styles */
+  .preset-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .preset-btn {
+    padding: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.8rem;
+  }
+
+  .preset-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .preset-btn.active {
+    background: rgba(0, 255, 136, 0.2);
+    border-color: rgba(0, 255, 136, 0.5);
+    color: #00ff88;
+  }
+
+  .color-input {
+    width: 60px;
+    height: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .size-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  .size-input {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .size-input label {
+    margin-bottom: 0;
+    font-size: 0.8rem;
+    color: #ccc;
+  }
+
+  .size-input input {
+    padding: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    border-radius: 4px;
+    font-size: 0.8rem;
   }
 </style>
