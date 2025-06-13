@@ -18,7 +18,9 @@
     theme: 'dark',
     quality: 'high',
     enableAudio: true,
-    fps: 15
+    fps: 15,
+    enableSmoothing: true,
+    filterWindowSize: 5
   };
 
   // WebcamPose dimensions
@@ -29,6 +31,11 @@
   let currentPoseData = null;
   let poseHistory = [];
   const maxPoseHistory = 60; // Keep last 60 frames for smoothing
+  
+  // Smoothing settings
+  let enableSmoothing = true;
+  let filterWindowSize = 7; // Window size for Savgol filter (must be odd)
+  let polynomialOrder = 4; // Polynomial order for Savgol filter
 
   // Recording state
   let isRecording = false;
@@ -56,6 +63,11 @@
     if (newCanvasSettings) {
       canvasSettings = { ...canvasSettings, ...newCanvasSettings };
     }
+    
+    // Update smoothing settings
+    enableSmoothing = userSettings.enableSmoothing;
+    filterWindowSize = userSettings.filterWindowSize;
+    
     closeSettings();
     // Save to localStorage
     localStorage.setItem('userSettings', JSON.stringify(userSettings));
@@ -90,25 +102,34 @@
 
   function handlePoseUpdate(event) {
     // Receive pose data from WebcamPose component
-    currentPoseData = event.detail;
+    const rawPoseData = event.detail;
     
     // Add to history for smoothing
-    if (currentPoseData) {
-      poseHistory.push(currentPoseData);
+    if (rawPoseData) {
+      poseHistory.push(rawPoseData);
       if (poseHistory.length > maxPoseHistory) {
         poseHistory.shift();
       }
 
-      // Record data if recording is active
+      // Apply smoothing to pose landmarks for visualization
+      let processedPoseData = { ...rawPoseData };
+      if (enableSmoothing && rawPoseData.poseLandmarks) {
+        processedPoseData.poseLandmarks = smoothLandmarks(rawPoseData.poseLandmarks);
+      }
+      
+      // Update current pose data for visualization
+      currentPoseData = processedPoseData;
+
+      // Record RAW data if recording is active (not smoothed)
       if (isRecording && recordingSession) {
         const unixTimestamp = Date.now(); // Unix timestamp in milliseconds
         const preciseFrameTime = performance.now() - recordingSession.performanceStartTime; // High-precision relative time
-        const csvRow = formatPoseDataForCSV(currentPoseData, unixTimestamp, preciseFrameTime);
+        const csvRow = formatPoseDataForCSV(rawPoseData, unixTimestamp, preciseFrameTime); // Use raw data for recording
         recordingSession.csvContent += csvRow;
         poseDataBuffer.push({
           timestamp: unixTimestamp,
           frameTime: preciseFrameTime,
-          data: currentPoseData
+          data: rawPoseData // Store raw data
         });
       }
     }
@@ -118,6 +139,161 @@
     const sidePanelWidth = window.innerWidth > 768 ? 350 : 0; // Hide side panel on mobile
     canvasSettings.width = window.innerWidth - sidePanelWidth;
     canvasSettings.height = window.innerHeight - 80; // Subtract header height
+  }
+
+  // Savitzky-Golay filter implementation
+  function savgolFilter(data, windowSize, polynomialOrder) {
+    if (data.length < windowSize) return data;
+    
+    const halfWindow = Math.floor(windowSize / 2);
+    const result = [...data];
+    
+    // Precompute Savgol coefficients
+    const coefficients = computeSavgolCoefficients(windowSize, polynomialOrder);
+    
+    for (let i = halfWindow; i < data.length - halfWindow; i++) {
+      let sum = 0;
+      for (let j = 0; j < windowSize; j++) {
+        sum += coefficients[j] * data[i - halfWindow + j];
+      }
+      result[i] = sum;
+    }
+    
+    return result;
+  }
+
+  function computeSavgolCoefficients(windowSize, polynomialOrder) {
+    const halfWindow = Math.floor(windowSize / 2);
+    const A = [];
+    const b = new Array(windowSize).fill(0);
+    b[halfWindow] = 1; // Central point
+    
+    // Build Vandermonde matrix
+    for (let i = 0; i < windowSize; i++) {
+      const x = i - halfWindow;
+      const row = [];
+      for (let j = 0; j <= polynomialOrder; j++) {
+        row.push(Math.pow(x, j));
+      }
+      A.push(row);
+    }
+    
+    // Solve normal equations: (A^T * A) * c = A^T * b
+    const AtA = matrixMultiply(transpose(A), A);
+    const Atb = matrixVectorMultiply(transpose(A), b);
+    const coeffs = solveLinearSystem(AtA, Atb);
+    
+    // Get coefficients for central point estimation
+    const result = new Array(windowSize);
+    for (let i = 0; i < windowSize; i++) {
+      const x = i - halfWindow;
+      result[i] = 0;
+      for (let j = 0; j <= polynomialOrder; j++) {
+        result[i] += coeffs[j] * Math.pow(x, j);
+      }
+    }
+    
+    return result;
+  }
+
+  // Helper functions for matrix operations
+  function transpose(matrix) {
+    return matrix[0].map((_, i) => matrix.map(row => row[i]));
+  }
+
+  function matrixMultiply(a, b) {
+    const result = [];
+    for (let i = 0; i < a.length; i++) {
+      result[i] = [];
+      for (let j = 0; j < b[0].length; j++) {
+        result[i][j] = 0;
+        for (let k = 0; k < b.length; k++) {
+          result[i][j] += a[i][k] * b[k][j];
+        }
+      }
+    }
+    return result;
+  }
+
+  function matrixVectorMultiply(matrix, vector) {
+    return matrix.map(row => 
+      row.reduce((sum, val, i) => sum + val * vector[i], 0)
+    );
+  }
+
+  function solveLinearSystem(A, b) {
+    // Simple Gaussian elimination for small matrices
+    const n = A.length;
+    const augmented = A.map((row, i) => [...row, b[i]]);
+    
+    // Forward elimination
+    for (let i = 0; i < n; i++) {
+      // Find pivot
+      let maxRow = i;
+      for (let k = i + 1; k < n; k++) {
+        if (Math.abs(augmented[k][i]) > Math.abs(augmented[maxRow][i])) {
+          maxRow = k;
+        }
+      }
+      [augmented[i], augmented[maxRow]] = [augmented[maxRow], augmented[i]];
+      
+      // Make all rows below this one 0 in current column
+      for (let k = i + 1; k < n; k++) {
+        const factor = augmented[k][i] / augmented[i][i];
+        for (let j = i; j < n + 1; j++) {
+          augmented[k][j] -= factor * augmented[i][j];
+        }
+      }
+    }
+    
+    // Back substitution
+    const solution = new Array(n);
+    for (let i = n - 1; i >= 0; i--) {
+      solution[i] = augmented[i][n];
+      for (let j = i + 1; j < n; j++) {
+        solution[i] -= augmented[i][j] * solution[j];
+      }
+      solution[i] /= augmented[i][i];
+    }
+    
+    return solution;
+  }
+
+  function smoothLandmarks(landmarks) {
+    if (!enableSmoothing || poseHistory.length < filterWindowSize) {
+      return landmarks;
+    }
+    
+    const smoothedLandmarks = [];
+    
+    for (let i = 0; i < landmarks.length; i++) {
+      // Extract time series for this landmark
+      const xValues = poseHistory.slice(-filterWindowSize).map(frame => 
+        frame.poseLandmarks && frame.poseLandmarks[i] ? frame.poseLandmarks[i].x : 0
+      );
+      const yValues = poseHistory.slice(-filterWindowSize).map(frame => 
+        frame.poseLandmarks && frame.poseLandmarks[i] ? frame.poseLandmarks[i].y : 0
+      );
+      const zValues = poseHistory.slice(-filterWindowSize).map(frame => 
+        frame.poseLandmarks && frame.poseLandmarks[i] ? frame.poseLandmarks[i].z : 0
+      );
+      
+      // Apply Savgol filter
+      const smoothedX = savgolFilter(xValues, filterWindowSize, polynomialOrder);
+      const smoothedY = savgolFilter(yValues, filterWindowSize, polynomialOrder);
+      const smoothedZ = savgolFilter(zValues, filterWindowSize, polynomialOrder);
+      
+      // Use the most recent smoothed value
+      const centerIndex = Math.floor(filterWindowSize / 2);
+      smoothedLandmarks[i] = {
+        x: smoothedX[smoothedX.length - 1 - centerIndex] || landmarks[i].x,
+        y: smoothedY[smoothedY.length - 1 - centerIndex] || landmarks[i].y,
+        z: smoothedZ[smoothedZ.length - 1 - centerIndex] || landmarks[i].z,
+        visibility: landmarks[i].visibility
+      };
+    }
+    
+    return smoothedLandmarks;
   }
 
   // Recording functions
@@ -355,6 +531,9 @@
     if (savedUserSettings) {
       try {
         userSettings = JSON.parse(savedUserSettings);
+        // Initialize smoothing settings
+        enableSmoothing = userSettings.enableSmoothing ?? true;
+        filterWindowSize = userSettings.filterWindowSize ?? 5;
       } catch (e) {
         console.error('Error loading saved user settings:', e);
       }

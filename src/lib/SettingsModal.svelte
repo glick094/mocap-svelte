@@ -6,7 +6,9 @@
     theme: 'dark',
     quality: 'high',
     enableAudio: true,
-    fps: 15
+    fps: 15,
+    enableSmoothing: true,
+    filterWindowSize: 5
   };
 
   export let canvasSettings = {
@@ -51,7 +53,9 @@
       theme: 'dark',
       quality: 'high',
       enableAudio: true,
-      fps: 15
+      fps: 15,
+      enableSmoothing: true,
+      filterWindowSize: 5
     };
     localCanvasSettings = {
       width: 800,
@@ -137,6 +141,29 @@
             />
             <small>Higher FPS = more responsive but uses more CPU</small>
           </div>
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                bind:checked={localSettings.enableSmoothing}
+              />
+              <span class="checkmark"></span>
+              Enable Pose Smoothing (Savitzky-Golay Filter)
+            </label>
+            <small>Reduces noise in pose visualization while preserving motion</small>
+          </div>
+          {#if localSettings.enableSmoothing}
+            <div class="form-group">
+              <label for="filter-window">Filter Window Size:</label>
+              <select id="filter-window" bind:value={localSettings.filterWindowSize}>
+                <option value={3}>3 (Light smoothing)</option>
+                <option value={5}>5 (Moderate smoothing)</option>
+                <option value={7}>7 (Strong smoothing)</option>
+                <option value={9}>9 (Heavy smoothing)</option>
+              </select>
+              <small>Larger window = more smoothing but more delay</small>
+            </div>
+          {/if}
         </section>
 
         <!-- Canvas Settings -->
@@ -504,15 +531,6 @@
     color: #00ff88;
   }
 
-  .color-input {
-    width: 60px;
-    height: 40px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 4px;
-    background: transparent;
-    cursor: pointer;
-    padding: 0;
-  }
 
   .size-controls {
     display: grid;
