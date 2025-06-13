@@ -62,11 +62,14 @@
     if (poseData) {
       drawPoseVisualization(poseData);
     } else {
-      // Draw placeholder text
+      // Draw placeholder text - temporarily flip back to read correctly
+      ctx.save();
+      ctx.scale(-1, 1); // Flip back horizontally for text
       ctx.fillStyle = '#666';
       ctx.font = '24px Arial';
       ctx.textAlign = 'center';
-      ctx.fillText('Waiting for pose data...', width / 2, height / 2);
+      ctx.fillText('Waiting for pose data...', -width / 2, height / 2);
+      ctx.restore();
     }
   }
 
@@ -687,5 +690,6 @@
     width: 100%;
     height: 100%;
     background: #000;
+    transform: scaleX(-1); /* Mirror the canvas horizontally to match webcam */
   }
 </style>

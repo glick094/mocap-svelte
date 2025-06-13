@@ -33,8 +33,6 @@
   let showHands = true;
   let showFace = true;
 
-  // Pose tracking results
-  let currentResults = null;
 
   // MediaPipe landmark connections
   const POSE_CONNECTIONS = [
@@ -102,31 +100,8 @@
     }
   }
 
-  function drawStatusOverlay() {
-    if (!mediaPipeReady) {
-      // Show loading status
-      canvasCtx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-      canvasCtx.fillRect(10, 10, 250, 60);
-      
-      canvasCtx.fillStyle = 'white';
-      canvasCtx.font = '14px Arial';
-      canvasCtx.fillText('MediaPipe: Loading...', 15, 30);
-      canvasCtx.font = '12px Arial';
-      canvasCtx.fillText('Installing from npm packages', 15, 50);
-    } else if (poseTrackingActive) {
-      // Show active status (smaller overlay)
-      canvasCtx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-      canvasCtx.fillRect(10, 10, 180, 30);
-      
-      canvasCtx.fillStyle = '#00FF00';
-      canvasCtx.font = '12px Arial';
-      canvasCtx.fillText('✓ MediaPipe Active', 15, 28);
-    }
-  }
 
   function onPoseResults(results) {
-    currentResults = results;
-    
     // Emit pose data for 3D visualization
     if (results.poseLandmarks || results.leftHandLandmarks || results.rightHandLandmarks || results.faceLandmarks) {
       dispatch('poseUpdate', {
@@ -180,8 +155,6 @@
         drawLandmarks(canvasCtx, results.faceLandmarks, '#FFFF00', 1);
       }
       
-      // Show status overlay
-      drawStatusOverlay();
     }
   }
 
@@ -264,7 +237,7 @@
               } catch (sendErr) {
                 console.error('Error sending frame to MediaPipe:', sendErr);
                 // If we get repeated frame errors, stop trying to avoid freezing
-                if (sendErr && sendErr.message && sendErr.message.includes('NetworkError')) {
+                if (sendErr && sendErr instanceof Error && sendErr.message.includes('NetworkError')) {
                   console.warn('Network error detected, temporarily pausing MediaPipe processing');
                   setTimeout(() => {
                     console.log('Resuming MediaPipe processing after network error');
@@ -395,8 +368,6 @@
           // Draw video
           canvasCtx.drawImage(videoElement, 0, 0, width, height);
           
-          // Show status overlay
-          drawStatusOverlay();
         }
         
         // Only continue animation loop if MediaPipe pose tracking isn't active
@@ -428,7 +399,7 @@
           startBasicWebcam();
         }, 1000);
       } else {
-        error = err.message;
+        error = err instanceof Error ? err.message : String(err);
         isLoading = false;
         retryCount = 0;
         initializationInProgress = false;
@@ -524,6 +495,19 @@
 <div class="webcam-container">
   <!-- <h3>MediaPipe Pose Tracking</h3> -->
   
+  <!-- MediaPipe Status -->
+  {#if !isLoading && !error}
+    <div class="status-indicator">
+      {#if !mediaPipeReady}
+        <span class="status-loading">🔄 Loading MediaPipe...</span>
+      {:else if poseTrackingActive}
+        <span class="status-active">✓ MediaPipe Active</span>
+      {:else}
+        <span class="status-failed">⚠️ MediaPipe failed to load</span>
+      {/if}
+    </div>
+  {/if}
+  
   <!-- Always render video elements -->
   <div class="video-container" style="display: {isLoading || error ? 'none' : 'block'}">
     <video
@@ -585,7 +569,7 @@
             <div class="target-info">
               <span class="target-label">Current Target:</span>
               <span class="target-type" style="color: {getTargetColor(currentTargetType)}">
-                {currentTargetType.toUpperCase()}
+                {String(currentTargetType || '').toUpperCase()}
               </span>
             </div>
           {/if}
@@ -706,12 +690,6 @@
     height: 100%;
   }
 
-  h3 {
-    margin: 0 0 1rem 0;
-    color: #fff;
-    font-size: 1.2rem;
-  }
-
   .video-container {
     position: relative;
   }
@@ -724,6 +702,7 @@
     height: auto;
     display: block;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    transform: scaleX(-1); /* Mirror the webcam horizontally */
   }
 
   .controls {
@@ -962,5 +941,33 @@
     .score-display {
       margin-bottom: 0.25rem;
     }
+  }
+
+  /* Status Indicator Styles */
+  .status-indicator {
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+  }
+
+  .status-loading {
+    color: #ffa500;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .status-active {
+    color: #00ff00;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .status-failed {
+    color: #ff4444;
+    font-size: 0.9rem;
+    font-weight: 500;
   }
 </style>
