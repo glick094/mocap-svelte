@@ -31,6 +31,13 @@
   let poseHistory = [];
   const maxPoseHistory = 60; // Keep last 60 frames for smoothing
 
+  // Recording state
+  let isRecording = false;
+  let recordingStartTime = null;
+  let poseDataBuffer = [];
+  let participantId = '';
+  let recordingSession = null;
+
   function openSettings() {
     showSettings = true;
   }
@@ -71,6 +78,19 @@
       if (poseHistory.length > maxPoseHistory) {
         poseHistory.shift();
       }
+
+      // Record data if recording is active
+      if (isRecording && recordingSession) {
+        const unixTimestamp = Date.now(); // Unix timestamp in milliseconds
+        const preciseFrameTime = performance.now() - recordingSession.performanceStartTime; // High-precision relative time
+        const csvRow = formatPoseDataForCSV(currentPoseData, unixTimestamp, preciseFrameTime);
+        recordingSession.csvContent += csvRow;
+        poseDataBuffer.push({
+          timestamp: unixTimestamp,
+          frameTime: preciseFrameTime,
+          data: currentPoseData
+        });
+      }
     }
   }
 
@@ -78,6 +98,161 @@
     const sidePanelWidth = window.innerWidth > 768 ? 350 : 0; // Hide side panel on mobile
     canvasSettings.width = window.innerWidth - sidePanelWidth;
     canvasSettings.height = window.innerHeight - 80; // Subtract header height
+  }
+
+  // Recording functions
+  function generateTimestamp() {
+    const now = new Date();
+    return now.toISOString().replace(/[:.]/g, '-').slice(0, -5); // Format: YYYY-MM-DDTHH-MM-SS
+  }
+
+  function generateParticipantId() {
+    if (!participantId) {
+      participantId = userSettings.username || `P${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
+    }
+    return participantId;
+  }
+
+  function createCSVHeader() {
+    const header = [
+      'unix_timestamp_ms', // Unix timestamp in milliseconds since epoch
+      'frame_time_ms',     // High-precision milliseconds since recording started
+      'pose_landmarks_count',
+      'left_hand_landmarks_count', 
+      'right_hand_landmarks_count',
+      'face_landmarks_count'
+    ];
+
+    // Add pose landmark columns (33 landmarks, each with x, y, z, visibility)
+    for (let i = 0; i < 33; i++) {
+      header.push(`pose_${i}_x`, `pose_${i}_y`, `pose_${i}_z`, `pose_${i}_visibility`);
+    }
+
+    // Add left hand landmark columns (21 landmarks, each with x, y, z)
+    for (let i = 0; i < 21; i++) {
+      header.push(`left_hand_${i}_x`, `left_hand_${i}_y`, `left_hand_${i}_z`);
+    }
+
+    // Add right hand landmark columns (21 landmarks, each with x, y, z)
+    for (let i = 0; i < 21; i++) {
+      header.push(`right_hand_${i}_x`, `right_hand_${i}_y`, `right_hand_${i}_z`);
+    }
+
+    // Add face landmark columns (468 landmarks, each with x, y, z)
+    for (let i = 0; i < 468; i++) {
+      header.push(`face_${i}_x`, `face_${i}_y`, `face_${i}_z`);
+    }
+
+    return header.join(',') + '\n';
+  }
+
+  function formatPoseDataForCSV(poseData, timestamp, frameTime) {
+    const row = [
+      timestamp,
+      frameTime,
+      poseData.poseLandmarks ? poseData.poseLandmarks.length : 0,
+      poseData.leftHandLandmarks ? poseData.leftHandLandmarks.length : 0,
+      poseData.rightHandLandmarks ? poseData.rightHandLandmarks.length : 0,
+      poseData.faceLandmarks ? poseData.faceLandmarks.length : 0
+    ];
+
+    // Add pose landmarks (33 landmarks)
+    for (let i = 0; i < 33; i++) {
+      if (poseData.poseLandmarks && i < poseData.poseLandmarks.length) {
+        const landmark = poseData.poseLandmarks[i];
+        row.push(landmark.x || 0, landmark.y || 0, landmark.z || 0, landmark.visibility || 0);
+      } else {
+        row.push(0, 0, 0, 0); // Empty landmark
+      }
+    }
+
+    // Add left hand landmarks (21 landmarks)
+    for (let i = 0; i < 21; i++) {
+      if (poseData.leftHandLandmarks && i < poseData.leftHandLandmarks.length) {
+        const landmark = poseData.leftHandLandmarks[i];
+        row.push(landmark.x || 0, landmark.y || 0, landmark.z || 0);
+      } else {
+        row.push(0, 0, 0); // Empty landmark
+      }
+    }
+
+    // Add right hand landmarks (21 landmarks)
+    for (let i = 0; i < 21; i++) {
+      if (poseData.rightHandLandmarks && i < poseData.rightHandLandmarks.length) {
+        const landmark = poseData.rightHandLandmarks[i];
+        row.push(landmark.x || 0, landmark.y || 0, landmark.z || 0);
+      } else {
+        row.push(0, 0, 0); // Empty landmark
+      }
+    }
+
+    // Add face landmarks (468 landmarks)
+    for (let i = 0; i < 468; i++) {
+      if (poseData.faceLandmarks && i < poseData.faceLandmarks.length) {
+        const landmark = poseData.faceLandmarks[i];
+        row.push(landmark.x || 0, landmark.y || 0, landmark.z || 0);
+      } else {
+        row.push(0, 0, 0); // Empty landmark
+      }
+    }
+
+    return row.join(',') + '\n';
+  }
+
+  function startRecording() {
+    if (isRecording) return;
+
+    const participant = generateParticipantId();
+    const timestamp = generateTimestamp();
+    
+    recordingSession = {
+      participantId: participant,
+      timestamp: timestamp,
+      filename: `pose_data_${participant}_${timestamp}.csv`,
+      csvContent: createCSVHeader(),
+      performanceStartTime: performance.now() // High-precision start time for relative timing
+    };
+
+    isRecording = true;
+    recordingStartTime = Date.now(); // Unix timestamp for absolute timing
+    poseDataBuffer = [];
+
+    console.log('Started recording pose data:', recordingSession.filename);
+    console.log('Recording start time (Unix):', recordingStartTime);
+    console.log('Performance start time:', recordingSession.performanceStartTime);
+  }
+
+  function stopRecording() {
+    if (!isRecording || !recordingSession) return;
+
+    isRecording = false;
+    
+    // Create and download the CSV file
+    const blob = new Blob([recordingSession.csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = recordingSession.filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    console.log('Stopped recording. File downloaded:', recordingSession.filename);
+    console.log('Total data points recorded:', poseDataBuffer.length);
+    
+    // Reset recording state
+    recordingSession = null;
+    recordingStartTime = null;
+    poseDataBuffer = [];
+  }
+
+  function toggleRecording() {
+    if (isRecording) {
+      stopRecording();
+    } else {
+      startRecording();
+    }
   }
 
   onMount(() => {
@@ -123,6 +298,14 @@
     <div class="header-buttons">
       <button class="header-btn" class:active={isWebcamActive} on:click={toggleWebcam}>
         {isWebcamActive ? '📹 Stop Camera' : '📷 Start Camera'}
+      </button>
+      <button 
+        class="header-btn record-btn" 
+        class:recording={isRecording}
+        on:click={toggleRecording}
+        disabled={!isWebcamActive}
+      >
+        {isRecording ? '⏹️ Stop Recording' : '🔴 Record Data'}
       </button>
       <button class="header-btn game-btn">
         🎮 Start Game
@@ -249,6 +432,33 @@
 
   .game-btn:hover {
     background: rgba(255, 136, 0, 0.3);
+  }
+
+  .record-btn {
+    background: rgba(255, 68, 68, 0.2);
+    border-color: rgba(255, 68, 68, 0.5);
+    color: #ff4444;
+  }
+
+  .record-btn:hover {
+    background: rgba(255, 68, 68, 0.3);
+  }
+
+  .record-btn.recording {
+    background: rgba(255, 68, 68, 0.4);
+    box-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+    animation: pulse-red 1s infinite;
+  }
+
+  .record-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  @keyframes pulse-red {
+    0%, 100% { box-shadow: 0 0 5px rgba(255, 68, 68, 0.3); }
+    50% { box-shadow: 0 0 15px rgba(255, 68, 68, 0.7); }
   }
 
   .main-content {

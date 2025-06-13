@@ -552,7 +552,7 @@
         </label>
       </div>
       
-      <div class="status-info">
+      <!-- <div class="status-info">
         <span class="status-text">
           {#if !mediaPipeReady}
             🔄 Loading MediaPipe...
@@ -562,7 +562,7 @@
             ⚠️ MediaPipe failed to load
           {/if}
         </span>
-      </div>
+      </div> -->
     </div>
   {/if}
   

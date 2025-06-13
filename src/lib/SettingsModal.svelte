@@ -91,13 +91,14 @@
         <section class="settings-section">
           <h3>👤 Profile</h3>
           <div class="form-group">
-            <label for="username">Username:</label>
+            <label for="username">Username/Participant ID:</label>
             <input 
               id="username"
               type="text" 
               bind:value={localSettings.username}
-              placeholder="Enter your username"
+              placeholder="Enter participant ID for data recording"
             />
+            <small>This ID will be used in recorded data filenames</small>
           </div>
         </section>
 
