@@ -127,16 +127,30 @@ The platform supports automatic participant setup via QR code scanning:
 }
 ```
 
+**Enhanced QR Scanner Features**:
+- **Shared Camera Stream**: QR scanner uses the same camera feed as MediaPipe to prevent conflicts
+- **Modal Interface**: Full-screen scanning modal with live camera preview
+- **Real-time Detection**: Up to 10 scans per second with optimized scan region
+- **Test Mode**: Built-in test button to verify detection workflow without physical QR codes
+- **Improved Reliability**: Fixed infinite restart loops and stream conflicts
+
 **Behavior**:
 - QR scanning is active only when the game is **not** running
-- Scans every 500ms with 2-second throttling to prevent duplicate reads
+- Scans every 500ms with 500ms throttling to prevent duplicate reads
 - Manual participant ID entry overrides QR code data
 - Demographics (age, height) are recorded in CSV output
+- Automatic modal closure after successful scan
+
+**Camera Stream Management**:
+The QR scanner now shares the camera stream with MediaPipe instead of requesting separate access:
+- Prevents "device busy" errors
+- Ensures clean video feed without pose tracking overlays
+- Seamless transition between pose tracking and QR scanning modes
 
 **Test QR Generator**:
 Use `test-qr.html` to generate QR codes for testing. Open the file in a browser and enter participant information.
 
-Implementation: [WebcamPose.svelte](src/lib/WebcamPose.svelte#L476-L539)
+Implementation: [QRScanModal.svelte](src/lib/QRScanModal.svelte) and [WebcamPose.svelte](src/lib/WebcamPose.svelte#L476-L539)
 
 ## Developer Guide
 
@@ -146,6 +160,7 @@ src/
 ├── lib/
 │   ├── ThreeJSCanvas.svelte    # Main game canvas and pose visualization
 │   ├── WebcamPose.svelte       # MediaPipe integration and webcam
+│   ├── QRScanModal.svelte      # QR code scanning modal interface
 │   ├── SettingsModal.svelte    # Configuration interface
 │   └── ControlPanel.svelte     # Recording and playback controls
 ├── routes/
@@ -190,6 +205,28 @@ npm run test
 - **WebAssembly**: For MediaPipe processing
 - **Modern JavaScript**: ES2020+ features
 - **Canvas 2D**: Hardware-accelerated rendering preferred
+
+## Troubleshooting
+
+### QR Code Scanning Issues
+
+**QR Code Not Detected**:
+1. Ensure QR code contains valid JSON with `participantid` field
+2. Hold QR code steady in the center of the camera view
+3. Ensure adequate lighting on the QR code
+4. Try using the "Test with Sample QR Data" button to verify the detection workflow
+5. Check browser console for any error messages
+
+**Camera Access Problems**:
+- Make sure you're accessing the site via HTTPS (required for camera access)
+- Grant camera permissions when prompted by the browser
+- Close other applications that might be using the camera
+- The application automatically shares camera stream between MediaPipe and QR scanner
+
+**Performance Issues**:
+- Reduce MediaPipe model complexity in settings if scanning is slow
+- Ensure good lighting conditions for both pose tracking and QR scanning
+- Consider using a dedicated QR code reader app if browser scanning fails
 
 ## Research Applications
 
