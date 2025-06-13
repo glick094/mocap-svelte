@@ -11,6 +11,13 @@
   export let width = 800;
   export let height = 600;
   export let poseData = null;
+  export let gameActive = false;
+
+  // Game state
+  let currentTarget = null;
+  let gameScore = 0;
+  let targetRadius = 50; // Collision detection radius
+  let hitTargetIds = new Set(); // Track which targets have been hit
 
   onMount(() => {
     if (canvasElement) {
@@ -75,6 +82,16 @@
     
     // Emit game data (smoothed pose data with same structure as MediaPipe)
     emitGameData(data);
+    
+    // Check for game collisions if game is active
+    if (gameActive && currentTarget) {
+      checkCollisions(data);
+    }
+    
+    // Draw game targets and UI
+    if (gameActive) {
+      drawGameElements();
+    }
   }
 
   function emitGameData(data) {
@@ -89,6 +106,237 @@
     
     // Dispatch the game data for recording
     dispatch('gameDataUpdate', gameData);
+  }
+
+  // Game functions
+  const TARGET_TYPES = {
+    HAND: 'hand',
+    HEAD: 'head', 
+    KNEE: 'knee'
+  };
+
+  const TARGET_COLORS = {
+    [TARGET_TYPES.HAND]: '#ff4444', // Red for hands
+    [TARGET_TYPES.HEAD]: '#44ff44', // Green for head
+    [TARGET_TYPES.KNEE]: '#4444ff'  // Blue for knees
+  };
+
+  function generateRandomTarget() {
+    const types = Object.values(TARGET_TYPES);
+    const targetType = types[Math.floor(Math.random() * types.length)];
+    
+    // Calculate 5% border margins (center 90% of screen)
+    const borderX = width * 0.05;
+    const borderY = height * 0.05;
+    const usableWidth = width * 0.9;
+    const usableHeight = height * 0.9;
+    
+    let x, y;
+    
+    // Position targets in appropriate regions within the center 90%
+    switch(targetType) {
+      case TARGET_TYPES.HEAD:
+        // Top 1/3 of canvas within center 90%, but with 10% top border for better reachability
+        const headBorderY = height * 0.1; // 10% top border for head targets
+        const headUsableHeight = height * 0.8; // 80% usable height (10% top + 10% bottom margins)
+        x = Math.random() * usableWidth + borderX;
+        y = Math.random() * (headUsableHeight / 3) + headBorderY;
+        break;
+      case TARGET_TYPES.KNEE:
+        // Between 1/2 and bottom 1/4 of canvas within center 90%
+        x = Math.random() * usableWidth + borderX;
+        y = Math.random() * (usableHeight / 4) + (borderY + usableHeight / 2); // From 50% to 75% of usable height
+        break;
+      case TARGET_TYPES.HAND:
+      default:
+        // Anywhere within center 90% of canvas
+        x = Math.random() * usableWidth + borderX;
+        y = Math.random() * usableHeight + borderY;
+        break;
+    }
+
+    return {
+      id: Date.now() + Math.random(), // Unique ID
+      type: targetType,
+      x: x,
+      y: y,
+      color: TARGET_COLORS[targetType]
+    };
+  }
+
+  function checkCollisions(data) {
+    if (!currentTarget || !data) return;
+
+    let targetHit = false;
+    const targetX = currentTarget.x;
+    const targetY = currentTarget.y;
+
+    switch(currentTarget.type) {
+      case TARGET_TYPES.HAND:
+        // Check both hands
+        if (data.leftHandLandmarks && data.leftHandLandmarks.length > 0) {
+          const leftHand = data.leftHandLandmarks[8]; // Index finger tip
+          if (leftHand && checkDistance(leftHand.x * width, leftHand.y * height, targetX, targetY)) {
+            targetHit = true;
+          }
+        }
+        if (data.rightHandLandmarks && data.rightHandLandmarks.length > 0) {
+          const rightHand = data.rightHandLandmarks[8]; // Index finger tip
+          if (rightHand && checkDistance(rightHand.x * width, rightHand.y * height, targetX, targetY)) {
+            targetHit = true;
+          }
+        }
+        break;
+        
+      case TARGET_TYPES.HEAD:
+        // Check if any face landmarks are within target
+        if (data.faceLandmarks && data.faceLandmarks.length > 0) {
+          // Check nose center (landmark 1) as head representative
+          const nose = data.faceLandmarks[1];
+          if (nose && checkDistance(nose.x * width, nose.y * height, targetX, targetY)) {
+            targetHit = true;
+          }
+        }
+        // Fallback to pose landmark 0 (nose center from pose)
+        if (!targetHit && data.poseLandmarks && data.poseLandmarks[0]) {
+          const poseNose = data.poseLandmarks[0];
+          if (poseNose && checkDistance(poseNose.x * width, poseNose.y * height, targetX, targetY)) {
+            targetHit = true;
+          }
+        }
+        break;
+        
+      case TARGET_TYPES.KNEE:
+        // Check both knees (pose landmarks 25 and 26)
+        if (data.poseLandmarks) {
+          const leftKnee = data.poseLandmarks[25];
+          const rightKnee = data.poseLandmarks[26];
+          
+          if (leftKnee && checkDistance(leftKnee.x * width, leftKnee.y * height, targetX, targetY)) {
+            targetHit = true;
+          }
+          if (rightKnee && checkDistance(rightKnee.x * width, rightKnee.y * height, targetX, targetY)) {
+            targetHit = true;
+          }
+        }
+        break;
+    }
+
+    if (targetHit && !hitTargetIds.has(currentTarget.id)) {
+      hitTargetIds.add(currentTarget.id);
+      gameScore++;
+      
+      // Generate new target after a short delay
+      setTimeout(() => {
+        currentTarget = generateRandomTarget();
+      }, 100);
+      
+      // Dispatch score update
+      dispatch('scoreUpdate', { score: gameScore, targetType: currentTarget.type });
+    }
+  }
+
+  function checkDistance(x1, y1, x2, y2) {
+    const distance = Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
+    return distance <= targetRadius;
+  }
+
+  function startGame() {
+    gameScore = 0;
+    hitTargetIds.clear();
+    currentTarget = generateRandomTarget();
+    dispatch('gameStarted', { score: gameScore });
+  }
+
+  function stopGame() {
+    currentTarget = null;
+    dispatch('gameEnded', { finalScore: gameScore });
+  }
+
+  // Reactive statement to handle game state changes
+  $: if (gameActive && !currentTarget) {
+    startGame();
+  } else if (!gameActive && currentTarget) {
+    stopGame();
+  }
+
+  function drawGameElements() {
+    if (!ctx || !currentTarget) return;
+    
+    // Draw target
+    drawTarget(currentTarget);
+    
+    // Draw game UI
+    drawGameUI();
+  }
+
+  function drawTarget(target) {
+    if (!ctx) return;
+    
+    const { x, y, color, type } = target;
+    
+    // Draw target circle with glow effect
+    ctx.save();
+    
+    // Outer glow
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 20;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.arc(x, y, targetRadius, 0, 2 * Math.PI);
+    ctx.stroke();
+    
+    // Inner circle
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = color + '40'; // Semi-transparent
+    ctx.beginPath();
+    ctx.arc(x, y, targetRadius - 10, 0, 2 * Math.PI);
+    ctx.fill();
+    
+    // Draw icon based on target type
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 36px Arial'; // Increased from 24px to 36px for better visibility
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    
+    let icon = '';
+    switch(type) {
+      case TARGET_TYPES.HAND:
+        icon = '✋'; // Hand emoji
+        break;
+      case TARGET_TYPES.HEAD:
+        icon = '😀'; // Head emoji
+        break;
+      case TARGET_TYPES.KNEE:
+        icon = '🦵'; // Leg emoji
+        break;
+    }
+    
+    ctx.fillText(icon, x, y);
+    ctx.restore();
+  }
+
+  function drawGameUI() {
+    if (!ctx) return;
+    
+    // Draw score
+    ctx.save();
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+    ctx.fillRect(10, 10, 200, 60);
+    
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 20px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText(`Score: ${gameScore}`, 20, 35);
+    
+    if (currentTarget) {
+      ctx.font = '14px Arial';
+      ctx.fillStyle = currentTarget.color;
+      ctx.fillText(`Target: ${currentTarget.type.toUpperCase()}`, 20, 55);
+    }
+    
+    ctx.restore();
   }
 
   function drawPoseLandmarks(landmarks) {

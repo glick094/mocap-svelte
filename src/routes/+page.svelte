@@ -7,6 +7,8 @@
   // App state
   let showSettings = false;
   let isWebcamActive = true; // Start with webcam active
+  let isGameActive = false; // Game state
+  let gameScore = 0; // Current game score
   let canvasSettings = {
     width: window.innerWidth || 1920,
     height: window.innerHeight - 80 || 1000 // Subtract header height
@@ -114,6 +116,32 @@
         data: gameData // Store smoothed game data
       });
     }
+  }
+
+  // Game event handlers
+  function handleGameStarted(event) {
+    console.log('Game started!', event.detail);
+    gameScore = event.detail.score;
+  }
+
+  function handleScoreUpdate(event) {
+    console.log('Score updated!', event.detail);
+    gameScore = event.detail.score;
+  }
+
+  function handleGameEnded(event) {
+    console.log('Game ended!', event.detail);
+    gameScore = event.detail.finalScore;
+  }
+
+  function toggleGame() {
+    if (!isWebcamActive) {
+      alert('Please start the camera first to play the game!');
+      return;
+    }
+    
+    isGameActive = !isGameActive;
+    console.log('Game toggled:', isGameActive ? 'Started' : 'Stopped');
   }
   
   function handleStreamReady(event) {
@@ -630,8 +658,16 @@
       >
         {isRecording ? '⏹️ Stop Recording' : '🔴 Record Data'}
       </button>
-      <button class="header-btn game-btn">
-        🎮 Start Game
+      <button 
+        class="header-btn game-btn" 
+        class:active={isGameActive}
+        on:click={toggleGame}
+        disabled={!isWebcamActive}
+      >
+        {isGameActive ? '⏹️ Stop Game' : '🎮 Start Game'}
+        {#if isGameActive && gameScore > 0}
+          <span class="score-badge">{gameScore}</span>
+        {/if}
       </button>
       <button class="header-btn settings-btn" on:click={openSettings}>
         ⚙️ Settings
@@ -647,8 +683,12 @@
         width={canvasSettings.width}
         height={canvasSettings.height}
         poseData={currentPoseData}
+        gameActive={isGameActive}
         on:update={handleCanvasUpdate}
         on:gameDataUpdate={handleGameDataUpdate}
+        on:gameStarted={handleGameStarted}
+        on:scoreUpdate={handleScoreUpdate}
+        on:gameEnded={handleGameEnded}
       />
     </section>
 
@@ -756,6 +796,33 @@
 
   .game-btn:hover {
     background: rgba(255, 136, 0, 0.3);
+  }
+
+  .game-btn.active {
+    background: rgba(255, 136, 0, 0.4);
+    box-shadow: 0 0 10px rgba(255, 136, 0, 0.5);
+    animation: pulse-orange 1s infinite;
+  }
+
+  .game-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .score-badge {
+    background: rgba(255, 255, 255, 0.9);
+    color: #ff8800;
+    border-radius: 10px;
+    padding: 2px 6px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    margin-left: 0.5rem;
+  }
+
+  @keyframes pulse-orange {
+    0%, 100% { box-shadow: 0 0 5px rgba(255, 136, 0, 0.3); }
+    50% { box-shadow: 0 0 15px rgba(255, 136, 0, 0.7); }
   }
 
   .record-btn {
