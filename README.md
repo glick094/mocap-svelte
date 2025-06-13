@@ -20,13 +20,14 @@ npm run dev -- --open
 
 ### How to Play
 1. **Start Camera**: Click "📷 Start Camera" to enable webcam
-2. **Begin Game**: Click "🎮 Start Game" to spawn targets
-3. **Hit Targets**: Move your body to hit colored targets:
+2. **Participant Setup**: Enter participant ID manually or scan QR code with demographics
+3. **Begin Game**: Click "🎮 Start Game" to spawn targets
+4. **Hit Targets**: Move your body to hit colored targets:
    - 🔴 **Red targets**: Hit with hands
    - 🟢 **Green targets**: Hit with head/face 
    - 🔵 **Blue targets**: Hit with knees
-4. **Record Data**: Click "🔴 Record Data" to capture motion and game data
-5. **View Progress**: Check your score breakdown in the side panel
+5. **Record Data**: Click "🔴 Record Data" to capture motion and game data
+6. **View Progress**: Check your score breakdown in the side panel
 
 ## Game Window Overview
 
@@ -47,6 +48,7 @@ The interface consists of three main areas:
 - **Mirrored Display**: Natural mirror-like interaction
 
 ### Side Panel ([WebcamPose.svelte](src/lib/WebcamPose.svelte))
+- **Participant Input**: Manual ID entry with automatic QR code scanning
 - **Webcam Feed**: Live camera view with pose overlay
 - **MediaPipe Status**: Connection and processing status
 - **Pose Controls**: Toggle visibility of pose, hands, and face tracking
@@ -110,6 +112,31 @@ Each recording session generates:
 CSV includes target data: `target_showing`, `target_id`, `target_type`, `target_x`, `target_y`, `target_status`
 
 Implementation: [+page.svelte](src/routes/+page.svelte#L385-L493)
+
+## Participant Management
+
+### QR Code Integration
+The platform supports automatic participant setup via QR code scanning:
+
+**QR Code Format**:
+```json
+{
+  "participantid": "P001",
+  "age": 25,
+  "height": 175
+}
+```
+
+**Behavior**:
+- QR scanning is active only when the game is **not** running
+- Scans every 500ms with 2-second throttling to prevent duplicate reads
+- Manual participant ID entry overrides QR code data
+- Demographics (age, height) are recorded in CSV output
+
+**Test QR Generator**:
+Use `test-qr.html` to generate QR codes for testing. Open the file in a browser and enter participant information.
+
+Implementation: [WebcamPose.svelte](src/lib/WebcamPose.svelte#L476-L539)
 
 ## Developer Guide
 
@@ -186,4 +213,4 @@ Key extension points:
 
 ## License
 
-MIT License - see LICENSE file for details.
+MIT License - see LICENSE file for details.https://glick094.github.io/mocap-svelte/

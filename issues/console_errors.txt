@@ -1,16 +1,1125 @@
-Error sending frame to MediaPipe: TypeError: NetworkError when attempting to fetch resource. WebcamPose.svelte:393:16
-    onFrame http://localhost:5173/src/lib/WebcamPose.svelte:393
-XHRGET
-https://unpkg.com/@mediapipe/holistic@0.5.1675471629/pose_landmark_lite.tflite
-[HTTP/3 500  17411ms]
-
-Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://unpkg.com/@mediapipe/holistic@0.5.1675471629/pose_landmark_lite.tflite. (Reason: CORS header ‘Access-Control-Allow-Origin’ missing). Status code: 500.
-Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://unpkg.com/@mediapipe/holistic@0.5.1675471629/pose_landmark_lite.tflite. (Reason: CORS header ‘Access-Control-Allow-Origin’ missing). Status code: 500.
-Error sending frame to MediaPipe: TypeError: NetworkError when attempting to fetch resource. WebcamPose.svelte:393:16
-XHRGET
-https://unpkg.com/@mediapipe/holistic@0.5.1675471629/pose_landmark_lite.tflite
-CORS Missing Allow Origin
-
-Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://unpkg.com/@mediapipe/holistic@0.5.1675471629/pose_landmark_lite.tflite. (Reason: CORS header ‘Access-Control-Allow-Origin’ missing). Status code: 500.
-Error sending frame to MediaPipe: TypeError: NetworkError when attempting to fetch resource. WebcamPose.svelte:393:16
-
+Component mounted WebcamPose.svelte:625:11
+Elements are ready, checking if we should start webcam... WebcamPose.svelte:631:13
+Starting webcam... (attempt 1/3) WebcamPose.svelte:540:12
+Camera stream obtained WebcamPose.svelte:557:12
+Video playing WebcamPose.svelte:561:12
+Video stream ready for recording +page.svelte:272:11
+Webcam working! WebcamPose.svelte:596:12
+Trying MediaPipe initialization with CDN: https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5.1675471629 WebcamPose.svelte:386:12
+MediaPipe modules loaded WebcamPose.svelte:401:13
+Holistic configured and onResults callback set WebcamPose.svelte:439:13
+MediaPipe pose tracking active with CDN: https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5.1675471629 WebcamPose.svelte:475:13
+I0000 00:00:1749833614.455000       1 gl_context_webgl.cc:151] Successfully created a WebGL context with major version 3 and handle 3 client.js:2976:15
+I0000 00:00:1749833614.456000       1 gl_context.cc:359] GL version: 3.0 (OpenGL ES 3.0 (WebGL 2.0)) client.js:2976:15
+W0000 00:00:1749833614.456000       1 gl_context.cc:1000] OpenGL error checking is disabled client.js:2976:15
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+WebGL warning: drawArraysInstanced: Tex image TEXTURE_2D level 0 is incurring lazy initialization. 4
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+WebGL warning: drawArraysInstanced: Tex image TEXTURE_2D level 0 is incurring lazy initialization. 4
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: true, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe results received: 
+Object { pose: true, leftHand: false, rightHand: false, face: true }
+WebcamPose.svelte:322:12
+MediaPipe paused for QR scanning WebcamPose.svelte:714:13
+Starting QR scanner camera... 2 QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+The camera stream is only accessible if the page is transferred via https. client.js:2976:15
+QR Scanner started successfully QRScanModal.svelte:112:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+The camera stream is only accessible if the page is transferred via https. client.js:2976:15
+QR Scanner started successfully QRScanModal.svelte:112:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+The camera stream is only accessible if the page is transferred via https. client.js:2976:15
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+The camera stream is only accessible if the page is transferred via https. client.js:2976:15
+QR Scanner started successfully QRScanModal.svelte:112:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+The camera stream is only accessible if the page is transferred via https. client.js:2976:15
+QR Scanner started successfully QRScanModal.svelte:112:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+The camera stream is only accessible if the page is transferred via https. client.js:2976:15
+QR Scanner started successfully QRScanModal.svelte:112:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+The camera stream is only accessible if the page is transferred via https. client.js:2976:15
+QR Scanner started successfully QRScanModal.svelte:112:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+The camera stream is only accessible if the page is transferred via https. client.js:2976:15
+QR Scanner started successfully QRScanModal.svelte:112:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+The camera stream is only accessible if the page is transferred via https. client.js:2976:15
+QR Scanner started successfully QRScanModal.svelte:112:12
+QR Code detected: 
+Object { data: '{"participantid": "p2m_0001", "age": "32", "height": "75in"}', cornerPoints: (4) […] }
+QRScanModal.svelte:100:14
+QR Code detected: {"participantid": "p2m_0001", "age": "32", "height": "75in"} WebcamPose.svelte:698:11
+QR Code detected and participant info updated: 
+Object { participantId: "p2m_0001", age: "32", height: "75in" }
++page.svelte:244:12
+QR Code detected: 
+Object { data: '{"participantid": "p2m_0001", "age": "32", "height": "75in"}', cornerPoints: (4) […] }
+QRScanModal.svelte:100:14
+QR Code detected: 
+Object { data: '{"participantid": "p2m_0001", "age": "32", "height": "75in"}', cornerPoints: (4) […] }
+QRScanModal.svelte:100:14
+QR Code detected: 
+Object { data: '{"participantid": "p2m_0001", "age": "32", "height": "75in"}', cornerPoints: (4) […] }
+QRScanModal.svelte:100:14
+QR Code detected: 
+Object { data: '{"participantid": "p2m_0001", "age": "32", "height": "75in"}', cornerPoints: (4) […] }
+QRScanModal.svelte:100:14
+QR Code detected: 
+Object { data: '{"participantid": "p2m_0001", "age": "32", "height": "75in"}', cornerPoints: (4) […] }
+QRScanModal.svelte:100:14
+Failed to start QR scanner: TypeError: $.get(...) is null
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+QR Code detected: 
+Object { data: '{"participantid": "p2m_0001", "age": "32", "height": "75in"}', cornerPoints: (4) […] }
+QRScanModal.svelte:100:14
+QR Code detected: 
+Object { data: '{"participantid": "p2m_0001", "age": "32", "height": "75in"}', cornerPoints: (4) […] }
+QRScanModal.svelte:100:14
+QR Code detected: 
+Object { data: '{"participantid": "p2m_0001", "age": "32", "height": "75in"}', cornerPoints: (4) […] }
+QRScanModal.svelte:100:14
+MediaPipe paused for QR scanning WebcamPose.svelte:714:13
+Starting QR scanner camera... 2 QRScanModal.svelte:85:12
+The camera stream is only accessible if the page is transferred via https. client.js:2976:15
+QR Scanner started successfully QRScanModal.svelte:112:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+The camera stream is only accessible if the page is transferred via https. client.js:2976:15
+QR Scanner started successfully QRScanModal.svelte:112:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+The camera stream is only accessible if the page is transferred via https. client.js:2976:15
+QR Scanner started successfully QRScanModal.svelte:112:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+The camera stream is only accessible if the page is transferred via https. client.js:2976:15
+QR Scanner started successfully QRScanModal.svelte:112:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+The camera stream is only accessible if the page is transferred via https. client.js:2976:15
+QR Scanner started successfully QRScanModal.svelte:112:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+The camera stream is only accessible if the page is transferred via https. client.js:2976:15
+QR Scanner started successfully QRScanModal.svelte:112:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+The camera stream is only accessible if the page is transferred via https. client.js:2976:15
+QR Scanner started successfully QRScanModal.svelte:112:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+The camera stream is only accessible if the page is transferred via https. client.js:2976:15
+QR Scanner started successfully QRScanModal.svelte:112:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+The camera stream is only accessible if the page is transferred via https. client.js:2976:15
+QR Scanner started successfully QRScanModal.svelte:112:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+The camera stream is only accessible if the page is transferred via https. client.js:2976:15
+QR Scanner started successfully QRScanModal.svelte:112:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+The camera stream is only accessible if the page is transferred via https. client.js:2976:15
+QR Scanner started successfully QRScanModal.svelte:112:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+The camera stream is only accessible if the page is transferred via https. client.js:2976:15
+QR Scanner started successfully QRScanModal.svelte:112:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+The camera stream is only accessible if the page is transferred via https. client.js:2976:15
+QR Scanner started successfully QRScanModal.svelte:112:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+The camera stream is only accessible if the page is transferred via https. client.js:2976:15
+QR Scanner started successfully QRScanModal.svelte:112:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+The camera stream is only accessible if the page is transferred via https. client.js:2976:15
+QR Scanner started successfully QRScanModal.svelte:112:12
+Starting QR scanner camera... QRScanModal.svelte:85:12
+The camera stream is only accessible if the page is transferred via https. client.js:2976:15
+QR Scanner started successfully QRScanModal.svelte:112:12
+QR Code detected: 
+Object { data: '{"participantid": "p2m_0001", "age": "32", "height": "75in"}', cornerPoints: (4) […] }
+QRScanModal.svelte:100:14
+QR Code detected: {"participantid": "p2m_0001", "age": "32", "height": "75in"} WebcamPose.svelte:698:11
+QR Code detected and participant info updated: 
+Object { participantId: "p2m_0001", age: "32", height: "75in" }
++page.svelte:244:12
+Failed to start QR scanner: TypeError: $.get(...) is null
+    startCamera QRScanModal.svelte:30
+QRScanModal.svelte:114:12

@@ -1,5 +1,6 @@
-<script>
+<script lang="ts">
   import { onMount, onDestroy, createEventDispatcher } from 'svelte';
+  import QRScanModal from './QRScanModal.svelte';
   
   const dispatch = createEventDispatcher();
 
@@ -9,6 +10,7 @@
   export let gameScore = 0;
   export let currentTargetType = null;
   export let scoreBreakdown = { hand: 0, head: 0, knee: 0 };
+  export let participantInfo = { participantId: '', age: null, height: null };
 
   let videoElement;
   let canvasElement;
@@ -32,6 +34,11 @@
   let showPose = true;
   let showHands = true;
   let showFace = true;
+
+  // QR Scanner modal state
+  let isQRModalOpen = false;
+  let lastQrScanTime = 0;
+  const QR_SCAN_THROTTLE = 500; // Reduced to 500ms to allow more frequent detection
 
 
   // MediaPipe landmark connections
@@ -464,8 +471,83 @@
     return Math.max((score / gameScore) * 100, 0);
   }
 
+  // QR Scanner functions
+  function openQRScanner() {
+    if (gameActive) {
+      console.log('Cannot open QR scanner while game is active');
+      return;
+    }
+    
+    // Pause MediaPipe processing while scanning
+    pauseMediaPipe();
+    isQRModalOpen = true;
+  }
+
+  function handleQRResult(event) {
+    const result = event.detail;
+    const now = Date.now();
+    if (now - lastQrScanTime < QR_SCAN_THROTTLE) return;
+    
+    lastQrScanTime = now;
+    console.log('QR Code detected:', result);
+    dispatch('qrCodeDetected', result);
+    
+    // Resume MediaPipe after scanning with small delay to ensure QR scanner is properly closed
+    setTimeout(() => {
+      resumeMediaPipe();
+    }, 100);
+  }
+
+  function closeQRScanner() {
+    isQRModalOpen = false;
+    // Resume MediaPipe after closing scanner with delay to ensure proper cleanup
+    setTimeout(() => {
+      resumeMediaPipe();
+    }, 100);
+  }
+
+  function pauseMediaPipe() {
+    if (camera && poseTrackingActive) {
+      try {
+        camera.stop();
+        poseTrackingActive = false;
+        console.log('MediaPipe paused for QR scanning');
+      } catch (error: any) {
+        console.warn('Error pausing MediaPipe:', error);
+      }
+    }
+  }
+
+  function resumeMediaPipe() {
+    if (camera && !poseTrackingActive && mediaPipeReady) {
+      try {
+        camera.start();
+        poseTrackingActive = true;
+        console.log('MediaPipe resumed after QR scanning');
+      } catch (error: any) {
+        console.warn('Error resuming MediaPipe:', error);
+      }
+    } else {
+      console.log('Resume conditions not met:', {
+        hasCamera: !!camera,
+        poseTrackingActive,
+        mediaPipeReady
+      });
+    }
+  }
+
+  function updateParticipantId() {
+    dispatch('participantIdChange', participantInfo.participantId);
+  }
+
+
   onDestroy(() => {
     console.log('Component destroying');
+    
+    // Close QR scanner modal if open
+    if (isQRModalOpen) {
+      isQRModalOpen = false;
+    }
     
     // Stop MediaPipe camera if active
     if (camera) {
@@ -495,6 +577,35 @@
 <div class="webcam-container">
   <!-- <h3>MediaPipe Pose Tracking</h3> -->
   
+  <!-- Participant ID Input -->
+  <div class="participant-section">
+    <label for="participant-id" class="participant-label">Participant ID:</label>
+    <div class="participant-input-group">
+      <input 
+        id="participant-id"
+        type="text" 
+        bind:value={participantInfo.participantId}
+        on:input={updateParticipantId}
+        placeholder="Enter ID manually"
+        class="participant-input"
+      />
+      <button 
+        class="qr-scan-btn"
+        on:click={openQRScanner}
+        disabled={gameActive}
+        title={gameActive ? 'Cannot scan QR code while game is active' : 'Scan QR code for participant info'}
+      >
+        📷 QR
+      </button>
+    </div>
+    {#if participantInfo.age || participantInfo.height}
+      <div class="participant-info">
+        {#if participantInfo.age}Age: {participantInfo.age}{/if}
+        {#if participantInfo.height}{participantInfo.age ? ', ' : ''}Height: {participantInfo.height}{/if}
+      </div>
+    {/if}
+  </div>
+
   <!-- MediaPipe Status -->
   {#if !isLoading && !error}
     <div class="status-indicator">
@@ -678,6 +789,14 @@
     </div>
   {/if}
 </div>
+
+<!-- QR Scanner Modal -->
+<QRScanModal 
+  bind:isOpen={isQRModalOpen}
+  cameraStream={stream}
+  on:qrCodeDetected={handleQRResult}
+  on:close={closeQRScanner}
+/>
 
 <style>
   .webcam-container {
@@ -968,6 +1087,86 @@
   .status-failed {
     color: #ff4444;
     font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  /* Participant Section Styles */
+  .participant-section {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .participant-label {
+    display: block;
+    color: #ccc;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+
+  .participant-input-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .participant-input {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 0.9rem;
+    box-sizing: border-box;
+  }
+
+  .qr-scan-btn {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid rgba(0, 255, 136, 0.5);
+    border-radius: 4px;
+    background: rgba(0, 255, 136, 0.1);
+    color: #00ff88;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .qr-scan-btn:hover:not(:disabled) {
+    background: rgba(0, 255, 136, 0.2);
+    border-color: rgba(0, 255, 136, 0.7);
+    transform: translateY(-1px);
+  }
+
+  .qr-scan-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    color: #666;
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .participant-input:focus {
+    outline: none;
+    border-color: #00ff88;
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .participant-input::placeholder {
+    color: #888;
+  }
+
+
+  .participant-info {
+    margin-top: 0.5rem;
+    color: #00ff88;
+    font-size: 0.8rem;
+    text-align: center;
     font-weight: 500;
   }
 </style>

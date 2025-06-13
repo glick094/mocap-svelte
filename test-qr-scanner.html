@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QR Scanner Test</title>
+    <script type="module">
+        import QrScanner from 'https://cdn.jsdelivr.net/npm/qr-scanner@1.4.2/qr-scanner.min.js';
+
+        async function testQrScanner() {
+            const video = document.getElementById('video');
+            const resultDiv = document.getElementById('result');
+            
+            try {
+                // Initialize QR Scanner
+                const qrScanner = new QrScanner(
+                    video,
+                    result => {
+                        console.log('QR Result:', result);
+                        resultDiv.innerHTML = `<strong>QR Code detected:</strong><br><pre>${JSON.stringify(result, null, 2)}</pre>`;
+                        
+                        // Try to parse as JSON
+                        try {
+                            const parsed = JSON.parse(result.data || result);
+                            resultDiv.innerHTML += `<br><strong>Parsed JSON:</strong><br><pre>${JSON.stringify(parsed, null, 2)}</pre>`;
+                        } catch (e) {
+                            resultDiv.innerHTML += `<br><em>Not valid JSON</em>`;
+                        }
+                    },
+                    {
+                        highlightScanRegion: true,
+                        highlightCodeOutline: true,
+                    }
+                );
+
+                // Start camera and scanner
+                await qrScanner.start();
+                console.log('QR Scanner started successfully');
+                document.getElementById('status').textContent = 'QR Scanner active - point camera at QR code';
+                
+            } catch (error) {
+                console.error('QR Scanner error:', error);
+                document.getElementById('status').textContent = `Error: ${error.message}`;
+            }
+        }
+
+        // Start when page loads
+        document.addEventListener('DOMContentLoaded', testQrScanner);
+    </script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        video { border: 2px solid #ccc; margin: 10px 0; }
+        #result { background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        #status { font-weight: bold; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>QR Scanner Test</h1>
+    <div id="status">Initializing...</div>
+    <video id="video" width="400" height="300"></video>
+    <div id="result">No QR code detected yet</div>
+</body>
+</html>

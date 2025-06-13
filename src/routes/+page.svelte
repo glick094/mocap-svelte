@@ -27,6 +27,14 @@
     filterWindowSize: 5
   };
 
+  // Participant information
+  let participantInfo = {
+    participantId: '',
+    age: null,
+    height: null
+  };
+  let qrScanEnabled = true;
+
   // WebcamPose dimensions
   let webcamWidth = 300;
   let webcamHeight = 225;
@@ -152,6 +160,30 @@
     
     // Store in a global variable that can be accessed by recording functions
     window.currentTargetData = targetData;
+  }
+
+  function handleQRCodeDetected(event) {
+    // Handle QR code data from the webcam
+    const qrData = event.detail;
+    try {
+      const parsed = JSON.parse(qrData);
+      if (parsed.participantid) {
+        participantInfo.participantId = parsed.participantid;
+      }
+      if (parsed.age) {
+        participantInfo.age = parsed.age;
+      }
+      if (parsed.height) {
+        participantInfo.height = parsed.height;
+      }
+      console.log('QR Code detected and participant info updated:', participantInfo);
+    } catch (error) {
+      console.warn('Invalid QR code format:', qrData);
+    }
+  }
+
+  function handleParticipantIdChange(event) {
+    participantInfo.participantId = event.detail;
   }
 
   function toggleGame() {
@@ -377,7 +409,8 @@
 
   function generateParticipantId() {
     if (!participantId) {
-      participantId = userSettings.username || `P${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
+      // Use participant info from QR code or text input, fallback to username or random ID
+      participantId = participantInfo.participantId || userSettings.username || `P${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
     }
     return participantId;
   }
@@ -386,6 +419,9 @@
     const header = [
       'unix_timestamp_ms', // Unix timestamp in milliseconds since epoch
       'frame_time_ms',     // High-precision milliseconds since recording started
+      'participant_id',    // Participant identifier
+      'participant_age',   // Participant age (from QR code)
+      'participant_height', // Participant height (from QR code)
       'pose_landmarks_count',
       'left_hand_landmarks_count', 
       'right_hand_landmarks_count',
@@ -436,6 +472,9 @@
     const row = [
       timestamp,
       frameTime,
+      participantInfo.participantId || '',
+      participantInfo.age || '',
+      participantInfo.height || '',
       poseData.poseLandmarks ? poseData.poseLandmarks.length : 0,
       poseData.leftHandLandmarks ? poseData.leftHandLandmarks.length : 0,
       poseData.rightHandLandmarks ? poseData.rightHandLandmarks.length : 0,
@@ -753,8 +792,12 @@
             gameScore={gameScore}
             currentTargetType={currentTargetType}
             scoreBreakdown={scoreBreakdown}
+            participantInfo={participantInfo}
+            qrScanEnabled={qrScanEnabled && !isGameActive}
             on:poseUpdate={handlePoseUpdate}
             on:streamReady={handleStreamReady}
+            on:qrCodeDetected={handleQRCodeDetected}
+            on:participantIdChange={handleParticipantIdChange}
           />
         {:else}
           <div class="webcam-inactive">
