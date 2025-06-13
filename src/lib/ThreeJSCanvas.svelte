@@ -159,7 +159,7 @@
       case TARGET_TYPES.KNEE:
         // Between 1/2 and bottom 1/4 of canvas within center 90%
         x = Math.random() * usableWidth + borderX;
-        y = Math.random() * (usableHeight / 4) + (borderY + usableHeight / 2); // From 50% to 75% of usable height
+        y = Math.random() * (usableHeight / 4) + (borderY + 3 * usableHeight / 5); // From 60% to 75% of usable height
         break;
       case TARGET_TYPES.HAND:
       default:
