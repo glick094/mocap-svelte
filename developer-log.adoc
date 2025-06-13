@@ -69,3 +69,9 @@
 === Install Mediapipe
 
 * `npm install @mediapipe/holistic @mediapipe/camera_utils @mediapipe/drawing_utils`
+
+== Next steps: 
+
+* continue updating target csv outputs. 
+* have the webcam inverted horizontally so the threejs is not mirrored
+* add qr reader for inputting participant data

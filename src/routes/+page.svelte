@@ -38,8 +38,8 @@
   
   // Smoothing settings
   let enableSmoothing = true;
-  let filterWindowSize = 7; // Window size for Savgol filter (must be odd)
-  let polynomialOrder = 4; // Polynomial order for Savgol filter
+  let filterWindowSize = 5; // Window size for Savgol filter (must be odd)
+  let polynomialOrder = 2; // Polynomial order for Savgol filter
 
   // Recording state
   let isRecording = false;
@@ -143,6 +143,15 @@
 
   function handleTargetChanged(event) {
     currentTargetType = event.detail.targetType;
+  }
+
+  function handleTargetDataUpdate(event) {
+    // This will be called every frame with current target data
+    // We'll add this data to our recording streams
+    const targetData = event.detail;
+    
+    // Store in a global variable that can be accessed by recording functions
+    window.currentTargetData = targetData;
   }
 
   function toggleGame() {
@@ -380,7 +389,14 @@
       'pose_landmarks_count',
       'left_hand_landmarks_count', 
       'right_hand_landmarks_count',
-      'face_landmarks_count'
+      'face_landmarks_count',
+      // Target data columns
+      'target_showing',    // Boolean: is a target currently displayed
+      'target_id',         // Unique identifier for the target
+      'target_type',       // Type: hand, head, or knee
+      'target_x',          // Target X position on canvas
+      'target_y',          // Target Y position on canvas
+      'target_status'      // Status: start, unobtained, obtained, end
     ];
 
     // Add pose landmark columns (33 landmarks, each with x, y, z, visibility)
@@ -407,13 +423,30 @@
   }
 
   function formatPoseDataForCSV(poseData, timestamp, frameTime) {
+    // Get current target data
+    const targetData = window.currentTargetData || {
+      targetShowing: false,
+      targetId: null,
+      targetType: null,
+      targetX: null,
+      targetY: null,
+      status: null
+    };
+
     const row = [
       timestamp,
       frameTime,
       poseData.poseLandmarks ? poseData.poseLandmarks.length : 0,
       poseData.leftHandLandmarks ? poseData.leftHandLandmarks.length : 0,
       poseData.rightHandLandmarks ? poseData.rightHandLandmarks.length : 0,
-      poseData.faceLandmarks ? poseData.faceLandmarks.length : 0
+      poseData.faceLandmarks ? poseData.faceLandmarks.length : 0,
+      // Target data
+      targetData.targetShowing,
+      targetData.targetId,
+      targetData.targetType,
+      targetData.targetX,
+      targetData.targetY,
+      targetData.status
     ];
 
     // Add pose landmarks (33 landmarks)
@@ -652,14 +685,14 @@
 </script>
 
 <svelte:head>
-  <title>Motion Capture Studio</title>
+  <title>Play2Move</title>
   <meta name="description" content="Interactive 3D motion capture with webcam and MediaPipe pose tracking" />
 </svelte:head>
 
 <div class="app-container">
   <!-- Header -->
   <header class="app-header">
-    <h1>Motion Capture Studio</h1>
+    <h1>Play2Move</h1>
     <div class="header-buttons">
       <button class="header-btn" class:active={isWebcamActive} on:click={toggleWebcam}>
         {isWebcamActive ? '📹 Stop Camera' : '📷 Start Camera'}
@@ -704,6 +737,7 @@
         on:scoreUpdate={handleScoreUpdate}
         on:gameEnded={handleGameEnded}
         on:targetChanged={handleTargetChanged}
+        on:targetDataUpdate={handleTargetDataUpdate}
       />
     </section>
 
@@ -897,7 +931,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
+    padding: 0.5rem;
   }
 
   .webcam-inactive {

@@ -522,7 +522,7 @@
 </script>
 
 <div class="webcam-container">
-  <h3>MediaPipe Pose Tracking</h3>
+  <!-- <h3>MediaPipe Pose Tracking</h3> -->
   
   <!-- Always render video elements -->
   <div class="video-container" style="display: {isLoading || error ? 'none' : 'block'}">
@@ -700,7 +700,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
+    gap: 0.5rem;
     padding: 0;
     width: 100%;
     height: 100%;
@@ -717,7 +717,7 @@
   }
 
   .output-canvas {
-    border: 2px solid #555;
+    border: 1px solid #555;
     border-radius: 8px;
     max-width: 100%;
     width: 100%;
@@ -851,7 +851,7 @@
   /* Game Score Styles */
   .game-score {
     margin-top: 1rem;
-    padding: 1rem;
+    padding: 0.5rem;
     background: rgba(0, 0, 0, 0.8);
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.2);

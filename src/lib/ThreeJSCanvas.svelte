@@ -26,6 +26,10 @@
     knee: 0
   };
 
+  // Target tracking for data recording
+  let targetHistory = []; // Track all target events
+  let currentTargetData = null; // Current target recording data
+
   onMount(() => {
     if (canvasElement) {
       ctx = canvasElement.getContext('2d');
@@ -175,22 +179,31 @@
     if (!currentTarget || !data) return;
 
     let targetHit = false;
+    let hitKeypoint = null;
     const targetX = currentTarget.x;
     const targetY = currentTarget.y;
 
     switch(currentTarget.type) {
       case TARGET_TYPES.HAND:
-        // Check both hands
+        // Check all landmarks in both hands for better collision detection
         if (data.leftHandLandmarks && data.leftHandLandmarks.length > 0) {
-          const leftHand = data.leftHandLandmarks[8]; // Index finger tip
-          if (leftHand && checkDistance(leftHand.x * width, leftHand.y * height, targetX, targetY)) {
-            targetHit = true;
+          for (let i = 0; i < data.leftHandLandmarks.length; i++) {
+            const landmark = data.leftHandLandmarks[i];
+            if (landmark && checkDistance(landmark.x * width, landmark.y * height, targetX, targetY)) {
+              targetHit = true;
+              hitKeypoint = `left_hand_${i}`;
+              break;
+            }
           }
         }
-        if (data.rightHandLandmarks && data.rightHandLandmarks.length > 0) {
-          const rightHand = data.rightHandLandmarks[8]; // Index finger tip
-          if (rightHand && checkDistance(rightHand.x * width, rightHand.y * height, targetX, targetY)) {
-            targetHit = true;
+        if (!targetHit && data.rightHandLandmarks && data.rightHandLandmarks.length > 0) {
+          for (let i = 0; i < data.rightHandLandmarks.length; i++) {
+            const landmark = data.rightHandLandmarks[i];
+            if (landmark && checkDistance(landmark.x * width, landmark.y * height, targetX, targetY)) {
+              targetHit = true;
+              hitKeypoint = `right_hand_${i}`;
+              break;
+            }
           }
         }
         break;
@@ -202,6 +215,7 @@
           const nose = data.faceLandmarks[1];
           if (nose && checkDistance(nose.x * width, nose.y * height, targetX, targetY)) {
             targetHit = true;
+            hitKeypoint = 'face_1';
           }
         }
         // Fallback to pose landmark 0 (nose center from pose)
@@ -209,6 +223,7 @@
           const poseNose = data.poseLandmarks[0];
           if (poseNose && checkDistance(poseNose.x * width, poseNose.y * height, targetX, targetY)) {
             targetHit = true;
+            hitKeypoint = 'pose_0';
           }
         }
         break;
@@ -221,9 +236,11 @@
           
           if (leftKnee && checkDistance(leftKnee.x * width, leftKnee.y * height, targetX, targetY)) {
             targetHit = true;
+            hitKeypoint = 'pose_25';
           }
-          if (rightKnee && checkDistance(rightKnee.x * width, rightKnee.y * height, targetX, targetY)) {
+          if (!targetHit && rightKnee && checkDistance(rightKnee.x * width, rightKnee.y * height, targetX, targetY)) {
             targetHit = true;
+            hitKeypoint = 'pose_26';
           }
         }
         break;
@@ -236,10 +253,26 @@
       // Update score breakdown by target type
       scoreBreakdown[currentTarget.type]++;
       
+      // Record target hit for data collection
+      if (currentTargetData) {
+        currentTargetData.status = 'obtained';
+        currentTargetData.hitKeypoint = hitKeypoint;
+        currentTargetData.hitTime = Date.now();
+        targetHistory.push({ ...currentTargetData });
+      }
+      
       // Generate new target after a short delay
       const hitTargetType = currentTarget.type;
       setTimeout(() => {
+        // End previous target
+        if (currentTargetData) {
+          currentTargetData.status = 'end';
+          targetHistory.push({ ...currentTargetData });
+        }
+        
+        // Create new target
         currentTarget = generateRandomTarget();
+        createTargetData();
         dispatch('targetChanged', { targetType: currentTarget.type });
       }, 100);
       
@@ -247,9 +280,13 @@
       dispatch('scoreUpdate', { 
         score: gameScore, 
         targetType: hitTargetType,
-        scoreBreakdown: { ...scoreBreakdown }
+        scoreBreakdown: { ...scoreBreakdown },
+        hitKeypoint: hitKeypoint
       });
     }
+    
+    // Emit current target data for recording
+    emitTargetData();
   }
 
   function checkDistance(x1, y1, x2, y2) {
@@ -257,18 +294,69 @@
     return distance <= targetRadius;
   }
 
+  function createTargetData() {
+    if (!currentTarget) return;
+    
+    currentTargetData = {
+      targetShowing: true,
+      targetId: currentTarget.id,
+      targetType: currentTarget.type,
+      targetX: currentTarget.x,
+      targetY: currentTarget.y,
+      status: 'start',
+      startTime: Date.now(),
+      hitKeypoint: null,
+      hitTime: null
+    };
+    
+    // Record target start
+    targetHistory.push({ ...currentTargetData });
+    currentTargetData.status = 'unobtained';
+  }
+
+  function emitTargetData() {
+    // Create target data for current frame
+    const targetData = currentTargetData ? {
+      targetShowing: !!currentTarget,
+      targetId: currentTargetData.targetId,
+      targetType: currentTargetData.targetType,
+      targetX: currentTargetData.targetX,
+      targetY: currentTargetData.targetY,
+      status: currentTargetData.status
+    } : {
+      targetShowing: false,
+      targetId: null,
+      targetType: null,
+      targetX: null,
+      targetY: null,
+      status: null
+    };
+    
+    // Dispatch for recording
+    dispatch('targetDataUpdate', targetData);
+  }
+
   function startGame() {
     gameScore = 0;
     hitTargetIds.clear();
     scoreBreakdown = { hand: 0, head: 0, knee: 0 };
+    targetHistory = [];
     currentTarget = generateRandomTarget();
+    createTargetData();
     dispatch('gameStarted', { score: gameScore, scoreBreakdown: { ...scoreBreakdown } });
     dispatch('targetChanged', { targetType: currentTarget.type });
   }
 
   function stopGame() {
+    // End current target if exists
+    if (currentTargetData) {
+      currentTargetData.status = 'end';
+      targetHistory.push({ ...currentTargetData });
+    }
+    
     currentTarget = null;
-    dispatch('gameEnded', { finalScore: gameScore });
+    currentTargetData = null;
+    dispatch('gameEnded', { finalScore: gameScore, targetHistory: [...targetHistory] });
   }
 
   // Reactive statement to handle game state changes
@@ -468,7 +556,7 @@
       rightEye: [362, 382, 381, 380, 374, 373, 390, 249, 263, 466, 388, 387, 386, 385, 384, 398],
       
       // Nose
-      nose: [1, 2, 5, 4, 6, 168, 8, 9, 10, 151, 195, 197, 196, 3, 51, 48, 115, 131, 134, 102, 49, 220, 305, 281, 360, 279],
+      nose: [1, 2, 5, 4, 6, 168, 8, 9, 10, 151, 195, 197, 51, 48, 115, 131, 134, 102, 49, 220, 281, 360, 279],
       
       // Mouth outer boundary (simplified for clear lines)
       // mouthOuter: [61, 84, 17, 314, 405, 320, 307, 375, 321, 308, 324, 318, 402, 317, 14, 87, 178, 88, 95, 78, 191, 80, 81, 82, 13, 312, 311, 310, 415, 308],
