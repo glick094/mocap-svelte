@@ -1,5 +1,7 @@
 <script>
-  import { onMount, onDestroy } from 'svelte';
+  import { onMount, onDestroy, createEventDispatcher } from 'svelte';
+
+  const dispatch = createEventDispatcher();
 
   let canvasElement;
   let ctx;
@@ -70,6 +72,23 @@
     if (data.faceLandmarks) {
       drawFaceLandmarks(data.faceLandmarks);
     }
+    
+    // Emit game data (smoothed pose data with same structure as MediaPipe)
+    emitGameData(data);
+  }
+
+  function emitGameData(data) {
+    // Create game data structure that matches MediaPipe format but with smoothed data
+    const gameData = {
+      poseLandmarks: data.poseLandmarks || null,
+      leftHandLandmarks: data.leftHandLandmarks || null,
+      rightHandLandmarks: data.rightHandLandmarks || null,
+      faceLandmarks: data.faceLandmarks || null,
+      timestamp: data.timestamp || Date.now() // Use original timestamp from MediaPipe
+    };
+    
+    // Dispatch the game data for recording
+    dispatch('gameDataUpdate', gameData);
   }
 
   function drawPoseLandmarks(landmarks) {

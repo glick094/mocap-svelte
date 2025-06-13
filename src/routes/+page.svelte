@@ -49,6 +49,10 @@
   let videoChunks = [];
   let videoStream = null;
 
+  // Game data recording state
+  let gameDataBuffer = [];
+  let gameDataSession = null;
+
   function openSettings() {
     showSettings = true;
   }
@@ -92,6 +96,24 @@
   function handleCanvasUpdate(event) {
     // Handle updates from the 3D canvas
     console.log('Canvas update:', event.detail);
+  }
+
+  function handleGameDataUpdate(event) {
+    // Receive game data from ThreeJSCanvas component (smoothed pose data)
+    const gameData = event.detail;
+    
+    // Record game data if recording is active
+    if (isRecording && gameDataSession) {
+      const unixTimestamp = gameData.timestamp || Date.now(); // Use original MediaPipe timestamp
+      const preciseFrameTime = performance.now() - gameDataSession.performanceStartTime; // High-precision relative time
+      const csvRow = formatPoseDataForCSV(gameData, unixTimestamp, preciseFrameTime); // Same format as MediaPipe data
+      gameDataSession.csvContent += csvRow;
+      gameDataBuffer.push({
+        timestamp: unixTimestamp,
+        frameTime: preciseFrameTime,
+        data: gameData // Store smoothed game data
+      });
+    }
   }
   
   function handleStreamReady(event) {
@@ -476,14 +498,25 @@
       performanceStartTime: performance.now() // High-precision start time for relative timing
     };
 
+    // Initialize game data recording session
+    gameDataSession = {
+      participantId: participant,
+      timestamp: timestamp,
+      filename: `game_data_${participant}_${timestamp}.csv`,
+      csvContent: createCSVHeader(), // Same format as MediaPipe data
+      performanceStartTime: performance.now() // Same start time for synchronization
+    };
+
     isRecording = true;
     recordingStartTime = Date.now(); // Unix timestamp for absolute timing
     poseDataBuffer = [];
+    gameDataBuffer = [];
 
     // Start video recording
     const videoStarted = startVideoRecording(participant, timestamp);
 
     console.log('Started recording pose data:', recordingSession.filename);
+    console.log('Started recording game data:', gameDataSession.filename);
     console.log('Video recording started:', videoStarted);
     console.log('Recording start time (Unix):', recordingStartTime);
     console.log('Performance start time:', recordingSession.performanceStartTime);
@@ -497,7 +530,7 @@
     // Stop video recording
     stopVideoRecording();
     
-    // Create and download the CSV file
+    // Create and download the MediaPipe CSV file
     const blob = new Blob([recordingSession.csvContent], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -508,13 +541,30 @@
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
+    // Create and download the game data CSV file
+    if (gameDataSession) {
+      const gameBlob = new Blob([gameDataSession.csvContent], { type: 'text/csv' });
+      const gameUrl = URL.createObjectURL(gameBlob);
+      const gameA = document.createElement('a');
+      gameA.href = gameUrl;
+      gameA.download = gameDataSession.filename;
+      document.body.appendChild(gameA);
+      gameA.click();
+      document.body.removeChild(gameA);
+      URL.revokeObjectURL(gameUrl);
+    }
+
     console.log('Stopped recording. Files downloaded:', recordingSession.filename);
-    console.log('Total data points recorded:', poseDataBuffer.length);
+    console.log('Game data file downloaded:', gameDataSession?.filename);
+    console.log('Total MediaPipe data points recorded:', poseDataBuffer.length);
+    console.log('Total game data points recorded:', gameDataBuffer.length);
     
     // Reset recording state
     recordingSession = null;
+    gameDataSession = null;
     recordingStartTime = null;
     poseDataBuffer = [];
+    gameDataBuffer = [];
   }
 
   function toggleRecording() {
@@ -598,6 +648,7 @@
         height={canvasSettings.height}
         poseData={currentPoseData}
         on:update={handleCanvasUpdate}
+        on:gameDataUpdate={handleGameDataUpdate}
       />
     </section>
 
