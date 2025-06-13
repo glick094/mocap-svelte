@@ -369,6 +369,9 @@
       
       console.log('Video playing');
 
+      // Emit stream ready event for video recording
+      dispatch('streamReady', { stream });
+
       // Set up canvas
       canvasCtx = canvasElement.getContext('2d');
       
@@ -709,18 +712,6 @@
     background: #FFFF00;
   }
 
-  .status-info {
-    text-align: center;
-  }
-
-  .status-text {
-    font-size: 0.9rem;
-    color: #666;
-    padding: 0.5rem 1rem;
-    background: #f8f9fa;
-    border-radius: 20px;
-    border: 1px solid #dee2e6;
-  }
 
   .loading, .error {
     display: flex;

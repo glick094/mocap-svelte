@@ -9,8 +9,7 @@
   let isWebcamActive = true; // Start with webcam active
   let canvasSettings = {
     width: window.innerWidth || 1920,
-    height: window.innerHeight - 80 || 1000, // Subtract header height
-    frameColor: '#333'
+    height: window.innerHeight - 80 || 1000 // Subtract header height
   };
 
   // Settings data
@@ -38,6 +37,11 @@
   let participantId = '';
   let recordingSession = null;
 
+  // Video recording state
+  let mediaRecorder = null;
+  let videoChunks = [];
+  let videoStream = null;
+
   function openSettings() {
     showSettings = true;
   }
@@ -60,6 +64,16 @@
   }
 
   function toggleWebcam() {
+    // Stop recording if active when turning off webcam
+    if (isRecording && !isWebcamActive) {
+      stopRecording();
+    }
+    
+    // Clear video stream reference when webcam is turned off
+    if (!isWebcamActive) {
+      videoStream = null;
+    }
+    
     isWebcamActive = !isWebcamActive;
   }
 
@@ -68,6 +82,12 @@
     console.log('Canvas update:', event.detail);
   }
   
+  function handleStreamReady(event) {
+    // Store video stream for recording
+    videoStream = event.detail.stream;
+    console.log('Video stream ready for recording');
+  }
+
   function handlePoseUpdate(event) {
     // Receive pose data from WebcamPose component
     currentPoseData = event.detail;
@@ -199,6 +219,73 @@
     return row.join(',') + '\n';
   }
 
+  function startVideoRecording(participant, timestamp) {
+    if (!videoStream) {
+      console.warn('Video stream not available for recording');
+      return false;
+    }
+
+    try {
+      // Reset video chunks
+      videoChunks = [];
+      
+      // Create MediaRecorder with video stream
+      const options = {
+        mimeType: 'video/webm;codecs=vp9', // Try VP9 first
+        videoBitsPerSecond: 2500000 // 2.5 Mbps for good quality
+      };
+      
+      // Fallback to VP8 if VP9 not supported
+      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+        options.mimeType = 'video/webm;codecs=vp8';
+      }
+      
+      // Final fallback to default
+      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+        delete options.mimeType;
+      }
+
+      mediaRecorder = new MediaRecorder(videoStream, options);
+      
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          videoChunks.push(event.data);
+        }
+      };
+      
+      mediaRecorder.onstop = () => {
+        // Create video file when recording stops
+        const videoBlob = new Blob(videoChunks, { type: 'video/webm' });
+        const videoUrl = URL.createObjectURL(videoBlob);
+        const a = document.createElement('a');
+        a.href = videoUrl;
+        a.download = `webcam_recording_${participant}_${timestamp}.webm`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(videoUrl);
+        
+        console.log('Video recording saved:', a.download);
+      };
+      
+      mediaRecorder.start(100); // Collect data every 100ms
+      console.log('Video recording started');
+      return true;
+      
+    } catch (error) {
+      console.error('Failed to start video recording:', error);
+      return false;
+    }
+  }
+
+  function stopVideoRecording() {
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+      mediaRecorder.stop();
+      mediaRecorder = null;
+      console.log('Video recording stopped');
+    }
+  }
+
   function startRecording() {
     if (isRecording) return;
 
@@ -217,7 +304,11 @@
     recordingStartTime = Date.now(); // Unix timestamp for absolute timing
     poseDataBuffer = [];
 
+    // Start video recording
+    const videoStarted = startVideoRecording(participant, timestamp);
+
     console.log('Started recording pose data:', recordingSession.filename);
+    console.log('Video recording started:', videoStarted);
     console.log('Recording start time (Unix):', recordingStartTime);
     console.log('Performance start time:', recordingSession.performanceStartTime);
   }
@@ -226,6 +317,9 @@
     if (!isRecording || !recordingSession) return;
 
     isRecording = false;
+    
+    // Stop video recording
+    stopVideoRecording();
     
     // Create and download the CSV file
     const blob = new Blob([recordingSession.csvContent], { type: 'text/csv' });
@@ -238,7 +332,7 @@
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    console.log('Stopped recording. File downloaded:', recordingSession.filename);
+    console.log('Stopped recording. Files downloaded:', recordingSession.filename);
     console.log('Total data points recorded:', poseDataBuffer.length);
     
     // Reset recording state
@@ -323,7 +417,6 @@
       <ThreeJSCanvas 
         width={canvasSettings.width}
         height={canvasSettings.height}
-        frameColor={canvasSettings.frameColor}
         poseData={currentPoseData}
         on:update={handleCanvasUpdate}
       />
@@ -338,6 +431,7 @@
             width={webcamWidth}
             height={webcamHeight}
             on:poseUpdate={handlePoseUpdate}
+            on:streamReady={handleStreamReady}
           />
         {:else}
           <div class="webcam-inactive">

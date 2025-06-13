@@ -11,8 +11,7 @@
 
   export let canvasSettings = {
     width: 800,
-    height: 600,
-    frameColor: '#333'
+    height: 600
   };
 
   const dispatch = createEventDispatcher();
@@ -56,8 +55,7 @@
     };
     localCanvasSettings = {
       width: 800,
-      height: 600,
-      frameColor: '#333'
+      height: 600
     };
   }
 
@@ -146,7 +144,7 @@
           <h3>🖼️ Canvas Settings</h3>
           
           <div class="form-group">
-            <label>Size Presets:</label>
+            <span class="form-label">Size Presets:</span>
             <div class="preset-buttons">
               {#each canvasPresets as preset}
                 <button 
@@ -161,15 +159,6 @@
             </div>
           </div>
 
-          <div class="form-group">
-            <label for="frame-color">Frame Color:</label>
-            <input 
-              id="frame-color"
-              type="color" 
-              bind:value={localCanvasSettings.frameColor}
-              class="color-input"
-            />
-          </div>
 
           <div class="size-controls">
             <div class="size-input">
@@ -334,7 +323,8 @@
     margin-bottom: 0;
   }
 
-  .form-group label {
+  .form-group label,
+  .form-group .form-label {
     display: block;
     margin-bottom: 0.5rem;
     color: #ccc;

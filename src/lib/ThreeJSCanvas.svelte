@@ -8,8 +8,6 @@
   // Component props
   export let width = 800;
   export let height = 600;
-  export let frameColor = '#333';
-  export let frameWidth = '4px';
   export let poseData = null;
 
   onMount(() => {
