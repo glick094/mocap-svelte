@@ -5,6 +5,10 @@
 
   export let width = 640;
   export let height = 480;
+  export let gameActive = false;
+  export let gameScore = 0;
+  export let currentTargetType = null;
+  export let scoreBreakdown = { hand: 0, head: 0, knee: 0 };
 
   let videoElement;
   let canvasElement;
@@ -475,6 +479,20 @@
     }, 500);
   }
 
+  function getTargetColor(targetType) {
+    const colors = {
+      'hand': '#ff0000',
+      'head': '#00ff88', 
+      'knee': '#0000ff'
+    };
+    return colors[targetType] || '#ffffff';
+  }
+
+  function getBarWidth(score) {
+    if (gameScore === 0) return 0;
+    return Math.max((score / gameScore) * 100, 0);
+  }
+
   onDestroy(() => {
     console.log('Component destroying');
     
@@ -554,6 +572,69 @@
           </span>
         </label>
       </div>
+      
+      <!-- Game Score Display -->
+      {#if gameActive}
+        <div class="game-score">
+          <div class="score-display">
+            <span class="score-label">Total Score:</span>
+            <span class="score-value">{gameScore}</span>
+          </div>
+          
+          {#if currentTargetType}
+            <div class="target-info">
+              <span class="target-label">Current Target:</span>
+              <span class="target-type" style="color: {getTargetColor(currentTargetType)}">
+                {currentTargetType.toUpperCase()}
+              </span>
+            </div>
+          {/if}
+          
+          <!-- Score Breakdown Bar Chart -->
+          <div class="score-breakdown">
+            <div class="breakdown-title">Score Breakdown:</div>
+            
+            <div class="chart-item">
+              <div class="chart-label">
+                <span class="chart-icon" style="color: #ff0000;">✋</span>
+                <span>Hands: {scoreBreakdown.hand}</span>
+              </div>
+              <div class="chart-bar">
+                <div 
+                  class="chart-fill" 
+                  style="width: {getBarWidth(scoreBreakdown.hand)}%; background-color: #ff0000;"
+                ></div>
+              </div>
+            </div>
+            
+            <div class="chart-item">
+              <div class="chart-label">
+                <span class="chart-icon" style="color: #00ff88;">😀</span>
+                <span>Head: {scoreBreakdown.head}</span>
+              </div>
+              <div class="chart-bar">
+                <div 
+                  class="chart-fill" 
+                  style="width: {getBarWidth(scoreBreakdown.head)}%; background-color: #00ff88;"
+                ></div>
+              </div>
+            </div>
+            
+            <div class="chart-item">
+              <div class="chart-label">
+                <span class="chart-icon" style="color: #0000ff;">🦵</span>
+                <span>Knees: {scoreBreakdown.knee}</span>
+              </div>
+              <div class="chart-bar">
+                <div 
+                  class="chart-fill" 
+                  style="width: {getBarWidth(scoreBreakdown.knee)}%; background-color: #0000ff;"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      {/if}
       
       <!-- <div class="status-info">
         <span class="status-text">
@@ -767,6 +848,101 @@
     100% { transform: rotate(360deg); }
   }
 
+  /* Game Score Styles */
+  .game-score {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .score-display {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .score-label {
+    color: #ccc;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .score-value {
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: bold;
+    background: rgba(0, 255, 136, 0.2);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 255, 136, 0.3);
+  }
+
+  .target-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .target-label {
+    color: #ccc;
+    font-size: 0.8rem;
+  }
+
+  .target-type {
+    font-size: 0.9rem;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  /* Score Breakdown Chart Styles */
+  .score-breakdown {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .breakdown-title {
+    color: #ccc;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+  }
+
+  .chart-item {
+    margin-bottom: 0.5rem;
+  }
+
+  .chart-label {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-bottom: 0.25rem;
+    font-size: 0.75rem;
+    color: #fff;
+  }
+
+  .chart-icon {
+    font-size: 0.9rem;
+  }
+
+  .chart-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .chart-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    min-width: 2px;
+  }
+
   @media (max-width: 768px) {
     .toggle-group {
       flex-direction: column;
@@ -776,6 +952,15 @@
     .toggle-btn .btn-content {
       min-width: 120px;
       justify-content: center;
+    }
+
+    .game-score {
+      margin-top: 0.5rem;
+      padding: 0.75rem;
+    }
+
+    .score-display {
+      margin-bottom: 0.25rem;
     }
   }
 </style>

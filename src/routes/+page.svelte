@@ -9,6 +9,8 @@
   let isWebcamActive = true; // Start with webcam active
   let isGameActive = false; // Game state
   let gameScore = 0; // Current game score
+  let currentTargetType = null; // Current target type for display
+  let scoreBreakdown = { hand: 0, head: 0, knee: 0 }; // Score breakdown by body part
   let canvasSettings = {
     width: window.innerWidth || 1920,
     height: window.innerHeight - 80 || 1000 // Subtract header height
@@ -122,16 +124,25 @@
   function handleGameStarted(event) {
     console.log('Game started!', event.detail);
     gameScore = event.detail.score;
+    scoreBreakdown = event.detail.scoreBreakdown;
   }
 
   function handleScoreUpdate(event) {
     console.log('Score updated!', event.detail);
     gameScore = event.detail.score;
+    currentTargetType = event.detail.targetType;
+    scoreBreakdown = event.detail.scoreBreakdown;
   }
 
   function handleGameEnded(event) {
     console.log('Game ended!', event.detail);
     gameScore = event.detail.finalScore;
+    currentTargetType = null;
+    // Keep scoreBreakdown for final display
+  }
+
+  function handleTargetChanged(event) {
+    currentTargetType = event.detail.targetType;
   }
 
   function toggleGame() {
@@ -141,6 +152,9 @@
     }
     
     isGameActive = !isGameActive;
+    if (!isGameActive) {
+      currentTargetType = null; // Clear target type when stopping game
+    }
     console.log('Game toggled:', isGameActive ? 'Started' : 'Stopped');
   }
   
@@ -689,6 +703,7 @@
         on:gameStarted={handleGameStarted}
         on:scoreUpdate={handleScoreUpdate}
         on:gameEnded={handleGameEnded}
+        on:targetChanged={handleTargetChanged}
       />
     </section>
 
@@ -700,6 +715,10 @@
           <WebcamPose 
             width={webcamWidth}
             height={webcamHeight}
+            gameActive={isGameActive}
+            gameScore={gameScore}
+            currentTargetType={currentTargetType}
+            scoreBreakdown={scoreBreakdown}
             on:poseUpdate={handlePoseUpdate}
             on:streamReady={handleStreamReady}
           />

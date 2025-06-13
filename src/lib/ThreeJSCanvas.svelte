@@ -18,6 +18,13 @@
   let gameScore = 0;
   let targetRadius = 50; // Collision detection radius
   let hitTargetIds = new Set(); // Track which targets have been hit
+  
+  // Score breakdown by target type
+  let scoreBreakdown = {
+    hand: 0,
+    head: 0,
+    knee: 0
+  };
 
   onMount(() => {
     if (canvasElement) {
@@ -116,9 +123,9 @@
   };
 
   const TARGET_COLORS = {
-    [TARGET_TYPES.HAND]: '#ff4444', // Red for hands
-    [TARGET_TYPES.HEAD]: '#44ff44', // Green for head
-    [TARGET_TYPES.KNEE]: '#4444ff'  // Blue for knees
+    [TARGET_TYPES.HAND]: '#ff0000', // Red for hands (matches hand landmark color)
+    [TARGET_TYPES.HEAD]: '#00ff88', // Green for head (matches pose landmark color)
+    [TARGET_TYPES.KNEE]: '#0000ff'  // Blue for knees (matches right hand color, but for legs)
   };
 
   function generateRandomTarget() {
@@ -226,13 +233,22 @@
       hitTargetIds.add(currentTarget.id);
       gameScore++;
       
+      // Update score breakdown by target type
+      scoreBreakdown[currentTarget.type]++;
+      
       // Generate new target after a short delay
+      const hitTargetType = currentTarget.type;
       setTimeout(() => {
         currentTarget = generateRandomTarget();
+        dispatch('targetChanged', { targetType: currentTarget.type });
       }, 100);
       
-      // Dispatch score update
-      dispatch('scoreUpdate', { score: gameScore, targetType: currentTarget.type });
+      // Dispatch score update with breakdown
+      dispatch('scoreUpdate', { 
+        score: gameScore, 
+        targetType: hitTargetType,
+        scoreBreakdown: { ...scoreBreakdown }
+      });
     }
   }
 
@@ -244,8 +260,10 @@
   function startGame() {
     gameScore = 0;
     hitTargetIds.clear();
+    scoreBreakdown = { hand: 0, head: 0, knee: 0 };
     currentTarget = generateRandomTarget();
-    dispatch('gameStarted', { score: gameScore });
+    dispatch('gameStarted', { score: gameScore, scoreBreakdown: { ...scoreBreakdown } });
+    dispatch('targetChanged', { targetType: currentTarget.type });
   }
 
   function stopGame() {
@@ -266,8 +284,7 @@
     // Draw target
     drawTarget(currentTarget);
     
-    // Draw game UI
-    drawGameUI();
+    // Note: Game UI (score) moved to webcam panel
   }
 
   function drawTarget(target) {
@@ -317,27 +334,6 @@
     ctx.restore();
   }
 
-  function drawGameUI() {
-    if (!ctx) return;
-    
-    // Draw score
-    ctx.save();
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-    ctx.fillRect(10, 10, 200, 60);
-    
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 20px Arial';
-    ctx.textAlign = 'left';
-    ctx.fillText(`Score: ${gameScore}`, 20, 35);
-    
-    if (currentTarget) {
-      ctx.font = '14px Arial';
-      ctx.fillStyle = currentTarget.color;
-      ctx.fillText(`Target: ${currentTarget.type.toUpperCase()}`, 20, 55);
-    }
-    
-    ctx.restore();
-  }
 
   function drawPoseLandmarks(landmarks) {
     if (!landmarks || landmarks.length === 0) return;
@@ -356,8 +352,12 @@
     // Define which pose landmarks to exclude (face points 1-10 except nose center 0)
     const excludedIndices = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
     
+    // Define body part landmark groups for color coding
+    const headLandmarks = new Set([0]); // Nose center
+    const legLandmarks = new Set([23, 24, 25, 26, 27, 28, 29, 30, 31, 32]); // Hips to feet
+    const armLandmarks = new Set([11, 12, 13, 14, 15, 16]); // Shoulders to wrists
+    
     // Draw connections first (behind landmarks)
-    ctx.strokeStyle = '#00ff88';
     ctx.lineWidth = 3;
     
     connections.forEach(([startIdx, endIdx]) => {
@@ -367,6 +367,17 @@
         const end = landmarks[endIdx];
         
         if (start.visibility > 0.5 && end.visibility > 0.5) {
+          // Color code connections based on body parts
+          if (legLandmarks.has(startIdx) && legLandmarks.has(endIdx)) {
+            ctx.strokeStyle = '#0000ff'; // Blue for legs
+          } else if (armLandmarks.has(startIdx) && armLandmarks.has(endIdx)) {
+            ctx.strokeStyle = '#ff0000'; // Red for arms
+          } else if (headLandmarks.has(startIdx) || headLandmarks.has(endIdx)) {
+            ctx.strokeStyle = '#00ff88'; // Green for head connections
+          } else {
+            ctx.strokeStyle = '#888888'; // Grey for torso and other connections
+          }
+          
           ctx.beginPath();
           ctx.moveTo(start.x * width, start.y * height);
           ctx.lineTo(end.x * width, end.y * height);
@@ -375,10 +386,20 @@
       }
     });
     
-    // Draw landmark points (excluding face points 1-10)
-    ctx.fillStyle = '#00ff88';
+    // Draw landmark points (excluding face points 1-10) with color coding
     landmarks.forEach((landmark, index) => {
       if (!excludedIndices.has(index) && landmark.visibility && landmark.visibility > 0.5) {
+        // Color code landmarks based on body parts
+        if (headLandmarks.has(index)) {
+          ctx.fillStyle = '#00ff88'; // Green for head
+        } else if (legLandmarks.has(index)) {
+          ctx.fillStyle = '#0000ff'; // Blue for legs
+        } else if (armLandmarks.has(index)) {
+          ctx.fillStyle = '#ff0000'; // Red for arms
+        } else {
+          ctx.fillStyle = '#888888'; // Grey for other points
+        }
+        
         ctx.beginPath();
         ctx.arc(landmark.x * width, landmark.y * height, 6, 0, 2 * Math.PI);
         ctx.fill();
@@ -389,7 +410,7 @@
   function drawHandLandmarks(landmarks, hand) {
     if (!landmarks || landmarks.length === 0) return;
     
-    const color = hand === 'left' ? '#ff0000' : '#0000ff';
+    const color = '#ff0000'; // Red for both hands to match target color
     
     // Hand connections for better visualization
     const handConnections = [
@@ -457,16 +478,16 @@
       mouthInner: [78, 95, 88, 178, 87, 14, 317, 402, 318, 324, 308, 324]
     };
     
-    // Draw each facial feature with different colors
+    // Draw each facial feature with green color to match head target
     const featureColors = {
-      faceContour: '#ffff00',
-      leftEyebrow: '#ff8800',
-      rightEyebrow: '#ff8800', 
-      leftEye: '#00ffff',
-      rightEye: '#00ffff',
-      nose: '#ff00ff',
-      mouthOuter: '#ff0088',
-      mouthInner: '#ff4444'
+      faceContour: '#00ff88',
+      leftEyebrow: '#00ff88',
+      rightEyebrow: '#00ff88', 
+      leftEye: '#00ff88',
+      rightEye: '#00ff88',
+      nose: '#00ff88',
+      mouthOuter: '#00ff88',
+      mouthInner: '#00ff88'
     };
     
     const featureSizes = {
@@ -527,13 +548,13 @@
     // Draw connections
     Object.entries(connections).forEach(([featureName, featureConnections]) => {
       if (featureName.includes('Eye')) {
-        ctx.strokeStyle = '#00ffff';
+        ctx.strokeStyle = '#00ff88'; // Green for eyes to match head target
         ctx.lineWidth = 1;
       } else if (featureName.includes('Eyebrow')) {
-        ctx.strokeStyle = '#ff8800';
+        ctx.strokeStyle = '#00ff88'; // Green for eyebrows to match head target
         ctx.lineWidth = 1;
       } else if (featureName.includes('mouth')) {
-        ctx.strokeStyle = '#ff0088'; // Pink lines for mouth
+        ctx.strokeStyle = '#00ff88'; // Green for mouth to match head target
         ctx.lineWidth = 3;
       }
       
