@@ -113,7 +113,7 @@
 
   function handleCanvasUpdate(event) {
     // Handle updates from the 3D canvas
-    console.log('Canvas update:', event.detail);
+    // Logging removed for performance
   }
 
   function handleGameDataUpdate(event) {
@@ -142,7 +142,7 @@
   }
 
   function handleScoreUpdate(event) {
-    console.log('Score updated!', event.detail);
+    // Logging removed for performance
     gameScore = event.detail.score;
     currentTargetType = event.detail.targetType;
     scoreBreakdown = event.detail.scoreBreakdown;
