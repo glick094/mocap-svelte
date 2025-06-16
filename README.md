@@ -42,7 +42,7 @@ The interface consists of three main areas:
 - **Game Controls**: Start/stop target game with live score display
 - **Settings**: Configure capture quality, smoothing, and canvas dimensions
 
-### Main Canvas ([ThreeJSCanvas.svelte](src/lib/ThreeJSCanvas.svelte))
+### Main Canvas ([ThreeJSCanvas.svelte](src/components/ThreeJSCanvas.svelte))
 
 - **Real-time Pose Visualization**: Color-coded skeletal overlay
   - Green: Head/face landmarks and connections
@@ -51,7 +51,7 @@ The interface consists of three main areas:
 - **Interactive Targets**: Dynamically positioned game targets with collision detection
 - **Mirrored Display**: Natural mirror-like interaction
 
-### Side Panel ([WebcamPose.svelte](src/lib/WebcamPose.svelte))
+### Side Panel ([WebcamPose.svelte](src/components/WebcamPose.svelte))
 
 - **Webcam Feed**: Live camera view with pose overlay
 - **MediaPipe Status**: Connection and processing status
@@ -69,7 +69,7 @@ The platform uses **Google MediaPipe Holistic** for comprehensive human pose est
 - **468 Face Landmarks**: Facial feature detection
 - **Real-time Processing**: ~30 FPS pose estimation
 
-Implementation: [WebcamPose.svelte](src/lib/WebcamPose.svelte#L188-L339)
+Implementation: [WebcamPose.svelte](src/components/WebcamPose.svelte#L188-L339)
 
 ### Motion Smoothing
 
@@ -79,7 +79,7 @@ Raw pose data is processed using a **Savitzky-Golay filter** to reduce noise whi
 - **Polynomial Order**: 2nd-order polynomial fitting
 - **Temporal Coherence**: Maintains natural movement flow
 
-Implementation: [+page.svelte](src/routes/+page.svelte#L217-L370)
+Implementation: [smoothingService.ts](src/services/smoothingService.ts) and [+page.svelte](src/routes/+page.svelte)
 
 ### Game Mechanics
 
@@ -92,7 +92,7 @@ Target generation and collision detection system:
 - **Enhanced Collision**: Uses all hand landmarks (not just fingertips) for robust detection
 - **Real-time Feedback**: Immediate visual and scoring response
 
-Implementation: [ThreeJSCanvas.svelte](src/lib/ThreeJSCanvas.svelte#L135-L290)
+Implementation: [ThreeJSCanvas.svelte](src/components/ThreeJSCanvas.svelte#L135-L290)
 
 ## Data Recording
 
@@ -100,12 +100,12 @@ Implementation: [ThreeJSCanvas.svelte](src/lib/ThreeJSCanvas.svelte#L135-L290)
 
 The platform captures two synchronized datasets:
 
-1. **Raw MediaPipe Data** ([+page.svelte](src/routes/+page.svelte#L196-L208))
+1. **Raw MediaPipe Data** ([recordingService.ts](src/services/recordingService.ts))
    - Unfiltered pose landmarks directly from MediaPipe
    - High temporal resolution for detailed analysis
    - Includes confidence scores and visibility flags
 
-2. **Processed Game Data** ([+page.svelte](src/routes/+page.svelte#L108-L121))
+2. **Processed Game Data** ([+page.svelte](src/routes/+page.svelte) with [smoothingService.ts](src/services/smoothingService.ts))
    - Smoothed pose data used for visualization
    - Game state information and target interactions
    - Collision events with hit keypoint identification
@@ -120,7 +120,7 @@ Each recording session generates:
 
 CSV includes target data: `target_showing`, `target_id`, `target_type`, `target_x`, `target_y`, `target_status`
 
-Implementation: [+page.svelte](src/routes/+page.svelte#L385-L493)
+Implementation: [recordingService.ts](src/services/recordingService.ts) and [+page.svelte](src/routes/+page.svelte)
 
 ## Developer Guide
 
@@ -128,13 +128,24 @@ Implementation: [+page.svelte](src/routes/+page.svelte#L385-L493)
 
 ```bash
 src/
-├── lib/
-│   ├── ThreeJSCanvas.svelte    # Main game canvas and pose visualization
-│   ├── WebcamPose.svelte       # MediaPipe integration and webcam
-│   ├── SettingsModal.svelte    # Configuration interface
-│   └── ControlPanel.svelte     # Recording and playback controls
-├── routes/
-│   └── +page.svelte           # Main application layout and data handling
+├── components/                 # UI Components
+│   ├── WebcamPose.svelte      # MediaPipe integration and webcam
+│   ├── ThreeJSCanvas.svelte   # Main game canvas and pose visualization
+│   ├── SettingsModal.svelte   # Configuration interface
+│   ├── ControlPanel.svelte    # Recording and playback controls
+│   └── WebcamPanel.svelte     # Advanced webcam processing
+├── services/                   # Business Logic
+│   ├── mediaPipeService.ts    # Pose detection and drawing utilities
+│   ├── recordingService.ts    # Data recording and file operations
+│   └── smoothingService.ts    # Signal processing algorithms
+├── stores/                     # State Management
+│   ├── gameStore.ts           # Game state and scoring
+│   └── appStore.ts            # App-wide settings and UI state
+├── routes/                     # SvelteKit Routes
+│   ├── +page.svelte           # Main application interface
+│   └── page-old.svelte        # Legacy modular interface
+└── lib/                        # Legacy (being phased out)
+    └── index.ts               # Re-exports for compatibility
 ```
 
 ### Key Technologies
@@ -142,12 +153,15 @@ src/
 - **Frontend**: SvelteKit + TypeScript
 - **Pose Detection**: MediaPipe Holistic (WebAssembly)
 - **Signal Processing**: Custom Savitzky-Golay implementation
-- **Graphics**: HTML5 Canvas 2D API
+- **3D Graphics**: Three.js for pose visualization
 - **Data Export**: Browser-native Blob API for file generation
+- **State Management**: Svelte stores with reactive updates
+- **Testing**: Vitest + Testing Library for comprehensive coverage
+- **Architecture**: Service-oriented design with TypeScript
 
 ### Configuration Options
 
-Accessible via Settings modal ([SettingsModal.svelte](src/lib/SettingsModal.svelte)):
+Accessible via Settings modal ([SettingsModal.svelte](src/components/SettingsModal.svelte)):
 
 - **Capture Quality**: Resolution and frame rate settings
 - **Smoothing Parameters**: Filter window size and polynomial order
@@ -205,13 +219,23 @@ The codebase uses:
 
 - **TypeScript**: For type safety and developer experience
 - **Svelte Reactivity**: For efficient real-time updates
-- **Modular Architecture**: Separation of concerns for maintainability
+- **Service-Oriented Architecture**: Clear separation of concerns with dedicated services
+- **Comprehensive Testing**: Unit and component tests for reliability
 
-Key extension points:
+### Architecture Benefits
 
-- **Target Types**: Add new target types in [ThreeJSCanvas.svelte](src/lib/ThreeJSCanvas.svelte#L123-L133)
-- **Export Formats**: Modify data structure in [+page.svelte](src/routes/+page.svelte#L425-L493)
-- **Pose Processing**: Extend filtering in [smoothLandmarks function](src/routes/+page.svelte#L335-L370)
+- **Services**: Reusable business logic separated from UI components
+- **Stores**: Centralized state management with reactive updates
+- **Components**: Pure UI components with clear prop interfaces
+- **Type Safety**: Full TypeScript coverage across all modules
+
+### Key Extension Points
+
+- **Target Types**: Add new target types in [ThreeJSCanvas.svelte](src/components/ThreeJSCanvas.svelte#L123-L133)
+- **Export Formats**: Extend data structures in [recordingService.ts](src/services/recordingService.ts)
+- **Pose Processing**: Add filtering algorithms in [smoothingService.ts](src/services/smoothingService.ts)
+- **Game Logic**: Modify scoring and mechanics in [gameStore.ts](src/stores/gameStore.ts)
+- **MediaPipe Integration**: Extend pose detection in [mediaPipeService.ts](src/services/mediaPipeService.ts)
 
 ## License
 
