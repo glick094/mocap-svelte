@@ -208,40 +208,29 @@
   }
   
   function generateHipSwayRegions() {
-    if (!poseData || !poseData.poseLandmarks) return null;
-    
-    // Get shoulder landmarks to determine body width
-    const leftShoulder = poseData.poseLandmarks[11]; // Left shoulder
-    const rightShoulder = poseData.poseLandmarks[12]; // Right shoulder
-    
-    if (!leftShoulder || !rightShoulder) return null;
-    
-    const shoulderCenter = {
-      x: (leftShoulder.x + rightShoulder.x) / 2,
-      y: (leftShoulder.y + rightShoulder.y) / 2
-    };
-    
-    const shoulderWidth = Math.abs(leftShoulder.x - rightShoulder.x) * width;
-    const regionWidth = shoulderWidth * 1.2; // 20% wider than shoulders
+    // Create fixed rectangular target zones on the sides of the screen
+    const regionWidth = width * 0.15; // 15% of screen width for each side
+    const regionHeight = height * 0.6; // 60% of screen height
+    const regionY = height * 0.2; // Start at 20% from top
     
     return {
-      center: {
-        x: shoulderCenter.x * width,
-        y: height * 0.6 // Position at torso level
-      },
-      width: regionWidth,
-      height: height * 0.4, // Cover torso area
       leftRegion: {
-        x: shoulderCenter.x * width - regionWidth / 2,
-        y: height * 0.4,
-        width: regionWidth / 2,
-        height: height * 0.4
+        x: 0, // Left edge of screen
+        y: regionY,
+        width: regionWidth,
+        height: regionHeight
       },
       rightRegion: {
-        x: shoulderCenter.x * width,
-        y: height * 0.4,
-        width: regionWidth / 2,
-        height: height * 0.4
+        x: width - regionWidth, // Right edge of screen
+        y: regionY,
+        width: regionWidth,
+        height: regionHeight
+      },
+      // Center line for visual reference
+      centerLine: {
+        x: width / 2,
+        y: regionY,
+        height: regionHeight
       }
     };
   }
@@ -319,52 +308,78 @@
     
     if (!leftHip || !rightHip) return;
     
-    const hipCenter = {
-      x: (leftHip.x + rightHip.x) / 2 * width,
-      y: (leftHip.y + rightHip.y) / 2 * height
+    // Convert hip coordinates to screen space
+    const leftHipScreen = {
+      x: leftHip.x * width,
+      y: leftHip.y * height
+    };
+    const rightHipScreen = {
+      x: rightHip.x * width,
+      y: rightHip.y * height
     };
     
-    // Determine which side the hips are on
-    const centerX = hipRegions.center.x;
-    let currentSide = null;
+    // Determine which region to check based on current target side
+    let inTargetRegion = false;
     
-    if (hipCenter.x < centerX - 20) { // 20px threshold
-      currentSide = 'left';
-    } else if (hipCenter.x > centerX + 20) {
-      currentSide = 'right';
+    if (hipSwayState.targetSide === 'left') {
+      // Check if either hip point is inside left target region
+      inTargetRegion = (
+        (leftHipScreen.x >= hipRegions.leftRegion.x && 
+         leftHipScreen.x <= hipRegions.leftRegion.x + hipRegions.leftRegion.width &&
+         leftHipScreen.y >= hipRegions.leftRegion.y && 
+         leftHipScreen.y <= hipRegions.leftRegion.y + hipRegions.leftRegion.height) ||
+        (rightHipScreen.x >= hipRegions.leftRegion.x && 
+         rightHipScreen.x <= hipRegions.leftRegion.x + hipRegions.leftRegion.width &&
+         rightHipScreen.y >= hipRegions.leftRegion.y && 
+         rightHipScreen.y <= hipRegions.leftRegion.y + hipRegions.leftRegion.height)
+      );
+    } else {
+      // Check if either hip point is inside right target region
+      inTargetRegion = (
+        (leftHipScreen.x >= hipRegions.rightRegion.x && 
+         leftHipScreen.x <= hipRegions.rightRegion.x + hipRegions.rightRegion.width &&
+         leftHipScreen.y >= hipRegions.rightRegion.y && 
+         leftHipScreen.y <= hipRegions.rightRegion.y + hipRegions.rightRegion.height) ||
+        (rightHipScreen.x >= hipRegions.rightRegion.x && 
+         rightHipScreen.x <= hipRegions.rightRegion.x + hipRegions.rightRegion.width &&
+         rightHipScreen.y >= hipRegions.rightRegion.y && 
+         rightHipScreen.y <= hipRegions.rightRegion.y + hipRegions.rightRegion.height)
+      );
     }
     
-    // Track sway progression
-    if (currentSide && currentSide !== hipSwayState.currentSide) {
-      if (hipSwayState.lastSide && hipSwayState.lastSide !== currentSide) {
-        // Completed a sway from one side to the other
-        if (currentSide === 'left') {
-          hipSwayState.leftSideCount++;
-        } else {
-          hipSwayState.rightSideCount++;
-        }
-        
-        gameScore++;
-        const totalCompleted = hipSwayState.leftSideCount + hipSwayState.rightSideCount;
-        
-        dispatch('scoreUpdate', {
-          score: gameScore,
-          targetType: `hip-${currentSide}`,
-          scoreBreakdown: { hand: 0, head: 0, knee: 0 },
-          modeProgress: { completed: totalCompleted, total: 8 }
-        });
-        
-        // Check if game mode is complete
-        if (totalCompleted >= 8) {
-          setTimeout(() => {
-            dispatch('gameEnded', { finalScore: gameScore, completed: true });
-          }, 1000);
-        }
-      }
+    // Trial progression logic
+    if (inTargetRegion && !hipSwayState.inTargetRegion && !hipSwayState.trialCompleted) {
+      // Just entered target region - mark as completed
+      hipSwayState.trialCompleted = true;
+      hipSwayState.currentTrial++;
+      gameScore++;
       
-      hipSwayState.lastSide = hipSwayState.currentSide;
-      hipSwayState.currentSide = currentSide;
+      console.log(`Hip sway trial ${hipSwayState.currentTrial} completed (${hipSwayState.targetSide} side)!`);
+      
+      dispatch('scoreUpdate', {
+        score: gameScore,
+        targetType: `hip-${hipSwayState.targetSide}`,
+        scoreBreakdown: { hand: 0, head: 0, knee: 0 },
+        modeProgress: { completed: hipSwayState.currentTrial, total: 8 }
+      });
+      
+      // Check if all trials completed
+      if (hipSwayState.currentTrial >= 8) {
+        setTimeout(() => {
+          dispatch('gameEnded', { finalScore: gameScore, completed: true });
+        }, 1000);
+      } else {
+        // Switch to opposite side for next trial after a brief delay
+        setTimeout(() => {
+          hipSwayState.targetSide = hipSwayState.targetSide === 'left' ? 'right' : 'left';
+          hipSwayState.trialCompleted = false;
+          console.log(`Next trial: target side is now ${hipSwayState.targetSide}`);
+        }, 500);
+      }
     }
+    
+    // Update region tracking
+    hipSwayState.inTargetRegion = inTargetRegion;
   }
   
   function checkFixedTargetCollisions(data) {
@@ -615,11 +630,10 @@
     switch (gameMode) {
       case GAME_MODES.HIPS_SWAY:
         hipSwayState = {
-          leftSideCount: 0,
-          rightSideCount: 0,
-          lastSide: null,
-          currentSide: null,
-          centerPosition: null
+          currentTrial: 0,
+          targetSide: 'left', // Start with left side
+          inTargetRegion: false,
+          trialCompleted: false
         };
         currentTarget = null; // No single target for hip sway
         break;
@@ -698,10 +712,11 @@
     if (!hipRegions) return;
     
     ctx.save();
-    ctx.globalAlpha = 0.3;
     
-    // Draw left region
-    if (hipSwayState.currentSide === 'left') {
+    // Only draw the current target region
+    ctx.globalAlpha = 0.6;
+    
+    if (hipSwayState.targetSide === 'left') {
       ctx.fillStyle = TARGET_COLORS[TARGET_TYPES.HIP_LEFT];
       ctx.fillRect(
         hipRegions.leftRegion.x,
@@ -709,10 +724,18 @@
         hipRegions.leftRegion.width,
         hipRegions.leftRegion.height
       );
-    }
-    
-    // Draw right region
-    if (hipSwayState.currentSide === 'right') {
+      
+      // Draw outline for current target
+      ctx.globalAlpha = 0.8;
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(
+        hipRegions.leftRegion.x,
+        hipRegions.leftRegion.y,
+        hipRegions.leftRegion.width,
+        hipRegions.leftRegion.height
+      );
+    } else {
       ctx.fillStyle = TARGET_COLORS[TARGET_TYPES.HIP_RIGHT];
       ctx.fillRect(
         hipRegions.rightRegion.x,
@@ -720,15 +743,26 @@
         hipRegions.rightRegion.width,
         hipRegions.rightRegion.height
       );
+      
+      // Draw outline for current target
+      ctx.globalAlpha = 0.8;
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(
+        hipRegions.rightRegion.x,
+        hipRegions.rightRegion.y,
+        hipRegions.rightRegion.width,
+        hipRegions.rightRegion.height
+      );
     }
     
-    // Draw center line
-    ctx.globalAlpha = 0.5;
+    // Draw center line for reference
+    ctx.globalAlpha = 0.3;
     ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(hipRegions.center.x, hipRegions.leftRegion.y);
-    ctx.lineTo(hipRegions.center.x, hipRegions.leftRegion.y + hipRegions.leftRegion.height);
+    ctx.moveTo(hipRegions.centerLine.x, hipRegions.centerLine.y);
+    ctx.lineTo(hipRegions.centerLine.x, hipRegions.centerLine.y + hipRegions.centerLine.height);
     ctx.stroke();
     
     ctx.restore();
@@ -738,9 +772,19 @@
     ctx.font = '24px Arial';
     ctx.textAlign = 'center';
     ctx.fillText(
-      `Sway Left: ${hipSwayState.leftSideCount}/4  Right: ${hipSwayState.rightSideCount}/4`,
+      `Trial: ${hipSwayState.currentTrial}/8`,
       width / 2,
       50
+    );
+    
+    // Draw instruction text
+    ctx.fillStyle = '#cccccc';
+    ctx.font = '18px Arial';
+    const sideText = hipSwayState.targetSide === 'left' ? 'LEFT' : 'RIGHT';
+    ctx.fillText(
+      `Move your hips to the ${sideText} rectangle`,
+      width / 2,
+      height - 30
     );
   }
   
