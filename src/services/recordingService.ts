@@ -58,8 +58,8 @@ export function createCSVHeader() {
     'target_showing',    // Boolean: is a target currently displayed
     'target_id',         // Unique identifier for the target
     'target_type',       // Type: hand, head, or knee
-    'target_x',          // Target X position on canvas
-    'target_y',          // Target Y position on canvas
+    'target_x',          // Target X position (normalized 0-1, same as MediaPipe coordinates)
+    'target_y',          // Target Y position (normalized 0-1, same as MediaPipe coordinates)
     'target_status'      // Status: start, unobtained, obtained, end
   ];
 

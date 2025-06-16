@@ -304,8 +304,8 @@
       targetShowing: true,
       targetId: currentTarget.id,
       targetType: currentTarget.type,
-      targetX: currentTarget.x,
-      targetY: currentTarget.y,
+      targetX: currentTarget.x / width,  // Normalize to 0-1 space (MediaPipe coordinate system)
+      targetY: currentTarget.y / height, // Normalize to 0-1 space (MediaPipe coordinate system)
       status: 'start',
       startTime: Date.now(),
       hitKeypoint: null,
@@ -318,13 +318,13 @@
   }
 
   function emitTargetData() {
-    // Create target data for current frame
+    // Create target data for current frame with normalized coordinates (0-1 space)
     const targetData = currentTargetData ? {
       targetShowing: !!currentTarget,
       targetId: currentTargetData.targetId,
       targetType: currentTargetData.targetType,
-      targetX: currentTargetData.targetX,
-      targetY: currentTargetData.targetY,
+      targetX: currentTargetData.targetX,  // Already normalized in createTargetData
+      targetY: currentTargetData.targetY,  // Already normalized in createTargetData
       status: currentTargetData.status
     } : {
       targetShowing: false,

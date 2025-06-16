@@ -120,6 +120,12 @@ Each recording session generates:
 
 CSV includes target data: `target_showing`, `target_id`, `target_type`, `target_x`, `target_y`, `target_status`
 
+**Coordinate System**: All position data (pose landmarks and targets) use normalized coordinates (0-1 range) where:
+
+- `x=0` is left edge, `x=1` is right edge
+- `y=0` is top edge, `y=1` is bottom edge
+- This ensures consistency between MediaPipe landmarks and target positions
+
 Implementation: [recordingService.ts](src/services/recordingService.ts) and [+page.svelte](src/routes/+page.svelte)
 
 ## Developer Guide

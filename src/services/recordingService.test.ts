@@ -129,13 +129,13 @@ describe('recordingService', () => {
         ]
       };
 
-      // Mock global target data
+      // Mock global target data (normalized coordinates 0-1)
       (globalThis as any).currentTargetData = {
         targetShowing: true,
         targetId: 'test-target',
         targetType: 'hand',
-        targetX: 100,
-        targetY: 200,
+        targetX: 0.5,  // Normalized coordinate (0-1 range)
+        targetY: 0.3,  // Normalized coordinate (0-1 range)
         status: 'start'
       };
 
@@ -151,6 +151,8 @@ describe('recordingService', () => {
       expect(rowArray[6]).toBe('true'); // target showing
       expect(rowArray[7]).toBe('test-target'); // target id
       expect(rowArray[8]).toBe('hand'); // target type
+      expect(rowArray[9]).toBe('0.5'); // target x (normalized)
+      expect(rowArray[10]).toBe('0.3'); // target y (normalized)
     });
 
     it('should handle missing landmarks gracefully', () => {

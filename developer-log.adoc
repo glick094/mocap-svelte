@@ -72,6 +72,7 @@
 
 == Next steps: 
 
-* continue updating target csv outputs. 
-* have the webcam inverted horizontally so the threejs is not mirrored
-* add qr reader for inputting participant data
+* [x] continue updating target csv outputs. 
+* [x] have the webcam inverted horizontally so the threejs is not mirrored
+* [x] add qr reader for inputting participant data
+**  [ ] fix the qr reader so it actually scans
