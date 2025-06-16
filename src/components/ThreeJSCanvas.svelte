@@ -12,6 +12,8 @@
   export let height = 600;
   export let poseData = null;
   export let gameActive = false;
+  export let gameMode = 'hips-sway';
+  export let gameModeProgress = { completed: 0, total: 8 };
 
   // Game state
   let currentTarget = null;
@@ -122,21 +124,130 @@
     dispatch('gameDataUpdate', gameData);
   }
 
+  // Game modes
+  const GAME_MODES = {
+    HIPS_SWAY: 'hips-sway',
+    HANDS_FIXED: 'hands-fixed',
+    HEAD_FIXED: 'head-fixed',
+    RANDOM: 'random'
+  };
+
   // Game functions
   const TARGET_TYPES = {
     HAND: 'hand',
     HEAD: 'head', 
-    KNEE: 'knee'
+    KNEE: 'knee',
+    HIP_LEFT: 'hip-left',
+    HIP_RIGHT: 'hip-right'
   };
 
   const TARGET_COLORS = {
     [TARGET_TYPES.HAND]: '#ff0000', // Red for hands (matches hand landmark color)
     [TARGET_TYPES.HEAD]: '#00ff88', // Green for head (matches pose landmark color)
-    [TARGET_TYPES.KNEE]: '#0000ff'  // Blue for knees (matches right hand color, but for legs)
+    [TARGET_TYPES.KNEE]: '#0000ff',  // Blue for knees (matches right hand color, but for legs)
+    [TARGET_TYPES.HIP_LEFT]: '#ffff00', // Yellow for left hip region
+    [TARGET_TYPES.HIP_RIGHT]: '#ffff00' // Yellow for right hip region
   };
 
+  // Game mode specific state
+  let hipSwayState = {
+    leftSideCount: 0,
+    rightSideCount: 0,
+    lastSide: null,
+    currentSide: null,
+    centerPosition: null
+  };
+  
+  let fixedTargets = []; // For hands-fixed and head-fixed modes
+  let currentFixedTargetIndex = 0;
+
+  function generateFigure8Targets() {
+    const centerX = width * 0.5;
+    const centerY = height * 0.5;
+    const radiusX = width * 0.15; // 15% of screen width
+    const radiusY = height * 0.1;  // 10% of screen height
+    
+    const targets = [];
+    for (let i = 0; i < 8; i++) {
+      const t = (i / 8) * 2 * Math.PI;
+      // Figure-8 parametric equations
+      const x = centerX + radiusX * Math.sin(t);
+      const y = centerY + radiusY * Math.sin(2 * t);
+      
+      targets.push({
+        id: `figure8_${i}`,
+        type: TARGET_TYPES.HAND,
+        x: x,
+        y: y,
+        color: TARGET_COLORS[TARGET_TYPES.HAND]
+      });
+    }
+    return targets;
+  }
+  
+  function generateCircleTargets() {
+    const centerX = width * 0.5;
+    const centerY = height * 0.3; // Positioned higher for head tracking
+    const radius = Math.min(width, height) * 0.12; // 12% of smallest dimension
+    
+    const targets = [];
+    for (let i = 0; i < 8; i++) {
+      const angle = (i / 8) * 2 * Math.PI;
+      const x = centerX + radius * Math.cos(angle);
+      const y = centerY + radius * Math.sin(angle);
+      
+      targets.push({
+        id: `circle_${i}`,
+        type: TARGET_TYPES.HEAD,
+        x: x,
+        y: y,
+        color: TARGET_COLORS[TARGET_TYPES.HEAD]
+      });
+    }
+    return targets;
+  }
+  
+  function generateHipSwayRegions() {
+    if (!poseData || !poseData.poseLandmarks) return null;
+    
+    // Get shoulder landmarks to determine body width
+    const leftShoulder = poseData.poseLandmarks[11]; // Left shoulder
+    const rightShoulder = poseData.poseLandmarks[12]; // Right shoulder
+    
+    if (!leftShoulder || !rightShoulder) return null;
+    
+    const shoulderCenter = {
+      x: (leftShoulder.x + rightShoulder.x) / 2,
+      y: (leftShoulder.y + rightShoulder.y) / 2
+    };
+    
+    const shoulderWidth = Math.abs(leftShoulder.x - rightShoulder.x) * width;
+    const regionWidth = shoulderWidth * 1.2; // 20% wider than shoulders
+    
+    return {
+      center: {
+        x: shoulderCenter.x * width,
+        y: height * 0.6 // Position at torso level
+      },
+      width: regionWidth,
+      height: height * 0.4, // Cover torso area
+      leftRegion: {
+        x: shoulderCenter.x * width - regionWidth / 2,
+        y: height * 0.4,
+        width: regionWidth / 2,
+        height: height * 0.4
+      },
+      rightRegion: {
+        x: shoulderCenter.x * width,
+        y: height * 0.4,
+        width: regionWidth / 2,
+        height: height * 0.4
+      }
+    };
+  }
+
   function generateRandomTarget() {
-    const types = Object.values(TARGET_TYPES);
+    const types = [TARGET_TYPES.HAND, TARGET_TYPES.HEAD, TARGET_TYPES.KNEE];
     const targetType = types[Math.floor(Math.random() * types.length)];
     
     // Calculate 5% border margins (center 90% of screen)
@@ -179,6 +290,161 @@
   }
 
   function checkCollisions(data) {
+    if (!data) return;
+    
+    switch (gameMode) {
+      case GAME_MODES.HIPS_SWAY:
+        checkHipSwayCollisions(data);
+        break;
+      case GAME_MODES.HANDS_FIXED:
+      case GAME_MODES.HEAD_FIXED:
+        checkFixedTargetCollisions(data);
+        break;
+      case GAME_MODES.RANDOM:
+      default:
+        checkRandomTargetCollisions(data);
+        break;
+    }
+  }
+  
+  function checkHipSwayCollisions(data) {
+    if (!data.poseLandmarks) return;
+    
+    const hipRegions = generateHipSwayRegions();
+    if (!hipRegions) return;
+    
+    // Get hip landmarks (23 = left hip, 24 = right hip)
+    const leftHip = data.poseLandmarks[23];
+    const rightHip = data.poseLandmarks[24];
+    
+    if (!leftHip || !rightHip) return;
+    
+    const hipCenter = {
+      x: (leftHip.x + rightHip.x) / 2 * width,
+      y: (leftHip.y + rightHip.y) / 2 * height
+    };
+    
+    // Determine which side the hips are on
+    const centerX = hipRegions.center.x;
+    let currentSide = null;
+    
+    if (hipCenter.x < centerX - 20) { // 20px threshold
+      currentSide = 'left';
+    } else if (hipCenter.x > centerX + 20) {
+      currentSide = 'right';
+    }
+    
+    // Track sway progression
+    if (currentSide && currentSide !== hipSwayState.currentSide) {
+      if (hipSwayState.lastSide && hipSwayState.lastSide !== currentSide) {
+        // Completed a sway from one side to the other
+        if (currentSide === 'left') {
+          hipSwayState.leftSideCount++;
+        } else {
+          hipSwayState.rightSideCount++;
+        }
+        
+        gameScore++;
+        const totalCompleted = hipSwayState.leftSideCount + hipSwayState.rightSideCount;
+        
+        dispatch('scoreUpdate', {
+          score: gameScore,
+          targetType: `hip-${currentSide}`,
+          scoreBreakdown: { hand: 0, head: 0, knee: 0 },
+          modeProgress: { completed: totalCompleted, total: 8 }
+        });
+        
+        // Check if game mode is complete
+        if (totalCompleted >= 8) {
+          setTimeout(() => {
+            dispatch('gameEnded', { finalScore: gameScore, completed: true });
+          }, 1000);
+        }
+      }
+      
+      hipSwayState.lastSide = hipSwayState.currentSide;
+      hipSwayState.currentSide = currentSide;
+    }
+  }
+  
+  function checkFixedTargetCollisions(data) {
+    if (fixedTargets.length === 0 || currentFixedTargetIndex >= fixedTargets.length) return;
+    
+    const currentTarget = fixedTargets[currentFixedTargetIndex];
+    if (!currentTarget) return;
+    
+    let targetHit = false;
+    let hitKeypoint = null;
+    const targetX = currentTarget.x;
+    const targetY = currentTarget.y;
+    
+    // Check collision based on target type
+    if (currentTarget.type === TARGET_TYPES.HAND) {
+      targetHit = checkHandCollision(data, targetX, targetY);
+      if (targetHit) hitKeypoint = 'hand';
+    } else if (currentTarget.type === TARGET_TYPES.HEAD) {
+      targetHit = checkHeadCollision(data, targetX, targetY);
+      if (targetHit) hitKeypoint = 'head';
+    }
+    
+    if (targetHit) {
+      currentFixedTargetIndex++;
+      gameScore++;
+      
+      dispatch('scoreUpdate', {
+        score: gameScore,
+        targetType: currentTarget.type,
+        scoreBreakdown: { hand: 0, head: 0, knee: 0 },
+        modeProgress: { completed: currentFixedTargetIndex, total: fixedTargets.length }
+      });
+      
+      // Check if all targets completed
+      if (currentFixedTargetIndex >= fixedTargets.length) {
+        setTimeout(() => {
+          dispatch('gameEnded', { finalScore: gameScore, completed: true });
+        }, 1000);
+      }
+    }
+  }
+  
+  function checkHandCollision(data, targetX, targetY) {
+    // Check all landmarks in both hands
+    if (data.leftHandLandmarks) {
+      for (let landmark of data.leftHandLandmarks) {
+        if (landmark && checkDistance(landmark.x * width, landmark.y * height, targetX, targetY)) {
+          return true;
+        }
+      }
+    }
+    if (data.rightHandLandmarks) {
+      for (let landmark of data.rightHandLandmarks) {
+        if (landmark && checkDistance(landmark.x * width, landmark.y * height, targetX, targetY)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+  
+  function checkHeadCollision(data, targetX, targetY) {
+    // Check face landmarks first
+    if (data.faceLandmarks && data.faceLandmarks[1]) {
+      const nose = data.faceLandmarks[1];
+      if (checkDistance(nose.x * width, nose.y * height, targetX, targetY)) {
+        return true;
+      }
+    }
+    // Fallback to pose nose
+    if (data.poseLandmarks && data.poseLandmarks[0]) {
+      const poseNose = data.poseLandmarks[0];
+      if (checkDistance(poseNose.x * width, poseNose.y * height, targetX, targetY)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function checkRandomTargetCollisions(data) {
     if (!currentTarget || !data) return;
 
     let targetHit = false;
@@ -344,10 +610,48 @@
     hitTargetIds.clear();
     scoreBreakdown = { hand: 0, head: 0, knee: 0 };
     targetHistory = [];
-    currentTarget = generateRandomTarget();
-    createTargetData();
-    dispatch('gameStarted', { score: gameScore, scoreBreakdown: { ...scoreBreakdown } });
-    dispatch('targetChanged', { targetType: currentTarget.type });
+    
+    // Initialize based on game mode
+    switch (gameMode) {
+      case GAME_MODES.HIPS_SWAY:
+        hipSwayState = {
+          leftSideCount: 0,
+          rightSideCount: 0,
+          lastSide: null,
+          currentSide: null,
+          centerPosition: null
+        };
+        currentTarget = null; // No single target for hip sway
+        break;
+        
+      case GAME_MODES.HANDS_FIXED:
+        fixedTargets = generateFigure8Targets();
+        currentFixedTargetIndex = 0;
+        currentTarget = fixedTargets[0];
+        break;
+        
+      case GAME_MODES.HEAD_FIXED:
+        fixedTargets = generateCircleTargets();
+        currentFixedTargetIndex = 0;
+        currentTarget = fixedTargets[0];
+        break;
+        
+      case GAME_MODES.RANDOM:
+      default:
+        currentTarget = generateRandomTarget();
+        createTargetData();
+        break;
+    }
+    
+    dispatch('gameStarted', { 
+      score: gameScore, 
+      scoreBreakdown: { ...scoreBreakdown },
+      gameMode: gameMode 
+    });
+    
+    if (currentTarget) {
+      dispatch('targetChanged', { targetType: currentTarget.type });
+    }
   }
 
   function stopGame() {
@@ -370,15 +674,110 @@
   }
 
   function drawGameElements() {
-    if (!ctx || !currentTarget) return;
+    if (!ctx) return;
     
-    // Draw target
-    drawTarget(currentTarget);
+    switch (gameMode) {
+      case GAME_MODES.HIPS_SWAY:
+        drawHipSwayRegions();
+        break;
+      case GAME_MODES.HANDS_FIXED:
+      case GAME_MODES.HEAD_FIXED:
+        drawFixedTargets();
+        break;
+      case GAME_MODES.RANDOM:
+      default:
+        if (currentTarget) {
+          drawTarget(currentTarget);
+        }
+        break;
+    }
+  }
+  
+  function drawHipSwayRegions() {
+    const hipRegions = generateHipSwayRegions();
+    if (!hipRegions) return;
     
-    // Note: Game UI (score) moved to webcam panel
+    ctx.save();
+    ctx.globalAlpha = 0.3;
+    
+    // Draw left region
+    if (hipSwayState.currentSide === 'left') {
+      ctx.fillStyle = TARGET_COLORS[TARGET_TYPES.HIP_LEFT];
+      ctx.fillRect(
+        hipRegions.leftRegion.x,
+        hipRegions.leftRegion.y,
+        hipRegions.leftRegion.width,
+        hipRegions.leftRegion.height
+      );
+    }
+    
+    // Draw right region
+    if (hipSwayState.currentSide === 'right') {
+      ctx.fillStyle = TARGET_COLORS[TARGET_TYPES.HIP_RIGHT];
+      ctx.fillRect(
+        hipRegions.rightRegion.x,
+        hipRegions.rightRegion.y,
+        hipRegions.rightRegion.width,
+        hipRegions.rightRegion.height
+      );
+    }
+    
+    // Draw center line
+    ctx.globalAlpha = 0.5;
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(hipRegions.center.x, hipRegions.leftRegion.y);
+    ctx.lineTo(hipRegions.center.x, hipRegions.leftRegion.y + hipRegions.leftRegion.height);
+    ctx.stroke();
+    
+    ctx.restore();
+    
+    // Draw progress text
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '24px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(
+      `Sway Left: ${hipSwayState.leftSideCount}/4  Right: ${hipSwayState.rightSideCount}/4`,
+      width / 2,
+      50
+    );
+  }
+  
+  function drawFixedTargets() {
+    if (fixedTargets.length === 0) return;
+    
+    fixedTargets.forEach((target, index) => {
+      if (index === currentFixedTargetIndex) {
+        // Draw current target highlighted
+        drawTarget(target, true);
+      } else if (index < currentFixedTargetIndex) {
+        // Draw completed targets faded
+        ctx.save();
+        ctx.globalAlpha = 0.3;
+        drawTarget(target, false);
+        ctx.restore();
+      } else {
+        // Draw upcoming targets dimmed
+        ctx.save();
+        ctx.globalAlpha = 0.1;
+        drawTarget(target, false);
+        ctx.restore();
+      }
+    });
+    
+    // Draw progress text
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '24px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(
+      `Progress: ${currentFixedTargetIndex}/${fixedTargets.length}`,
+      width / 2,
+      50
+    );
   }
 
-  function drawTarget(target) {
+  function drawTarget(target, highlighted = false) {
     if (!ctx) return;
     
     const { x, y, color, type } = target;
@@ -386,16 +785,16 @@
     // Draw target circle with glow effect
     ctx.save();
     
-    // Outer glow
+    // Outer glow (enhanced if highlighted)
     ctx.shadowColor = color;
-    ctx.shadowBlur = 20;
+    ctx.shadowBlur = highlighted ? 30 : 20;
     ctx.strokeStyle = color;
-    ctx.lineWidth = 4;
+    ctx.lineWidth = highlighted ? 6 : 4;
     ctx.beginPath();
     ctx.arc(x, y, targetRadius, 0, 2 * Math.PI);
     ctx.stroke();
     
-    // Inner circle
+    // Inner circle (pulsing if highlighted)
     ctx.shadowBlur = 0;
     ctx.fillStyle = color + '40'; // Semi-transparent
     ctx.beginPath();

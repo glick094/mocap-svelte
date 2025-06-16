@@ -29,6 +29,17 @@
   let gameScore = 0; // Current game score
   let currentTargetType = null; // Current target type for display
   let scoreBreakdown = { hand: 0, head: 0, knee: 0 }; // Score breakdown by body part
+  
+  // Game modes
+  const GAME_MODES = {
+    HIPS_SWAY: 'hips-sway',
+    HANDS_FIXED: 'hands-fixed', 
+    HEAD_FIXED: 'head-fixed',
+    RANDOM: 'random'
+  };
+  
+  let currentGameMode = GAME_MODES.HIPS_SWAY; // Start with hips sway mode
+  let gameModeProgress = { completed: 0, total: 8 }; // Progress tracking for current mode
   let canvasSettings = {
     width: window.innerWidth || 1920,
     height: window.innerHeight - 80 || 1000 // Subtract header height
@@ -158,6 +169,11 @@
     gameScore = event.detail.score;
     currentTargetType = event.detail.targetType;
     scoreBreakdown = event.detail.scoreBreakdown;
+    
+    // Update game mode progress
+    if (event.detail.modeProgress) {
+      gameModeProgress = event.detail.modeProgress;
+    }
   }
 
   function handleGameEnded(event) {
@@ -213,8 +229,39 @@
     isGameActive = !isGameActive;
     if (!isGameActive) {
       currentTargetType = null; // Clear target type when stopping game
+    } else {
+      // Reset progress when starting a new game
+      resetGameModeProgress();
     }
     console.log('Game toggled:', isGameActive ? 'Started' : 'Stopped');
+  }
+  
+  function changeGameMode(newMode) {
+    if (isGameActive) {
+      // Stop current game when changing modes
+      isGameActive = false;
+      currentTargetType = null;
+    }
+    currentGameMode = newMode;
+    resetGameModeProgress();
+    console.log('Game mode changed to:', newMode);
+  }
+  
+  function resetGameModeProgress() {
+    switch (currentGameMode) {
+      case GAME_MODES.HIPS_SWAY:
+        gameModeProgress = { completed: 0, total: 8 }; // 4 times each side
+        break;
+      case GAME_MODES.HANDS_FIXED:
+        gameModeProgress = { completed: 0, total: 8 }; // 8 points in figure-8
+        break;
+      case GAME_MODES.HEAD_FIXED:
+        gameModeProgress = { completed: 0, total: 8 }; // 8 points in circle
+        break;
+      case GAME_MODES.RANDOM:
+        gameModeProgress = { completed: 0, total: Infinity }; // Endless mode
+        break;
+    }
   }
   
   function handleStreamReady(event) {
@@ -660,6 +707,19 @@
       >
         {isRecording ? '⏹️ Stop Recording' : '🔴 Record Data'}
       </button>
+      <!-- Game Mode Selector -->
+      <select 
+        class="header-select"
+        bind:value={currentGameMode}
+        on:change={(e) => changeGameMode(e.target.value)}
+        disabled={isGameActive}
+      >
+        <option value={GAME_MODES.HIPS_SWAY}>🕺 Hips Sway</option>
+        <option value={GAME_MODES.HANDS_FIXED}>✋ Hands Figure-8</option>
+        <option value={GAME_MODES.HEAD_FIXED}>🟡 Head Circle</option>
+        <option value={GAME_MODES.RANDOM}>🎯 Random Targets</option>
+      </select>
+      
       <button 
         class="header-btn game-btn" 
         class:active={isGameActive}
@@ -686,6 +746,8 @@
         height={canvasSettings.height}
         poseData={currentPoseData}
         gameActive={isGameActive}
+        gameMode={currentGameMode}
+        gameModeProgress={gameModeProgress}
         on:update={handleCanvasUpdate}
         on:gameDataUpdate={handleGameDataUpdate}
         on:gameStarted={handleGameStarted}
@@ -709,6 +771,8 @@
             currentTargetType={currentTargetType}
             scoreBreakdown={scoreBreakdown}
             participantInfo={participantInfo}
+            gameMode={currentGameMode}
+            gameModeProgress={gameModeProgress}
             qrScanEnabled={qrScanEnabled && !isGameActive}
             on:poseUpdate={handlePoseUpdate}
             on:streamReady={handleStreamReady}
@@ -792,6 +856,33 @@
   .header-btn:hover {
     background: rgba(255, 255, 255, 0.2);
     transform: translateY(-1px);
+  }
+
+  .header-select {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    min-width: 150px;
+  }
+
+  .header-select:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+  }
+
+  .header-select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .header-select option {
+    background: #1a1a1a;
+    color: white;
   }
 
   .header-btn.active {

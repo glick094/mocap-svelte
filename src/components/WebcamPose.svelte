@@ -11,6 +11,8 @@
   export let currentTargetType = null;
   export let scoreBreakdown = { hand: 0, head: 0, knee: 0 };
   export let participantInfo = { participantId: '', age: null, height: null };
+  export let gameMode = 'hips-sway';
+  export let gameModeProgress = { completed: 0, total: 8 };
 
   let videoElement;
   let canvasElement;
@@ -535,6 +537,21 @@
   function updateParticipantId() {
     dispatch('participantIdChange', participantInfo.participantId);
   }
+  
+  function getGameModeDisplayName(mode) {
+    const modeNames = {
+      'hips-sway': 'Hips Sway',
+      'hands-fixed': 'Hands Figure-8',
+      'head-fixed': 'Head Circle',
+      'random': 'Random Targets'
+    };
+    return modeNames[mode] || mode;
+  }
+  
+  function getProgressPercentage() {
+    if (gameModeProgress.total === Infinity) return 0;
+    return Math.round((gameModeProgress.completed / gameModeProgress.total) * 100);
+  }
 
 
   onDestroy(() => {
@@ -667,12 +684,27 @@
       <!-- Game Score Display -->
       {#if gameActive}
         <div class="game-score">
+          <div class="mode-display">
+            <span class="mode-label">Mode:</span>
+            <span class="mode-name">{getGameModeDisplayName(gameMode)}</span>
+          </div>
+          
           <div class="score-display">
-            <span class="score-label">Total Score:</span>
+            <span class="score-label">Score:</span>
             <span class="score-value">{gameScore}</span>
           </div>
           
-          {#if currentTargetType}
+          <div class="progress-display">
+            <span class="progress-label">Progress:</span>
+            <span class="progress-value">
+              {gameModeProgress.completed}/{gameModeProgress.total === Infinity ? '∞' : gameModeProgress.total}
+              {#if gameModeProgress.total !== Infinity}
+                ({getProgressPercentage()}%)
+              {/if}
+            </span>
+          </div>
+          
+          {#if currentTargetType && gameMode === 'random'}
             <div class="target-info">
               <span class="target-label">Current Target:</span>
               <span class="target-type" style="color: {getTargetColor(currentTargetType)}">
@@ -951,11 +983,55 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
   }
 
+  .mode-display {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .mode-label {
+    color: #ccc;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  
+  .mode-name {
+    color: #00ff88;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+
   .score-display {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 0.5rem;
+  }
+  
+  .progress-display {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .progress-label {
+    color: #ccc;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  
+  .progress-value {
+    color: #fff;
+    font-size: 1rem;
+    font-weight: bold;
+    background: rgba(0, 136, 255, 0.2);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 136, 255, 0.3);
   }
 
   .score-label {
