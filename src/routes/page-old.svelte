@@ -1,9 +1,9 @@
 <script>
   import { onMount } from 'svelte';
-  import ThreeJSCanvas from '$lib/ThreeJSCanvas.svelte';
-  import WebcamPanel from '$lib/WebcamPanel.svelte';
-  import ControlPanel from '$lib/ControlPanel.svelte';
-  import SettingsModal from '$lib/SettingsModal.svelte';
+  import ThreeJSCanvas from '../components/ThreeJSCanvas.svelte';
+  import WebcamPanel from '../components/WebcamPanel.svelte';
+  import ControlPanel from '../components/ControlPanel.svelte';
+  import SettingsModal from '../components/SettingsModal.svelte';
 
   // App state
   let showSettings = false;
