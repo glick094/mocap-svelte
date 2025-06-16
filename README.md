@@ -171,7 +171,17 @@ npm run preview
 
 # Run tests
 npm run test
+
+# Run unit tests only
+npm run test:unit
+
+# Run end-to-end tests
+npm run test:e2e
 ```
+
+### Testing
+
+This project includes a comprehensive test suite covering services, stores, and components. For detailed information about our testing approach, coverage, and how to write new tests, see our **[Testing Documentation](TESTING.md)**.
 
 ### Browser Requirements
 
