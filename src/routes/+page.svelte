@@ -1,8 +1,26 @@
 <script>
   import { onMount } from 'svelte';
-  import ThreeJSCanvas from '$lib/ThreeJSCanvas.svelte';
-  import WebcamPose from '$lib/WebcamPose.svelte';
-  import SettingsModal from '$lib/SettingsModal.svelte';
+  
+  // Suppress MediaPipe console warnings on mount
+  const originalConsoleWarn = console.warn;
+  const originalConsoleLog = console.log;
+  import ThreeJSCanvas from '../components/ThreeJSCanvas.svelte';
+  import WebcamPose from '../components/WebcamPose.svelte';
+  import SettingsModal from '../components/SettingsModal.svelte';
+  
+  // Import services
+  import { 
+    generateTimestamp, 
+    generateParticipantId, 
+    formatPoseDataForCSV,
+    createCSVHeader,
+    startRecordingSession,
+    downloadFile,
+    startVideoRecording,
+    stopVideoRecording
+  } from '../services/recordingService.js';
+  
+  import { smoothLandmarks as smoothLandmarksService } from '../services/smoothingService.js';
 
   // App state
   let showSettings = false;
@@ -107,7 +125,7 @@
 
   function handleCanvasUpdate(event) {
     // Handle updates from the 3D canvas
-    console.log('Canvas update:', event.detail);
+    // Logging removed for performance
   }
 
   function handleGameDataUpdate(event) {
@@ -136,7 +154,7 @@
   }
 
   function handleScoreUpdate(event) {
-    console.log('Score updated!', event.detail);
+    // Logging removed for performance
     gameScore = event.detail.score;
     currentTargetType = event.detail.targetType;
     scoreBreakdown = event.detail.scoreBreakdown;
@@ -402,136 +420,7 @@
   }
 
   // Recording functions
-  function generateTimestamp() {
-    const now = new Date();
-    return now.toISOString().replace(/[:.]/g, '-').slice(0, -5); // Format: YYYY-MM-DDTHH-MM-SS
-  }
-
-  function generateParticipantId() {
-    if (!participantId) {
-      // Use participant info from QR code or text input, fallback to username or random ID
-      participantId = participantInfo.participantId || userSettings.username || `P${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
-    }
-    return participantId;
-  }
-
-  function createCSVHeader() {
-    const header = [
-      'unix_timestamp_ms', // Unix timestamp in milliseconds since epoch
-      'frame_time_ms',     // High-precision milliseconds since recording started
-      'participant_id',    // Participant identifier
-      'participant_age',   // Participant age (from QR code)
-      'participant_height', // Participant height (from QR code)
-      'pose_landmarks_count',
-      'left_hand_landmarks_count', 
-      'right_hand_landmarks_count',
-      'face_landmarks_count',
-      // Target data columns
-      'target_showing',    // Boolean: is a target currently displayed
-      'target_id',         // Unique identifier for the target
-      'target_type',       // Type: hand, head, or knee
-      'target_x',          // Target X position on canvas
-      'target_y',          // Target Y position on canvas
-      'target_status'      // Status: start, unobtained, obtained, end
-    ];
-
-    // Add pose landmark columns (33 landmarks, each with x, y, z, visibility)
-    for (let i = 0; i < 33; i++) {
-      header.push(`pose_${i}_x`, `pose_${i}_y`, `pose_${i}_z`, `pose_${i}_visibility`);
-    }
-
-    // Add left hand landmark columns (21 landmarks, each with x, y, z)
-    for (let i = 0; i < 21; i++) {
-      header.push(`left_hand_${i}_x`, `left_hand_${i}_y`, `left_hand_${i}_z`);
-    }
-
-    // Add right hand landmark columns (21 landmarks, each with x, y, z)
-    for (let i = 0; i < 21; i++) {
-      header.push(`right_hand_${i}_x`, `right_hand_${i}_y`, `right_hand_${i}_z`);
-    }
-
-    // Add face landmark columns (468 landmarks, each with x, y, z)
-    for (let i = 0; i < 468; i++) {
-      header.push(`face_${i}_x`, `face_${i}_y`, `face_${i}_z`);
-    }
-
-    return header.join(',') + '\n';
-  }
-
-  function formatPoseDataForCSV(poseData, timestamp, frameTime) {
-    // Get current target data
-    const targetData = window.currentTargetData || {
-      targetShowing: false,
-      targetId: null,
-      targetType: null,
-      targetX: null,
-      targetY: null,
-      status: null
-    };
-
-    const row = [
-      timestamp,
-      frameTime,
-      participantInfo.participantId || '',
-      participantInfo.age || '',
-      participantInfo.height || '',
-      poseData.poseLandmarks ? poseData.poseLandmarks.length : 0,
-      poseData.leftHandLandmarks ? poseData.leftHandLandmarks.length : 0,
-      poseData.rightHandLandmarks ? poseData.rightHandLandmarks.length : 0,
-      poseData.faceLandmarks ? poseData.faceLandmarks.length : 0,
-      // Target data
-      targetData.targetShowing,
-      targetData.targetId,
-      targetData.targetType,
-      targetData.targetX,
-      targetData.targetY,
-      targetData.status
-    ];
-
-    // Add pose landmarks (33 landmarks)
-    for (let i = 0; i < 33; i++) {
-      if (poseData.poseLandmarks && i < poseData.poseLandmarks.length) {
-        const landmark = poseData.poseLandmarks[i];
-        row.push(landmark.x || 0, landmark.y || 0, landmark.z || 0, landmark.visibility || 0);
-      } else {
-        row.push(0, 0, 0, 0); // Empty landmark
-      }
-    }
-
-    // Add left hand landmarks (21 landmarks)
-    for (let i = 0; i < 21; i++) {
-      if (poseData.leftHandLandmarks && i < poseData.leftHandLandmarks.length) {
-        const landmark = poseData.leftHandLandmarks[i];
-        row.push(landmark.x || 0, landmark.y || 0, landmark.z || 0);
-      } else {
-        row.push(0, 0, 0); // Empty landmark
-      }
-    }
-
-    // Add right hand landmarks (21 landmarks)
-    for (let i = 0; i < 21; i++) {
-      if (poseData.rightHandLandmarks && i < poseData.rightHandLandmarks.length) {
-        const landmark = poseData.rightHandLandmarks[i];
-        row.push(landmark.x || 0, landmark.y || 0, landmark.z || 0);
-      } else {
-        row.push(0, 0, 0); // Empty landmark
-      }
-    }
-
-    // Add face landmarks (468 landmarks)
-    for (let i = 0; i < 468; i++) {
-      if (poseData.faceLandmarks && i < poseData.faceLandmarks.length) {
-        const landmark = poseData.faceLandmarks[i];
-        row.push(landmark.x || 0, landmark.y || 0, landmark.z || 0);
-      } else {
-        row.push(0, 0, 0); // Empty landmark
-      }
-    }
-
-    return row.join(',') + '\n';
-  }
-
-  function startVideoRecording(participant, timestamp) {
+  function startLocalVideoRecording(participant, timestamp) {
     if (!videoStream) {
       console.warn('Video stream not available for recording');
       return false;
@@ -590,7 +479,7 @@
     }
   }
 
-  function stopVideoRecording() {
+  function stopLocalVideoRecording() {
     if (mediaRecorder && mediaRecorder.state !== 'inactive') {
       mediaRecorder.stop();
       mediaRecorder = null;
@@ -601,7 +490,7 @@
   function startRecording() {
     if (isRecording) return;
 
-    const participant = generateParticipantId();
+    const participant = generateParticipantId(userSettings);
     const timestamp = generateTimestamp();
     
     recordingSession = {
@@ -627,7 +516,7 @@
     gameDataBuffer = [];
 
     // Start video recording
-    const videoStarted = startVideoRecording(participant, timestamp);
+    const videoStarted = startLocalVideoRecording(participant, timestamp);
 
     console.log('Started recording pose data:', recordingSession.filename);
     console.log('Started recording game data:', gameDataSession.filename);
@@ -642,7 +531,7 @@
     isRecording = false;
     
     // Stop video recording
-    stopVideoRecording();
+    stopLocalVideoRecording();
     
     // Create and download the MediaPipe CSV file
     const blob = new Blob([recordingSession.csvContent], { type: 'text/csv' });
@@ -690,6 +579,30 @@
   }
 
   onMount(() => {
+    // Filter MediaPipe WebGL warnings
+    console.warn = function(message, ...args) {
+      // Suppress MediaPipe WebGL warnings
+      if (typeof message === 'string' && 
+          (message.includes('WebGL') || 
+           message.includes('OpenGL') || 
+           message.includes('gl_context') ||
+           message.includes('drawArraysInstanced'))) {
+        return;
+      }
+      originalConsoleWarn.call(this, message, ...args);
+    };
+    
+    console.log = function(message, ...args) {
+      // Suppress MediaPipe verbose logging
+      if (typeof message === 'string' && 
+          (message.includes('I0000') || 
+           message.includes('GL version') ||
+           message.includes('gl_context'))) {
+        return;
+      }
+      originalConsoleLog.call(this, message, ...args);
+    };
+    
     // Load saved settings on app start
     const savedUserSettings = localStorage.getItem('userSettings');
     if (savedUserSettings) {
@@ -718,6 +631,9 @@
     window.addEventListener('resize', updateCanvasSize);
     
     return () => {
+      // Restore original console functions
+      console.warn = originalConsoleWarn;
+      console.log = originalConsoleLog;
       window.removeEventListener('resize', updateCanvasSize);
     };
   });

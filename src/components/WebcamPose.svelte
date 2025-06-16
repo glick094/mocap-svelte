@@ -109,22 +109,18 @@
 
 
   function onPoseResults(results) {
-    // Emit pose data for 3D visualization
-    if (results.poseLandmarks || results.leftHandLandmarks || results.rightHandLandmarks || results.faceLandmarks) {
+    // Early return if no valid results and no canvas to draw on
+    const hasLandmarks = results.poseLandmarks || results.leftHandLandmarks || results.rightHandLandmarks || results.faceLandmarks;
+    if (!hasLandmarks && !canvasCtx) return;
+    
+    // Emit pose data for 3D visualization only if we have landmarks
+    if (hasLandmarks) {
       dispatch('poseUpdate', {
         poseLandmarks: results.poseLandmarks,
         leftHandLandmarks: results.leftHandLandmarks,
         rightHandLandmarks: results.rightHandLandmarks,
         faceLandmarks: results.faceLandmarks,
-        timestamp: Date.now()
-      });
-      
-      // Debug logging
-      console.log('MediaPipe results received:', {
-        pose: !!results.poseLandmarks,
-        leftHand: !!results.leftHandLandmarks,
-        rightHand: !!results.rightHandLandmarks,
-        face: !!results.faceLandmarks
+        timestamp: performance.now() // More precise than Date.now()
       });
     }
     
