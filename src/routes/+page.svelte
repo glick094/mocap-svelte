@@ -1,5 +1,9 @@
 <script>
   import { onMount } from 'svelte';
+  
+  // Suppress MediaPipe console warnings on mount
+  const originalConsoleWarn = console.warn;
+  const originalConsoleLog = console.log;
   import ThreeJSCanvas from '../components/ThreeJSCanvas.svelte';
   import WebcamPose from '../components/WebcamPose.svelte';
   import SettingsModal from '../components/SettingsModal.svelte';
@@ -547,6 +551,30 @@
   }
 
   onMount(() => {
+    // Filter MediaPipe WebGL warnings
+    console.warn = function(message, ...args) {
+      // Suppress MediaPipe WebGL warnings
+      if (typeof message === 'string' && 
+          (message.includes('WebGL') || 
+           message.includes('OpenGL') || 
+           message.includes('gl_context') ||
+           message.includes('drawArraysInstanced'))) {
+        return;
+      }
+      originalConsoleWarn.call(this, message, ...args);
+    };
+    
+    console.log = function(message, ...args) {
+      // Suppress MediaPipe verbose logging
+      if (typeof message === 'string' && 
+          (message.includes('I0000') || 
+           message.includes('GL version') ||
+           message.includes('gl_context'))) {
+        return;
+      }
+      originalConsoleLog.call(this, message, ...args);
+    };
+    
     // Load saved settings on app start
     const savedUserSettings = localStorage.getItem('userSettings');
     if (savedUserSettings) {
@@ -575,6 +603,9 @@
     window.addEventListener('resize', updateCanvasSize);
     
     return () => {
+      // Restore original console functions
+      console.warn = originalConsoleWarn;
+      console.log = originalConsoleLog;
       window.removeEventListener('resize', updateCanvasSize);
     };
   });
