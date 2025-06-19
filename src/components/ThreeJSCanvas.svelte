@@ -223,8 +223,10 @@
         drawHipSwayRegions();
         break;
       case GAME_MODES.HANDS_FIXED:
+        drawHandsFixedGame();
+        break;
       case GAME_MODES.HEAD_FIXED:
-        drawFixedTargets();
+        drawHeadFixedGame();
         break;
       case GAME_MODES.RANDOM:
       default:
@@ -420,6 +422,198 @@
     ctx.restore();
   }
   
+  function drawHandsFixedGame() {
+    if (!gameService) return;
+    
+    const handsCenteringState = gameService.getHandsCenteringState();
+    
+    switch (handsCenteringState.phase) {
+      case 'centering':
+        drawHandsCenteringPhase(handsCenteringState);
+        break;
+      case 'targeting':
+        drawFixedTargets();
+        break;
+      case 'completed':
+        drawFixedTargets();
+        break;
+    }
+  }
+  
+  function drawHeadFixedGame() {
+    if (!gameService) return;
+    
+    const headCenteringState = gameService.getHeadCenteringState();
+    
+    switch (headCenteringState.phase) {
+      case 'centering':
+        drawHeadCenteringPhase(headCenteringState);
+        break;
+      case 'targeting':
+        drawFixedTargets();
+        break;
+      case 'completed':
+        drawFixedTargets();
+        break;
+    }
+  }
+
+  function drawHandsCenteringPhase(handsState) {
+    if (!ctx) return;
+    
+    ctx.save();
+    
+    // Draw center crosses for hands
+    const leftCenterX = handsState.leftCenterX;
+    const leftCenterY = handsState.leftCenterY;
+    const rightCenterX = handsState.rightCenterX;
+    const rightCenterY = handsState.rightCenterY;
+    const tolerance = handsState.centeringTolerance;
+    const crossSize = tolerance * 0.5; // Make cross smaller than tolerance
+    
+    // Left center cross
+    ctx.strokeStyle = handsState.isCentered ? '#00ff00' : '#ff0000'; // Green when centered, red otherwise
+    ctx.lineWidth = 4;
+    ctx.globalAlpha = 0.8;
+    
+    // Horizontal line
+    ctx.beginPath();
+    ctx.moveTo(leftCenterX - crossSize, leftCenterY);
+    ctx.lineTo(leftCenterX + crossSize, leftCenterY);
+    ctx.stroke();
+    
+    // Vertical line
+    ctx.beginPath();
+    ctx.moveTo(leftCenterX, leftCenterY - crossSize);
+    ctx.lineTo(leftCenterX, leftCenterY + crossSize);
+    ctx.stroke();
+    
+    // Draw tolerance circle (faint)
+    ctx.globalAlpha = 0.2;
+    ctx.beginPath();
+    ctx.arc(leftCenterX, leftCenterY, tolerance, 0, 2 * Math.PI);
+    ctx.stroke();
+    
+    // Right center cross
+    ctx.strokeStyle = handsState.isCentered ? '#00ff00' : '#ff0000'; // Green when centered, red otherwise
+    ctx.lineWidth = 4;
+    ctx.globalAlpha = 0.8;
+    
+    // Horizontal line
+    ctx.beginPath();
+    ctx.moveTo(rightCenterX - crossSize, rightCenterY);
+    ctx.lineTo(rightCenterX + crossSize, rightCenterY);
+    ctx.stroke();
+    
+    // Vertical line
+    ctx.beginPath();
+    ctx.moveTo(rightCenterX, rightCenterY - crossSize);
+    ctx.lineTo(rightCenterX, rightCenterY + crossSize);
+    ctx.stroke();
+    
+    // Draw tolerance circle (faint)
+    ctx.globalAlpha = 0.2;
+    ctx.beginPath();
+    ctx.arc(rightCenterX, rightCenterY, tolerance, 0, 2 * Math.PI);
+    ctx.stroke();
+    
+    ctx.restore();
+    
+    // Draw instruction text (flip back to correct orientation)
+    ctx.save();
+    ctx.scale(-1, 1);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '24px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(
+      'Position both hands on the crosses',
+      -width / 2,
+      50
+    );
+    
+    ctx.fillStyle = '#cccccc';
+    ctx.font = '18px Arial';
+    if (handsState.isCentered) {
+      ctx.fillText(
+        'Hold position for 2 seconds...',
+        -width / 2,
+        height - 30
+      );
+    } else {
+      ctx.fillText(
+        'Move hands to the center crosses of each lobe',
+        -width / 2,
+        height - 30
+      );
+    }
+    ctx.restore();
+  }
+  
+  function drawHeadCenteringPhase(headState) {
+    if (!ctx) return;
+    
+    ctx.save();
+    
+    // Draw center cross for head
+    const centerX = headState.centerX;
+    const centerY = headState.centerY;
+    const tolerance = headState.centeringTolerance;
+    const crossSize = tolerance * 0.5; // Make cross smaller than tolerance
+    
+    ctx.strokeStyle = headState.isCentered ? '#00ff00' : '#00ff88'; // Bright green when centered, regular green otherwise
+    ctx.lineWidth = 4;
+    ctx.globalAlpha = 0.8;
+    
+    // Horizontal line
+    ctx.beginPath();
+    ctx.moveTo(centerX - crossSize, centerY);
+    ctx.lineTo(centerX + crossSize, centerY);
+    ctx.stroke();
+    
+    // Vertical line
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY - crossSize);
+    ctx.lineTo(centerX, centerY + crossSize);
+    ctx.stroke();
+    
+    // Draw tolerance circle (faint)
+    ctx.globalAlpha = 0.2;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, tolerance, 0, 2 * Math.PI);
+    ctx.stroke();
+    
+    ctx.restore();
+    
+    // Draw instruction text (flip back to correct orientation)
+    ctx.save();
+    ctx.scale(-1, 1);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '24px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(
+      'Position your head on the cross',
+      -width / 2,
+      50
+    );
+    
+    ctx.fillStyle = '#cccccc';
+    ctx.font = '18px Arial';
+    if (headState.isCentered) {
+      ctx.fillText(
+        'Hold position for 2 seconds...',
+        -width / 2,
+        height - 30
+      );
+    } else {
+      ctx.fillText(
+        'Move your head to the center cross',
+        -width / 2,
+        height - 30
+      );
+    }
+    ctx.restore();
+  }
+
   function drawFixedTargets() {
     if (!gameService) return;
     

@@ -253,10 +253,10 @@
         gameModeProgress = { completed: 0, total: 8 }; // 4 times each side
         break;
       case GAME_MODES.HANDS_FIXED:
-        gameModeProgress = { completed: 0, total: 8 }; // 8 points in figure-8
+        gameModeProgress = { completed: 0, total: 17 }; // 1 centering + 16 figure-8 points
         break;
       case GAME_MODES.HEAD_FIXED:
-        gameModeProgress = { completed: 0, total: 8 }; // 8 points in circle
+        gameModeProgress = { completed: 0, total: 13 }; // 1 centering + 12 circle points
         break;
       case GAME_MODES.RANDOM:
         gameModeProgress = { completed: 0, total: Infinity }; // Endless mode

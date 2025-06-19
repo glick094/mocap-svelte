@@ -110,6 +110,28 @@ export interface HipSwayState {
   } | null;
 }
 
+export interface HandsCenteringState {
+  phase: 'centering' | 'targeting' | 'completed';
+  isCentered: boolean;
+  centeringStartTime: number | null;
+  centeringTolerance: number;
+  centeringTimeRequired: number;
+  leftCenterX: number;
+  leftCenterY: number;
+  rightCenterX: number;
+  rightCenterY: number;
+}
+
+export interface HeadCenteringState {
+  phase: 'centering' | 'targeting' | 'completed';
+  isCentered: boolean;
+  centeringStartTime: number | null;
+  centeringTolerance: number;
+  centeringTimeRequired: number;
+  centerX: number;
+  centerY: number;
+}
+
 export interface TargetData {
   targetShowing: boolean;
   targetId: string | number | null;
@@ -140,6 +162,8 @@ export interface GameState {
   targetHistory: TargetData[];
   currentTargetData: TargetData | null;
   hipSwayState: HipSwayState;
+  handsCenteringState: HandsCenteringState;
+  headCenteringState: HeadCenteringState;
   fixedTargets: Target[];
   currentFixedTargetIndex: number;
   currentTarget: Target | null;
@@ -177,6 +201,10 @@ export class GameService {
   }
 
   private initializeGameState(): GameState {
+    const centerX = this.width * 0.5;
+    const centerY = this.height * 0.5;
+    const radiusX = this.width * 0.4;
+    
     return {
       gameScore: 0,
       targetRadius: 50,
@@ -207,6 +235,26 @@ export class GameService {
         },
         lastHipPosition: null
       },
+      handsCenteringState: {
+        phase: 'centering',
+        isCentered: false,
+        centeringStartTime: null,
+        centeringTolerance: 80, // 80px radius from center points (more generous)
+        centeringTimeRequired: 1000, // 1 second for easier testing
+        leftCenterX: centerX - radiusX * 0.5, // Halfway between center and left extreme
+        leftCenterY: centerY, // Same Y as figure-8 center
+        rightCenterX: centerX + radiusX * 0.5, // Halfway between center and right extreme
+        rightCenterY: centerY // Same Y as figure-8 center
+      },
+      headCenteringState: {
+        phase: 'centering',
+        isCentered: false,
+        centeringStartTime: null,
+        centeringTolerance: 80, // 80px radius from center point (more generous)
+        centeringTimeRequired: 1000, // 1 second for easier testing
+        centerX: centerX,
+        centerY: this.height * 0.3 // Match the actual circle center Y
+      },
       fixedTargets: [],
       currentFixedTargetIndex: 0,
       currentTarget: null,
@@ -229,6 +277,14 @@ export class GameService {
 
   public getHipSwayState(): HipSwayState {
     return { ...this.state.hipSwayState };
+  }
+
+  public getHandsCenteringState(): HandsCenteringState {
+    return { ...this.state.handsCenteringState };
+  }
+
+  public getHeadCenteringState(): HeadCenteringState {
+    return { ...this.state.headCenteringState };
   }
 
   public getHipSwayAnimationOffset(): { offsetX: number; offsetY: number; opacity: number } | null {
@@ -426,16 +482,22 @@ export class GameService {
         
       case GAME_MODES.HANDS_FIXED:
         this.state.fixedTargets = this.generateFigure8Targets();
-        this.state.currentFixedTargetIndex = 1; // Start at index 1
-        this.state.currentTarget = this.state.fixedTargets[0]; // Still use 0-based array access
-        this.createTargetData();
+        this.state.currentFixedTargetIndex = 0; // Will be set to 1 after centering
+        this.state.currentTarget = null; // No target during centering
+        this.state.handsCenteringState.phase = 'centering';
+        this.state.handsCenteringState.isCentered = false;
+        this.state.handsCenteringState.centeringStartTime = null;
+        this.createHandsCenteringData();
         break;
         
       case GAME_MODES.HEAD_FIXED:
         this.state.fixedTargets = this.generateCircleTargets();
-        this.state.currentFixedTargetIndex = 1; // Start at index 1
-        this.state.currentTarget = this.state.fixedTargets[0]; // Still use 0-based array access
-        this.createTargetData();
+        this.state.currentFixedTargetIndex = 0; // Will be set to 1 after centering
+        this.state.currentTarget = null; // No target during centering
+        this.state.headCenteringState.phase = 'centering';
+        this.state.headCenteringState.isCentered = false;
+        this.state.headCenteringState.centeringStartTime = null;
+        this.createHeadCenteringData();
         break;
         
       case GAME_MODES.RANDOM:
@@ -464,8 +526,9 @@ export class GameService {
       case GAME_MODES.HIPS_SWAY:
         return this.checkHipSwayCollisions(data);
       case GAME_MODES.HANDS_FIXED:
+        return this.checkHandsCenteringCollisions(data);
       case GAME_MODES.HEAD_FIXED:
-        return this.checkFixedTargetCollisions(data);
+        return this.checkHeadCenteringCollisions(data);
       case GAME_MODES.RANDOM:
       default:
         return this.checkRandomTargetCollisions(data);
@@ -695,6 +758,174 @@ export class GameService {
     
     return { hit: false };
   }
+
+  private checkHandsCenteringCollisions(data: PoseData): { hit: boolean; hitType?: string; modeProgress?: any; playSound?: boolean } {
+    console.log('checkHandsCenteringCollisions called with:', {
+      hasLeftHand: !!data.leftHandLandmarks,
+      hasRightHand: !!data.rightHandLandmarks,
+      leftCount: data.leftHandLandmarks?.length || 0,
+      rightCount: data.rightHandLandmarks?.length || 0
+    });
+    
+    if (!data.leftHandLandmarks && !data.rightHandLandmarks) return { hit: false };
+    
+    const handsState = this.state.handsCenteringState;
+    
+    switch (handsState.phase) {
+      case 'centering':
+        // Use the same collision detection as targets, but check both center positions
+        const leftHandCentered = this.checkHandCollisionAtPosition(data, handsState.leftCenterX, handsState.leftCenterY, handsState.centeringTolerance);
+        const rightHandCentered = this.checkHandCollisionAtPosition(data, handsState.rightCenterX, handsState.rightCenterY, handsState.centeringTolerance);
+        const bothHandsCentered = leftHandCentered && rightHandCentered;
+        
+        console.log('Hands centering debug:', {
+          leftHandCentered,
+          rightHandCentered,
+          bothHandsCentered,
+          leftCenter: { x: handsState.leftCenterX, y: handsState.leftCenterY },
+          rightCenter: { x: handsState.rightCenterX, y: handsState.rightCenterY },
+          tolerance: handsState.centeringTolerance
+        });
+        
+        if (bothHandsCentered) {
+          if (!handsState.isCentered) {
+            // Just became centered, start timing
+            handsState.isCentered = true;
+            handsState.centeringStartTime = Date.now();
+          } else {
+            // Check if centered long enough
+            const centeringDuration = Date.now() - (handsState.centeringStartTime || 0);
+            if (centeringDuration >= handsState.centeringTimeRequired) {
+              // Complete centering phase
+              if (this.state.currentTargetData) {
+                this.state.currentTargetData.status = 'obtained';
+                this.state.currentTargetData.hitTime = Date.now();
+                this.state.targetHistory.push({ ...this.state.currentTargetData });
+                
+                // Create end record for centering phase
+                this.state.currentTargetData.status = 'end';
+                this.state.targetHistory.push({ ...this.state.currentTargetData });
+              }
+              
+              // Move to targeting phase
+              handsState.phase = 'targeting';
+              this.state.currentFixedTargetIndex = 1; // Start at index 1
+              this.state.currentTarget = this.state.fixedTargets[0]; // Use 0-based array access
+              this.createTargetData();
+              
+              return {
+                hit: true,
+                hitType: 'centering',
+                playSound: false,
+                modeProgress: { completed: 1, total: this.state.fixedTargets.length + 1 }
+              };
+            }
+          }
+        } else {
+          // Not centered, reset centering timer
+          handsState.isCentered = false;
+          handsState.centeringStartTime = null;
+        }
+        break;
+        
+      case 'targeting':
+        return this.checkFixedTargetCollisions(data);
+        
+      case 'completed':
+        break;
+    }
+    
+    return { hit: false };
+  }
+
+  private checkHeadCenteringCollisions(data: PoseData): { hit: boolean; hitType?: string; modeProgress?: any; playSound?: boolean } {
+    if (!data.faceLandmarks && !data.poseLandmarks) return { hit: false };
+    
+    const headState = this.state.headCenteringState;
+    
+    switch (headState.phase) {
+      case 'centering':
+        // Check if head is near center position
+        let headCentered = false;
+        
+        // Check face landmarks (nose)
+        if (data.faceLandmarks && data.faceLandmarks[1]) {
+          const nose = data.faceLandmarks[1];
+          const headX = nose.x * this.width;
+          const headY = nose.y * this.height;
+          const distance = Math.sqrt(
+            Math.pow(headX - headState.centerX, 2) + 
+            Math.pow(headY - headState.centerY, 2)
+          );
+          if (distance <= headState.centeringTolerance) {
+            headCentered = true;
+          }
+        }
+        
+        // Fallback to pose landmarks if face not available
+        if (!headCentered && data.poseLandmarks && data.poseLandmarks[0]) {
+          const poseNose = data.poseLandmarks[0];
+          const headX = poseNose.x * this.width;
+          const headY = poseNose.y * this.height;
+          const distance = Math.sqrt(
+            Math.pow(headX - headState.centerX, 2) + 
+            Math.pow(headY - headState.centerY, 2)
+          );
+          if (distance <= headState.centeringTolerance) {
+            headCentered = true;
+          }
+        }
+        
+        if (headCentered) {
+          if (!headState.isCentered) {
+            // Just became centered, start timing
+            headState.isCentered = true;
+            headState.centeringStartTime = Date.now();
+          } else {
+            // Check if centered long enough
+            const centeringDuration = Date.now() - (headState.centeringStartTime || 0);
+            if (centeringDuration >= headState.centeringTimeRequired) {
+              // Complete centering phase
+              if (this.state.currentTargetData) {
+                this.state.currentTargetData.status = 'obtained';
+                this.state.currentTargetData.hitTime = Date.now();
+                this.state.targetHistory.push({ ...this.state.currentTargetData });
+                
+                // Create end record for centering phase
+                this.state.currentTargetData.status = 'end';
+                this.state.targetHistory.push({ ...this.state.currentTargetData });
+              }
+              
+              // Move to targeting phase
+              headState.phase = 'targeting';
+              this.state.currentFixedTargetIndex = 1; // Start at index 1
+              this.state.currentTarget = this.state.fixedTargets[0]; // Use 0-based array access
+              this.createTargetData();
+              
+              return {
+                hit: true,
+                hitType: 'centering',
+                playSound: false,
+                modeProgress: { completed: 1, total: this.state.fixedTargets.length + 1 }
+              };
+            }
+          }
+        } else {
+          // Not centered, reset centering timer
+          headState.isCentered = false;
+          headState.centeringStartTime = null;
+        }
+        break;
+        
+      case 'targeting':
+        return this.checkFixedTargetCollisions(data);
+        
+      case 'completed':
+        break;
+    }
+    
+    return { hit: false };
+  }
   
   private checkFixedTargetCollisions(data: PoseData): { hit: boolean; hitType?: string; modeProgress?: any; playSound?: boolean } {
     if (this.state.fixedTargets.length === 0 || this.state.currentFixedTargetIndex > this.state.fixedTargets.length) {
@@ -756,8 +987,8 @@ export class GameService {
         hitType: currentTarget.type,
         playSound: true, // Add sound flag
         modeProgress: { 
-          completed: this.state.currentFixedTargetIndex, 
-          total: this.state.fixedTargets.length 
+          completed: this.state.currentFixedTargetIndex + 1, // +1 for centering phase
+          total: this.state.fixedTargets.length + 1 // +1 for centering phase
         }
       };
     }
@@ -883,6 +1114,37 @@ export class GameService {
     }
     return false;
   }
+
+  // Helper method for centering phase - same logic as checkHandCollision but with custom tolerance
+  private checkHandCollisionAtPosition(data: PoseData, targetX: number, targetY: number, tolerance: number): boolean {
+    if (data.leftHandLandmarks) {
+      for (let landmark of data.leftHandLandmarks) {
+        if (landmark) {
+          const distance = Math.sqrt(
+            (landmark.x * this.width - targetX) ** 2 + 
+            (landmark.y * this.height - targetY) ** 2
+          );
+          if (distance <= tolerance) {
+            return true;
+          }
+        }
+      }
+    }
+    if (data.rightHandLandmarks) {
+      for (let landmark of data.rightHandLandmarks) {
+        if (landmark) {
+          const distance = Math.sqrt(
+            (landmark.x * this.width - targetX) ** 2 + 
+            (landmark.y * this.height - targetY) ** 2
+          );
+          if (distance <= tolerance) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
   
   private checkHeadCollision(data: PoseData, targetX: number, targetY: number): boolean {
     if (data.faceLandmarks && data.faceLandmarks[1]) {
@@ -920,11 +1182,13 @@ export class GameService {
         trialNumber = this.state.hipSwayState.currentTrial;
         break;
       case GAME_MODES.HANDS_FIXED:
-        gamePhase = this.state.currentFixedTargetIndex === 1 ? 'starting' : 'targeting';
+        gamePhase = this.state.handsCenteringState.phase === 'centering' ? 'centering' : 
+                   (this.state.currentFixedTargetIndex === 1 ? 'starting' : 'targeting');
         targetIndex = this.state.currentFixedTargetIndex;
         break;
       case GAME_MODES.HEAD_FIXED:
-        gamePhase = this.state.currentFixedTargetIndex === 1 ? 'starting' : 'targeting';
+        gamePhase = this.state.headCenteringState.phase === 'centering' ? 'centering' : 
+                   (this.state.currentFixedTargetIndex === 1 ? 'starting' : 'targeting');
         targetIndex = this.state.currentFixedTargetIndex;
         break;
       case GAME_MODES.RANDOM:
@@ -1044,6 +1308,76 @@ export class GameService {
       gamePhase: this.state.hipSwayState.phase,
       targetIndex: null,
       trialNumber: this.state.hipSwayState.currentTrial
+    };
+    
+    this.state.targetHistory.push({ ...this.state.currentTargetData });
+    this.state.currentTargetData.status = 'unobtained';
+  }
+
+  // Hands centering phase data tracking
+  private createHandsCenteringData(): void {
+    const handsState = this.state.handsCenteringState;
+    
+    // Create a virtual target for the hands centering phase
+    const virtualTarget = {
+      id: 'hands-centering-001',
+      type: 'centering' as any, // Special type for centering phase
+      x: (handsState.leftCenterX + handsState.rightCenterX) / 2, // Midpoint between centers
+      y: handsState.leftCenterY,
+      color: '#ffffff'
+    };
+    
+    this.state.currentTargetData = {
+      targetShowing: true,
+      targetId: virtualTarget.id,
+      targetType: 'centering' as any,
+      targetX: virtualTarget.x / this.width,
+      targetY: virtualTarget.y / this.height,
+      targetPixelX: virtualTarget.x,
+      targetPixelY: virtualTarget.y,
+      status: 'start',
+      startTime: Date.now(),
+      hitKeypoint: null,
+      hitTime: null,
+      gameMode: this.gameMode,
+      gamePhase: handsState.phase,
+      targetIndex: null,
+      trialNumber: null
+    };
+    
+    this.state.targetHistory.push({ ...this.state.currentTargetData });
+    this.state.currentTargetData.status = 'unobtained';
+  }
+
+  // Head centering phase data tracking
+  private createHeadCenteringData(): void {
+    const headState = this.state.headCenteringState;
+    
+    // Create a virtual target for the head centering phase
+    const virtualTarget = {
+      id: 'head-centering-001',
+      type: 'centering' as any, // Special type for centering phase
+      x: headState.centerX,
+      y: headState.centerY,
+      color: '#ffffff'
+    };
+    
+    this.state.currentTargetData = {
+      targetShowing: true,
+      targetId: virtualTarget.id,
+      targetType: 'centering' as any,
+      targetX: virtualTarget.x / this.width,
+      targetY: virtualTarget.y / this.height,
+      targetPixelX: virtualTarget.x,
+      targetPixelY: virtualTarget.y,
+      status: 'start',
+      startTime: Date.now(),
+      hitKeypoint: null,
+      hitTime: null,
+      gameMode: this.gameMode,
+      gamePhase: headState.phase,
+      targetIndex: null,
+      trialNumber: null
     };
     
     this.state.targetHistory.push({ ...this.state.currentTargetData });
