@@ -11,6 +11,22 @@ export interface ScoreBreakdown {
   knee: number;
 }
 
+export interface HipSwayTextPrompts {
+  centering: {
+    main: string;
+    subCentered: string;
+    subNotCentered: string;
+  };
+  targeting: {
+    progress: (total: number, left: number, right: number) => string;
+    instruction: (side: string) => string;
+  };
+  completed: {
+    main: string;
+    score: (score: number, total: number) => string;
+  };
+}
+
 export interface GameSettings {
   targetDuration: number;
   targetSize: number;
@@ -19,6 +35,7 @@ export interface GameSettings {
     centeringTolerance: number; // Pixels from center line
     centeringTimeRequired: number; // ms to hold center position
   };
+  hipSwayTextPrompts: HipSwayTextPrompts;
 }
 
 export type TargetType = 'hand' | 'head' | 'knee' | null;
@@ -37,6 +54,24 @@ export const gameSettings = writable<GameSettings>({
     targetsPerSide: 5,
     centeringTolerance: 50, // pixels
     centeringTimeRequired: 1000 // 1 second
+  },
+  hipSwayTextPrompts: {
+    centering: {
+      main: 'Position yourself at the center line',
+      subCentered: 'Hold position to continue...',
+      subNotCentered: 'Center your hips on the white line'
+    },
+    targeting: {
+      progress: (total: number, left: number, right: number) => 
+        `Progress: ${total}/10 (L:${left} R:${right})`,
+      instruction: (side: string) => 
+        `Move your hips to the ${side.toUpperCase()} rectangle`
+    },
+    completed: {
+      main: 'Hip Sway Game Complete!',
+      score: (score: number, total: number) => 
+        `Final Score: ${score}/${total}`
+    }
   }
 });
 

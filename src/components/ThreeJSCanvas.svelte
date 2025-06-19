@@ -2,6 +2,7 @@
   import { onMount, onDestroy, createEventDispatcher } from 'svelte';
   import { GameService, GAME_MODES, TARGET_TYPES } from '../services/gameService';
   import { gameColors, poseColors, hipSwaySettings } from '../stores/themeStore';
+  import { gameSettings } from '../stores/gameStore';
 
   const dispatch = createEventDispatcher();
 
@@ -28,6 +29,7 @@
       // Initialize audio context for sound effects
       try {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        console.log('AudioContext initialized, state:', audioContext.state);
       } catch (e) {
         console.warn('AudioContext not supported, sounds disabled');
         soundEnabled = false;
@@ -47,31 +49,86 @@
   });
 
   // Function to play hit sound effect
-  function playHitSound() {
+  async function playHitSound() {
     if (!soundEnabled || !audioContext) return;
     
     try {
-      // Create a short, pleasant hit sound using Web Audio API
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
+      // Resume audio context if it's suspended (browser autoplay policy)
+      if (audioContext.state === 'suspended') {
+        await audioContext.resume();
+        console.log('Audio context resumed');
+      }
       
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
+      // Create a realistic "thump" sound like a drum hit
+      const compressor = audioContext.createDynamicsCompressor();
+      const masterGain = audioContext.createGain();
       
-      // Set frequency for a pleasant "pop" sound
-      oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-      oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+      // Set up compressor for punch
+      compressor.threshold.setValueAtTime(-10, audioContext.currentTime);
+      compressor.knee.setValueAtTime(10, audioContext.currentTime);
+      compressor.ratio.setValueAtTime(8, audioContext.currentTime);
+      compressor.attack.setValueAtTime(0, audioContext.currentTime);
+      compressor.release.setValueAtTime(0.15, audioContext.currentTime);
       
-      // Set volume envelope
-      gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.3, audioContext.currentTime + 0.01);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+      // Set master gain higher for overall volume boost
+      masterGain.gain.setValueAtTime(10.0, audioContext.currentTime);
       
-      oscillator.type = 'sine';
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.15);
+      masterGain.connect(compressor);
+      compressor.connect(audioContext.destination);
+      
+      // Bass thump - low frequency for body
+      const bassOsc = audioContext.createOscillator();
+      const bassGain = audioContext.createGain();
+      bassOsc.connect(bassGain);
+      bassGain.connect(masterGain);
+      
+      // Noise burst for attack/click
+      const noiseBuffer = audioContext.createBuffer(1, audioContext.sampleRate * 0.1, audioContext.sampleRate);
+      const noiseData = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < noiseData.length; i++) {
+        noiseData[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / noiseData.length, 2);
+      }
+      
+      const noiseSource = audioContext.createBufferSource();
+      const noiseGain = audioContext.createGain();
+      const noiseFilter = audioContext.createBiquadFilter();
+      
+      noiseSource.buffer = noiseBuffer;
+      noiseSource.connect(noiseFilter);
+      noiseFilter.connect(noiseGain);
+      noiseGain.connect(masterGain);
+      
+      // Filter the noise for more natural sound
+      noiseFilter.type = 'lowpass';
+      noiseFilter.frequency.setValueAtTime(800, audioContext.currentTime);
+      noiseFilter.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.05);
+      
+      // Bass frequency sweep (like a kick drum)
+      bassOsc.frequency.setValueAtTime(60, audioContext.currentTime);
+      bassOsc.frequency.exponentialRampToValueAtTime(30, audioContext.currentTime + 0.1);
+      
+      // Bass envelope - quick attack, longer decay (increased volume)
+      bassGain.gain.setValueAtTime(0, audioContext.currentTime);
+      bassGain.gain.linearRampToValueAtTime(1.2, audioContext.currentTime + 0.005);
+      bassGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+      
+      // Noise envelope - very quick attack for "thump" character (increased volume)
+      noiseGain.gain.setValueAtTime(0, audioContext.currentTime);
+      noiseGain.gain.linearRampToValueAtTime(0.7, audioContext.currentTime + 0.002);
+      noiseGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05);
+      
+      bassOsc.type = 'sine'; // Sine wave for clean bass
+      
+      // Start all sounds
+      bassOsc.start(audioContext.currentTime);
+      bassOsc.stop(audioContext.currentTime + 0.2);
+      noiseSource.start(audioContext.currentTime);
+      noiseSource.stop(audioContext.currentTime + 0.1);
+      
+      console.log('Sound played successfully');
     } catch (e) {
       console.warn('Error playing sound:', e);
+      soundEnabled = false; // Disable sound if there are repeated errors
     }
   }
 
@@ -162,6 +219,7 @@
     
     // Play sound effect if requested
     if (playSound) {
+      console.log('Playing hit sound for collision:', hitType);
       playHitSound();
     }
     
@@ -388,7 +446,7 @@
     switch (hipSwayState.phase) {
       case 'centering':
         ctx.fillText(
-          'Position yourself at the center line',
+          $gameSettings.hipSwayTextPrompts.centering.main,
           -width / 2, // Negative x because we flipped
           50
         );
@@ -397,13 +455,13 @@
         ctx.font = '18px Arial';
         if (hipSwayState.isCentered) {
           ctx.fillText(
-            'Hold position to continue...',
+            $gameSettings.hipSwayTextPrompts.centering.subCentered,
             -width / 2,
             height - 30
           );
         } else {
           ctx.fillText(
-            'Center your hips on the white line',
+            $gameSettings.hipSwayTextPrompts.centering.subNotCentered,
             -width / 2,
             height - 30
           );
@@ -413,16 +471,15 @@
       case 'targeting':
         const totalTargets = (hipSwayState.leftSideHits + hipSwayState.rightSideHits);
         ctx.fillText(
-          `Progress: ${totalTargets}/10 (L:${hipSwayState.leftSideHits} R:${hipSwayState.rightSideHits})`,
+          $gameSettings.hipSwayTextPrompts.targeting.progress(totalTargets, hipSwayState.leftSideHits, hipSwayState.rightSideHits),
           -width / 2, // Negative x because we flipped
           50
         );
         
         ctx.fillStyle = '#cccccc';
         ctx.font = '18px Arial';
-        const sideText = hipSwayState.targetSide === 'left' ? 'LEFT' : 'RIGHT';
         ctx.fillText(
-          `Move your hips to the ${sideText} rectangle`,
+          $gameSettings.hipSwayTextPrompts.targeting.instruction(hipSwayState.targetSide),
           -width / 2, // Negative x because we flipped
           height - 30
         );
@@ -430,7 +487,7 @@
         
       case 'completed':
         ctx.fillText(
-          'Hip Sway Game Complete!',
+          $gameSettings.hipSwayTextPrompts.completed.main,
           -width / 2, // Negative x because we flipped
           50
         );
@@ -438,7 +495,7 @@
         ctx.fillStyle = '#cccccc';
         ctx.font = '18px Arial';
         ctx.fillText(
-          `Final Score: ${hipSwayState.leftSideHits + hipSwayState.rightSideHits}/10`,
+          $gameSettings.hipSwayTextPrompts.completed.score(hipSwayState.leftSideHits + hipSwayState.rightSideHits, 10),
           -width / 2, // Negative x because we flipped
           height - 30
         );
@@ -787,6 +844,18 @@
     }
   }
 
+  // Handle canvas click to initialize audio (browser autoplay policy)
+  async function handleCanvasClick() {
+    if (audioContext && audioContext.state === 'suspended') {
+      try {
+        await audioContext.resume();
+        console.log('Audio context activated by user interaction');
+      } catch (e) {
+        console.warn('Failed to activate audio context:', e);
+      }
+    }
+  }
+
   // Reactive statement to handle prop changes
   $: if (canvasElement) {
     handleResize();
@@ -798,6 +867,7 @@
   {width} 
   {height}
   class="fullscreen-canvas"
+  on:click={handleCanvasClick}
 ></canvas>
 
 <style>
