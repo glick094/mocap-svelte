@@ -14,11 +14,6 @@ export interface ScoreBreakdown {
 export interface GameSettings {
   targetDuration: number;
   targetSize: number;
-  targetColors: {
-    hand: string;
-    head: string;
-    knee: string;
-  };
 }
 
 export type TargetType = 'hand' | 'head' | 'knee' | null;
@@ -32,12 +27,7 @@ export const scoreBreakdown = writable<ScoreBreakdown>({ hand: 0, head: 0, knee:
 // Game settings
 export const gameSettings = writable<GameSettings>({
   targetDuration: 3000, // ms
-  targetSize: 50, // pixels
-  targetColors: {
-    hand: '#00ff88',
-    head: '#ff6b6b', 
-    knee: '#4ecdc4'
-  }
+  targetSize: 50 // pixels
 });
 
 // Derived stores

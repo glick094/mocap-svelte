@@ -7,7 +7,7 @@
  * Savitzky-Golay filter implementation
  * Smooths pose landmark data to reduce noise
  */
-export function savitzkyGolayFilter(data, windowSize = 5, polynomialOrder = 3) {
+export function savitzkyGolayFilter(data, windowSize = 3, polynomialOrder = 2) {
   if (!data || data.length < windowSize) {
     return data;
   }
