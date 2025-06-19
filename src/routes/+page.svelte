@@ -190,6 +190,7 @@
     if (event.detail.modeProgress) {
       gameModeProgress = event.detail.modeProgress;
     }
+    
   }
 
   function handleGameEnded(event) {

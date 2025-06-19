@@ -80,3 +80,10 @@
 * [x] have the webcam inverted horizontally so the threejs is not mirrored
 * [x] add qr reader for inputting participant data
 **  [ ] fix the qr reader so it actually scans
+
+
+* [ ] the flow mode is not showing hands after centering
+* [ ] the flow mode is not showing head trials (shows hands)
+* [ ] the flow mode is not showing random trials
+* [ ] add a visual circle timer in short delay
+* [ ] remove initial delay. 

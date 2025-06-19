@@ -974,12 +974,28 @@ export class GameService {
           this.state.currentTarget = this.state.fixedTargets[nextArrayIndex];
           this.createTargetData(); // Create data for next target
         } else {
+          // All targets completed
           this.state.currentTarget = null;
           this.state.currentTargetData = null;
+          
+          // Mark game as completed
+          if (this.gameMode === GAME_MODES.HANDS_FIXED) {
+            this.state.handsCenteringState.phase = 'completed';
+          } else if (this.gameMode === GAME_MODES.HEAD_FIXED) {
+            this.state.headCenteringState.phase = 'completed';
+          }
         }
       } else {
+        // All targets completed
         this.state.currentTarget = null;
         this.state.currentTargetData = null;
+        
+        // Mark game as completed
+        if (this.gameMode === GAME_MODES.HANDS_FIXED) {
+          this.state.handsCenteringState.phase = 'completed';
+        } else if (this.gameMode === GAME_MODES.HEAD_FIXED) {
+          this.state.headCenteringState.phase = 'completed';
+        }
       }
       
       return {
@@ -1239,6 +1255,27 @@ export class GameService {
       targetIndex: null,
       trialNumber: null
     };
+  }
+
+  // Check if the current game mode is complete
+  public isGameComplete(): boolean {
+    switch (this.gameMode) {
+      case GAME_MODES.HIPS_SWAY:
+        return this.state.hipSwayState.phase === 'completed';
+      case GAME_MODES.HANDS_FIXED:
+        return this.state.handsCenteringState.phase === 'completed' || 
+               (this.state.handsCenteringState.phase === 'targeting' && 
+                this.state.currentFixedTargetIndex > this.state.fixedTargets.length);
+      case GAME_MODES.HEAD_FIXED:
+        return this.state.headCenteringState.phase === 'completed' || 
+               (this.state.headCenteringState.phase === 'targeting' && 
+                this.state.currentFixedTargetIndex > this.state.fixedTargets.length);
+      case GAME_MODES.RANDOM:
+        // Random mode doesn't auto-complete, relies on external timer
+        return false;
+      default:
+        return false;
+    }
   }
 
   // Hip sway centering phase data tracking

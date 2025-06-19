@@ -148,15 +148,15 @@
       hitKeypoint: hitKeypoint
     });
     
-    // Check if game is complete
-    if (modeProgress && modeProgress.completed >= modeProgress.total) {
+    // Check if game is complete using the game service method
+    if (gameService.isGameComplete()) {
       setTimeout(() => {
         dispatch('gameEnded', { 
           finalScore: gameService.getGameScore(), 
           completed: true,
           targetHistory: gameService.getTargetHistory()
         });
-      }, 1000);
+      }, 500); // Reduced delay for faster flow
     }
     
     // For random mode, dispatch target change

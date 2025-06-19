@@ -35,7 +35,7 @@ export class GameFlowService {
 
   constructor(config: GameFlowConfig = {
     games: [GAME_MODES.HIPS_SWAY, GAME_MODES.HANDS_FIXED, GAME_MODES.HEAD_FIXED, GAME_MODES.RANDOM],
-    delayBetweenGames: 10000, // 10 seconds
+    delayBetweenGames: 5000, // 5 seconds
     autoStartRecording: true
   }) {
     this.config = config;
