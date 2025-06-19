@@ -21,6 +21,7 @@
   } from '../services/recordingService.js';
   
   import { smoothLandmarks as smoothLandmarksService } from '../services/smoothingService.js';
+  import { GameFlowService } from '../services/gameFlowService.js';
 
   // App state
   let showSettings = false;
@@ -29,6 +30,20 @@
   let gameScore = 0; // Current game score
   let currentTargetType = null; // Current target type for display
   let scoreBreakdown = { hand: 0, head: 0, knee: 0 }; // Score breakdown by body part
+  
+  // Game flow state
+  let gameFlowService = null;
+  let gameFlowState = {
+    currentGameIndex: -1,
+    currentGame: null,
+    phase: 'waiting',
+    isActive: false,
+    delayStartTime: null,
+    delayRemaining: 0
+  };
+  let isFlowMode = false; // Whether we're in automatic flow mode vs manual mode
+  let randomGameTimer = null; // Timer for 1-minute random game
+  let randomGameTimeRemaining = 0;
   
   // Game modes
   const GAME_MODES = {
@@ -93,6 +108,7 @@
   // Game data recording state
   let gameDataBuffer = [];
   let gameDataSession = null;
+  let allGameDataSessions = []; // Track all game-specific recording sessions
 
   function openSettings() {
     showSettings = true;
@@ -144,7 +160,7 @@
     const gameData = event.detail;
     
     // Record game data if recording is active
-    if (isRecording && gameDataSession) {
+    if (gameDataSession) {
       const unixTimestamp = gameData.timestamp || Date.now(); // Use original MediaPipe timestamp
       const preciseFrameTime = performance.now() - gameDataSession.performanceStartTime; // High-precision relative time
       const csvRow = formatPoseDataForCSV(gameData, unixTimestamp, preciseFrameTime); // Same format as MediaPipe data
@@ -181,6 +197,12 @@
     gameScore = event.detail.finalScore;
     currentTargetType = null;
     // Keep scoreBreakdown for final display
+    
+    // If in flow mode, notify the flow service
+    if (isFlowMode && gameFlowService) {
+      gameFlowService.onGameCompleted();
+      gameFlowState = gameFlowService.getState();
+    }
   }
 
   function handleTargetChanged(event) {
@@ -226,17 +248,156 @@
       return;
     }
     
-    isGameActive = !isGameActive;
-    if (!isGameActive) {
-      currentTargetType = null; // Clear target type when stopping game
+    if (isFlowMode) {
+      // In flow mode, toggle the entire flow
+      toggleGameFlow();
     } else {
-      // Reset progress when starting a new game
-      resetGameModeProgress();
+      // In manual mode, toggle individual game
+      isGameActive = !isGameActive;
+      if (!isGameActive) {
+        currentTargetType = null; // Clear target type when stopping game
+      } else {
+        // Reset progress when starting a new game
+        resetGameModeProgress();
+      }
+      console.log('Game toggled:', isGameActive ? 'Started' : 'Stopped');
     }
-    console.log('Game toggled:', isGameActive ? 'Started' : 'Stopped');
+  }
+  
+  function toggleGameFlow() {
+    if (gameFlowState.isActive) {
+      stopGameFlow();
+    } else {
+      startGameFlow();
+    }
+  }
+  
+  function startGameFlow() {
+    if (!isWebcamActive) {
+      alert('Please start the camera first to play games!');
+      return;
+    }
+    
+    console.log('Starting game flow');
+    
+    // Initialize game flow service if not already done
+    if (!gameFlowService) {
+      initializeGameFlow();
+    }
+    
+    // Start overall pose data recording
+    if (!isRecording) {
+      startPoseDataRecording();
+    }
+    
+    // Start the flow
+    gameFlowService.startFlow();
+    gameFlowState = gameFlowService.getState();
+  }
+  
+  function stopGameFlow() {
+    console.log('Stopping game flow');
+    
+    if (gameFlowService) {
+      gameFlowService.stopFlow();
+      gameFlowState = gameFlowService.getState();
+    }
+    
+    // Stop random game timer
+    if (randomGameTimer) {
+      clearInterval(randomGameTimer);
+      randomGameTimer = null;
+      randomGameTimeRemaining = 0;
+    }
+    
+    // Stop current game
+    isGameActive = false;
+    currentTargetType = null;
+    
+    // Stop all recording
+    if (isRecording) {
+      stopRecording();
+    }
+  }
+  
+  function initializeGameFlow() {
+    gameFlowService = new GameFlowService({
+      games: [GAME_MODES.HIPS_SWAY, GAME_MODES.HANDS_FIXED, GAME_MODES.HEAD_FIXED, GAME_MODES.RANDOM],
+      delayBetweenGames: 10000, // 10 seconds
+      autoStartRecording: true
+    });
+    
+    gameFlowService.setCallbacks({
+      onGameStart: (gameMode, gameIndex) => {
+        console.log(`Flow: Starting game ${gameIndex + 1}: ${gameMode}`);
+        currentGameMode = gameMode;
+        isGameActive = true;
+        resetGameModeProgress();
+        
+        // Start game-specific recording
+        startGameDataRecording(gameMode);
+        
+        // Start 1-minute timer for random mode
+        if (gameMode === GAME_MODES.RANDOM) {
+          startRandomGameTimer();
+        }
+      },
+      
+      onGameEnd: (gameMode, gameIndex) => {
+        console.log(`Flow: Ending game ${gameIndex + 1}: ${gameMode}`);
+        isGameActive = false;
+        currentTargetType = null;
+        
+        // Stop random game timer if active
+        if (randomGameTimer) {
+          clearInterval(randomGameTimer);
+          randomGameTimer = null;
+          randomGameTimeRemaining = 0;
+        }
+        
+        // Stop game-specific recording
+        stopGameDataRecording();
+      },
+      
+      onDelayStart: (nextGame, delayTime) => {
+        console.log(`Flow: Starting ${delayTime / 1000}s delay before ${nextGame}`);
+        isGameActive = false;
+        currentTargetType = null;
+      },
+      
+      onDelayUpdate: (remaining) => {
+        gameFlowState = gameFlowService.getState();
+      },
+      
+      onFlowComplete: () => {
+        console.log('Flow: All games completed!');
+        isGameActive = false;
+        currentTargetType = null;
+        
+        // Stop random game timer if still active
+        if (randomGameTimer) {
+          clearInterval(randomGameTimer);
+          randomGameTimer = null;
+          randomGameTimeRemaining = 0;
+        }
+        
+        // Stop overall recording
+        if (isRecording) {
+          stopRecording();
+        }
+        
+        // Download all game data files
+        downloadAllGameData();
+      }
+    });
   }
   
   function changeGameMode(newMode) {
+    if (isFlowMode) {
+      // In flow mode, don't allow manual game mode changes
+      return;
+    }
+    
     if (isGameActive) {
       // Stop current game when changing modes
       isGameActive = false;
@@ -535,6 +696,14 @@
   }
 
   function startRecording() {
+    startPoseDataRecording();
+    if (!isFlowMode) {
+      // In manual mode, also start game data recording
+      startGameDataRecording(currentGameMode);
+    }
+  }
+  
+  function startPoseDataRecording() {
     if (isRecording) return;
 
     const participant = generateParticipantId(userSettings);
@@ -548,28 +717,71 @@
       performanceStartTime: performance.now() // High-precision start time for relative timing
     };
 
-    // Initialize game data recording session
-    gameDataSession = {
-      participantId: participant,
-      timestamp: timestamp,
-      filename: `game_data_${participant}_${timestamp}.csv`,
-      csvContent: createCSVHeader(), // Same format as MediaPipe data
-      performanceStartTime: performance.now() // Same start time for synchronization
-    };
-
     isRecording = true;
     recordingStartTime = Date.now(); // Unix timestamp for absolute timing
     poseDataBuffer = [];
-    gameDataBuffer = [];
 
     // Start video recording
     const videoStarted = startLocalVideoRecording(participant, timestamp);
 
     console.log('Started recording pose data:', recordingSession.filename);
-    console.log('Started recording game data:', gameDataSession.filename);
     console.log('Video recording started:', videoStarted);
     console.log('Recording start time (Unix):', recordingStartTime);
     console.log('Performance start time:', recordingSession.performanceStartTime);
+  }
+  
+  function startGameDataRecording(gameMode) {
+    if (!recordingSession) {
+      console.error('Cannot start game data recording without pose data session');
+      return;
+    }
+    
+    const gameName = gameMode.replace('-', '_');
+    const timestamp = recordingSession.timestamp;
+    
+    gameDataSession = {
+      participantId: recordingSession.participantId,
+      timestamp: timestamp,
+      gameMode: gameMode,
+      filename: `game_data_${gameName}_${recordingSession.participantId}_${timestamp}.csv`,
+      csvContent: createCSVHeader(), // Same format as MediaPipe data
+      performanceStartTime: recordingSession.performanceStartTime // Same start time for synchronization
+    };
+    
+    gameDataBuffer = [];
+    allGameDataSessions.push(gameDataSession);
+    
+    console.log('Started recording game data:', gameDataSession.filename);
+  }
+  
+  function stopGameDataRecording() {
+    if (!gameDataSession) return;
+    
+    console.log('Stopped recording game data:', gameDataSession.filename);
+    gameDataSession = null;
+    gameDataBuffer = [];
+  }
+  
+  function startRandomGameTimer() {
+    randomGameTimeRemaining = 60; // 60 seconds
+    console.log('Starting 1-minute timer for random game');
+    
+    randomGameTimer = setInterval(() => {
+      randomGameTimeRemaining--;
+      
+      if (randomGameTimeRemaining <= 0) {
+        console.log('Random game time expired');
+        clearInterval(randomGameTimer);
+        randomGameTimer = null;
+        randomGameTimeRemaining = 0;
+        
+        // Notify game flow service
+        if (gameFlowService) {
+          gameFlowService.onRandomGameTimeout();
+          gameFlowState = gameFlowService.getState();
+        }
+      }
+    }, 1000); // Update every second
   }
 
   function stopRecording() {
@@ -580,7 +792,10 @@
     // Stop video recording
     stopLocalVideoRecording();
     
-    // Create and download the MediaPipe CSV file
+    // Stop current game data recording
+    stopGameDataRecording();
+    
+    // Download pose data file
     const blob = new Blob([recordingSession.csvContent], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -591,30 +806,41 @@
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    // Create and download the game data CSV file
-    if (gameDataSession) {
-      const gameBlob = new Blob([gameDataSession.csvContent], { type: 'text/csv' });
-      const gameUrl = URL.createObjectURL(gameBlob);
-      const gameA = document.createElement('a');
-      gameA.href = gameUrl;
-      gameA.download = gameDataSession.filename;
-      document.body.appendChild(gameA);
-      gameA.click();
-      document.body.removeChild(gameA);
-      URL.revokeObjectURL(gameUrl);
-    }
-
-    console.log('Stopped recording. Files downloaded:', recordingSession.filename);
-    console.log('Game data file downloaded:', gameDataSession?.filename);
+    console.log('Stopped recording. Pose data file downloaded:', recordingSession.filename);
     console.log('Total MediaPipe data points recorded:', poseDataBuffer.length);
-    console.log('Total game data points recorded:', gameDataBuffer.length);
+    
+    if (!isFlowMode) {
+      // In manual mode, download game data immediately
+      downloadAllGameData();
+    }
     
     // Reset recording state
     recordingSession = null;
-    gameDataSession = null;
     recordingStartTime = null;
     poseDataBuffer = [];
-    gameDataBuffer = [];
+  }
+  
+  function downloadAllGameData() {
+    console.log(`Downloading ${allGameDataSessions.length} game data files`);
+    
+    allGameDataSessions.forEach(session => {
+      if (session.csvContent && session.csvContent.length > 0) {
+        const gameBlob = new Blob([session.csvContent], { type: 'text/csv' });
+        const gameUrl = URL.createObjectURL(gameBlob);
+        const gameA = document.createElement('a');
+        gameA.href = gameUrl;
+        gameA.download = session.filename;
+        document.body.appendChild(gameA);
+        gameA.click();
+        document.body.removeChild(gameA);
+        URL.revokeObjectURL(gameUrl);
+        
+        console.log('Downloaded game data file:', session.filename);
+      }
+    });
+    
+    // Reset game data sessions
+    allGameDataSessions = [];
   }
 
   function toggleRecording() {
@@ -677,11 +903,20 @@
     updateCanvasSize();
     window.addEventListener('resize', updateCanvasSize);
     
+    // Start game flow update interval
+    const flowUpdateInterval = setInterval(() => {
+      if (gameFlowService) {
+        gameFlowService.update();
+        gameFlowState = gameFlowService.getState();
+      }
+    }, 100); // Update every 100ms
+    
     return () => {
       // Restore original console functions
       console.warn = originalConsoleWarn;
       console.log = originalConsoleLog;
       window.removeEventListener('resize', updateCanvasSize);
+      clearInterval(flowUpdateInterval);
     };
   });
 </script>
@@ -699,38 +934,75 @@
       <button class="header-btn" class:active={isWebcamActive} on:click={toggleWebcam}>
         {isWebcamActive ? '📹 Stop Camera' : '📷 Start Camera'}
       </button>
+      <!-- Flow Mode Toggle -->
       <button 
-        class="header-btn record-btn" 
-        class:recording={isRecording}
-        on:click={toggleRecording}
-        disabled={!isWebcamActive}
+        class="header-btn flow-btn" 
+        class:active={isFlowMode}
+        on:click={() => isFlowMode = !isFlowMode}
+        disabled={isGameActive || gameFlowState.isActive}
       >
-        {isRecording ? '⏹️ Stop Recording' : '🔴 Record Data'}
+        {isFlowMode ? '🔄 Flow Mode' : '🎯 Manual Mode'}
       </button>
-      <!-- Game Mode Selector -->
-      <select 
-        class="header-select"
-        bind:value={currentGameMode}
-        on:change={(e) => changeGameMode(e.target.value)}
-        disabled={isGameActive}
-      >
-        <option value={GAME_MODES.HIPS_SWAY}>🕺 Hips Sway</option>
-        <option value={GAME_MODES.HANDS_FIXED}>✋ Hands Figure-8</option>
-        <option value={GAME_MODES.HEAD_FIXED}>🟡 Head Circle</option>
-        <option value={GAME_MODES.RANDOM}>🎯 Random Targets</option>
-      </select>
       
+      <!-- Recording Button (only in manual mode) -->
+      {#if !isFlowMode}
+        <button 
+          class="header-btn record-btn" 
+          class:recording={isRecording}
+          on:click={toggleRecording}
+          disabled={!isWebcamActive}
+        >
+          {isRecording ? '⏹️ Stop Recording' : '🔴 Record Data'}
+        </button>
+      {/if}
+      
+      <!-- Game Mode Selector (only in manual mode) -->
+      {#if !isFlowMode}
+        <select 
+          class="header-select"
+          bind:value={currentGameMode}
+          on:change={(e) => changeGameMode(e.target.value)}
+          disabled={isGameActive}
+        >
+          <option value={GAME_MODES.HIPS_SWAY}>🕺 Hips Sway</option>
+          <option value={GAME_MODES.HANDS_FIXED}>✋ Hands Figure-8</option>
+          <option value={GAME_MODES.HEAD_FIXED}>🟡 Head Circle</option>
+          <option value={GAME_MODES.RANDOM}>🎯 Random Targets</option>
+        </select>
+      {/if}
+      
+      <!-- Game Control Button -->
       <button 
         class="header-btn game-btn" 
-        class:active={isGameActive}
+        class:active={isGameActive || gameFlowState.isActive}
         on:click={toggleGame}
         disabled={!isWebcamActive}
       >
-        {isGameActive ? '⏹️ Stop Game' : '🎮 Start Game'}
-        {#if isGameActive && gameScore > 0}
+        {#if isFlowMode}
+          {gameFlowState.isActive ? '⏹️ Stop Flow' : '🚀 Start Flow'}
+        {:else}
+          {isGameActive ? '⏹️ Stop Game' : '🎮 Start Game'}
+        {/if}
+        {#if (isGameActive || gameFlowState.isActive) && gameScore > 0}
           <span class="score-badge">{gameScore}</span>
         {/if}
       </button>
+      
+      <!-- Flow Status Display -->
+      {#if isFlowMode && gameFlowState.isActive}
+        <div class="flow-status">
+          {#if gameFlowState.phase === 'playing'}
+            <span class="flow-game">Playing: {gameFlowService?.getGameDisplayName(gameFlowState.currentGame) || ''}</span>
+            {#if gameFlowState.currentGame === GAME_MODES.RANDOM && randomGameTimeRemaining > 0}
+              <span class="random-timer">Time: {randomGameTimeRemaining}s</span>
+            {/if}
+          {:else if gameFlowState.phase === 'delay'}
+            <span class="flow-delay">Next in: {gameFlowService?.formatDelayTime(gameFlowState.delayRemaining) || ''}</span>
+          {:else if gameFlowState.phase === 'completed'}
+            <span class="flow-complete">✅ All Games Complete!</span>
+          {/if}
+        </div>
+      {/if}
       <button class="header-btn settings-btn" on:click={openSettings}>
         ⚙️ Settings
       </button>
@@ -921,6 +1193,49 @@
     font-size: 0.7rem;
     font-weight: bold;
     margin-left: 0.5rem;
+  }
+  
+  .flow-btn {
+    background: rgba(128, 0, 255, 0.2);
+    border-color: rgba(128, 0, 255, 0.5);
+    color: #8000ff;
+  }
+  
+  .flow-btn:hover {
+    background: rgba(128, 0, 255, 0.3);
+  }
+  
+  .flow-btn.active {
+    background: rgba(128, 0, 255, 0.4);
+    box-shadow: 0 0 10px rgba(128, 0, 255, 0.5);
+  }
+  
+  .flow-status {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  
+  .flow-game {
+    color: #00ff88;
+  }
+  
+  .flow-delay {
+    color: #ff8800;
+  }
+  
+  .flow-complete {
+    color: #00ff88;
+  }
+  
+  .random-timer {
+    color: #ff4444;
+    margin-left: 1rem;
+    font-weight: bold;
   }
 
   @keyframes pulse-orange {
