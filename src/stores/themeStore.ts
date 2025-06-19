@@ -158,7 +158,7 @@ export const defaultGameTheme: GameTheme = {
     hand: '#ff6b6b',
     head: '#4ecdc4', 
     knee: '#45b7d1',
-    hipLeft: '#f39c12',
+    hipLeft: '#f1b603',
     hipRight: '#f39c12'
   },
   hipSwayRegions: {

@@ -3,6 +3,9 @@
  * Handles game logic, state management, and collision detection for motion capture games
  */
 
+import { get } from 'svelte/store';
+import { gameSettings } from '../stores/gameStore.js';
+
 // Game mode constants
 export const GAME_MODES = {
   HIPS_SWAY: 'hips-sway',
@@ -63,10 +66,27 @@ export interface HipRegions {
 }
 
 export interface HipSwayState {
+  phase: 'centering' | 'targeting' | 'completed';
   currentTrial: number;
-  targetSide: 'left' | 'right';
+  targetSide: 'left' | 'right' | null;
+  leftSideHits: number;
+  rightSideHits: number;
+  isCentered: boolean;
+  centeringStartTime: number | null;
   inTargetRegion: boolean;
   trialCompleted: boolean;
+  animation: {
+    isAnimating: boolean;
+    animationStartTime: number | null;
+    velocityX: number;
+    velocityY: number;
+    animationDuration: number; // ms
+  };
+  lastHipPosition: {
+    x: number;
+    y: number;
+    timestamp: number;
+  } | null;
 }
 
 export interface GameState {
@@ -123,10 +143,23 @@ export class GameService {
       targetHistory: [],
       currentTargetData: null,
       hipSwayState: {
+        phase: 'centering',
         currentTrial: 0,
-        targetSide: 'left',
+        targetSide: null,
+        leftSideHits: 0,
+        rightSideHits: 0,
+        isCentered: false,
+        centeringStartTime: null,
         inTargetRegion: false,
-        trialCompleted: false
+        trialCompleted: false,
+        animation: {
+          isAnimating: false,
+          animationStartTime: null,
+          velocityX: 0,
+          velocityY: 0,
+          animationDuration: 800 // 800ms animation
+        },
+        lastHipPosition: null
       },
       fixedTargets: [],
       currentFixedTargetIndex: 0,
@@ -149,6 +182,46 @@ export class GameService {
 
   public getHipSwayState(): HipSwayState {
     return { ...this.state.hipSwayState };
+  }
+
+  public getHipSwayAnimationPosition(hipRegions: HipRegions): { x: number; y: number; opacity: number } | null {
+    const hipSwayState = this.state.hipSwayState;
+    
+    if (!hipSwayState.animation.isAnimating || !hipSwayState.animation.animationStartTime) {
+      return null;
+    }
+    
+    const currentTime = Date.now();
+    const elapsed = currentTime - hipSwayState.animation.animationStartTime;
+    const progress = Math.min(elapsed / hipSwayState.animation.animationDuration, 1);
+    
+    // Calculate the base position (center of the target region)
+    let baseX: number;
+    let baseY: number;
+    
+    if (hipSwayState.targetSide === 'left') {
+      baseX = hipRegions.leftRegion.x + hipRegions.leftRegion.width / 2;
+      baseY = hipRegions.leftRegion.y + hipRegions.leftRegion.height / 2;
+    } else {
+      baseX = hipRegions.rightRegion.x + hipRegions.rightRegion.width / 2;
+      baseY = hipRegions.rightRegion.y + hipRegions.rightRegion.height / 2;
+    }
+    
+    // Apply easing function (ease-out cubic)
+    const easeOut = 1 - Math.pow(1 - progress, 3);
+    
+    // Calculate animated position based on velocity
+    const animatedX = baseX + (hipSwayState.animation.velocityX * elapsed / 1000);
+    const animatedY = baseY + (hipSwayState.animation.velocityY * elapsed / 1000);
+    
+    // Fade out as animation progresses
+    const opacity = 1 - easeOut;
+    
+    return {
+      x: animatedX,
+      y: animatedY,
+      opacity: Math.max(0, opacity)
+    };
   }
 
   public getFixedTargets(): Target[] {
@@ -283,10 +356,23 @@ export class GameService {
     switch (this.gameMode) {
       case GAME_MODES.HIPS_SWAY:
         this.state.hipSwayState = {
+          phase: 'centering',
           currentTrial: 0,
-          targetSide: 'left',
+          targetSide: null,
+          leftSideHits: 0,
+          rightSideHits: 0,
+          isCentered: false,
+          centeringStartTime: null,
           inTargetRegion: false,
-          trialCompleted: false
+          trialCompleted: false,
+          animation: {
+            isAnimating: false,
+            animationStartTime: null,
+            velocityX: 0,
+            velocityY: 0,
+            animationDuration: 800
+          },
+          lastHipPosition: null
         };
         this.state.currentTarget = null;
         break;
@@ -322,7 +408,7 @@ export class GameService {
   }
 
   // Collision detection
-  public checkCollisions(data: PoseData): { hit: boolean; hitType?: string; modeProgress?: any } {
+  public checkCollisions(data: PoseData): { hit: boolean; hitType?: string; modeProgress?: any; playSound?: boolean } {
     if (!data) return { hit: false };
     
     switch (this.gameMode) {
@@ -337,7 +423,7 @@ export class GameService {
     }
   }
 
-  private checkHipSwayCollisions(data: PoseData): { hit: boolean; hitType?: string; modeProgress?: any } {
+  private checkHipSwayCollisions(data: PoseData): { hit: boolean; hitType?: string; modeProgress?: any; playSound?: boolean } {
     if (!data.poseLandmarks) return { hit: false };
     
     const hipRegions = this.generateHipSwayRegions();
@@ -355,60 +441,174 @@ export class GameService {
       y: rightHip.y * this.height
     };
     
-    let inTargetRegion = false;
+    // Calculate center point between hips
+    const hipCenterX = (leftHipScreen.x + rightHipScreen.x) / 2;
+    const hipCenterY = (leftHipScreen.y + rightHipScreen.y) / 2;
+    const centerLineX = hipRegions.centerLine.x;
     
-    if (this.state.hipSwayState.targetSide === 'left') {
-      inTargetRegion = (
-        (leftHipScreen.x >= hipRegions.leftRegion.x && 
-         leftHipScreen.x <= hipRegions.leftRegion.x + hipRegions.leftRegion.width &&
-         leftHipScreen.y >= hipRegions.leftRegion.y && 
-         leftHipScreen.y <= hipRegions.leftRegion.y + hipRegions.leftRegion.height) ||
-        (rightHipScreen.x >= hipRegions.leftRegion.x && 
-         rightHipScreen.x <= hipRegions.leftRegion.x + hipRegions.leftRegion.width &&
-         rightHipScreen.y >= hipRegions.leftRegion.y && 
-         rightHipScreen.y <= hipRegions.leftRegion.y + hipRegions.leftRegion.height)
-      );
-    } else {
-      inTargetRegion = (
-        (leftHipScreen.x >= hipRegions.rightRegion.x && 
-         leftHipScreen.x <= hipRegions.rightRegion.x + hipRegions.rightRegion.width &&
-         leftHipScreen.y >= hipRegions.rightRegion.y && 
-         leftHipScreen.y <= hipRegions.rightRegion.y + hipRegions.rightRegion.height) ||
-        (rightHipScreen.x >= hipRegions.rightRegion.x && 
-         rightHipScreen.x <= hipRegions.rightRegion.x + hipRegions.rightRegion.width &&
-         rightHipScreen.y >= hipRegions.rightRegion.y && 
-         rightHipScreen.y <= hipRegions.rightRegion.y + hipRegions.rightRegion.height)
-      );
-    }
+    // Calculate hip velocity for animation
+    const currentTime = Date.now();
+    let velocityX = 0;
+    let velocityY = 0;
     
-    if (inTargetRegion && !this.state.hipSwayState.inTargetRegion && !this.state.hipSwayState.trialCompleted) {
-      this.state.hipSwayState.trialCompleted = true;
-      this.state.hipSwayState.currentTrial++;
-      this.state.gameScore++;
-      
-      const isComplete = this.state.hipSwayState.currentTrial >= 8;
-      
-      if (!isComplete) {
-        setTimeout(() => {
-          this.state.hipSwayState.targetSide = this.state.hipSwayState.targetSide === 'left' ? 'right' : 'left';
-          this.state.hipSwayState.trialCompleted = false;
-        }, 500);
+    if (this.state.hipSwayState.lastHipPosition) {
+      const deltaTime = currentTime - this.state.hipSwayState.lastHipPosition.timestamp;
+      if (deltaTime > 0) {
+        velocityX = (hipCenterX - this.state.hipSwayState.lastHipPosition.x) / deltaTime * 1000; // pixels per second
+        velocityY = (hipCenterY - this.state.hipSwayState.lastHipPosition.y) / deltaTime * 1000;
       }
-      
-      this.state.hipSwayState.inTargetRegion = inTargetRegion;
-      
-      return { 
-        hit: true, 
-        hitType: `hip-${this.state.hipSwayState.targetSide}`,
-        modeProgress: { completed: this.state.hipSwayState.currentTrial, total: 8 }
-      };
     }
     
-    this.state.hipSwayState.inTargetRegion = inTargetRegion;
+    // Update last hip position
+    this.state.hipSwayState.lastHipPosition = {
+      x: hipCenterX,
+      y: hipCenterY,
+      timestamp: currentTime
+    };
+    
+    // Get settings from gameStore
+    const settings = get(gameSettings);
+    const centeringTolerance = settings.hipSwayGame.centeringTolerance;
+    const centeringTimeRequired = settings.hipSwayGame.centeringTimeRequired;
+    const targetsPerSide = settings.hipSwayGame.targetsPerSide;
+    
+    // Check if hips are centered
+    const isCentered = Math.abs(hipCenterX - centerLineX) <= centeringTolerance;
+    
+    switch (this.state.hipSwayState.phase) {
+      case 'centering':
+        if (isCentered) {
+          if (!this.state.hipSwayState.isCentered) {
+            // Just became centered, start timing
+            this.state.hipSwayState.isCentered = true;
+            this.state.hipSwayState.centeringStartTime = Date.now();
+          } else {
+            // Check if centered long enough
+            const centeringDuration = Date.now() - (this.state.hipSwayState.centeringStartTime || 0);
+            if (centeringDuration >= centeringTimeRequired) {
+              // Move to targeting phase
+              this.state.hipSwayState.phase = 'targeting';
+              this.state.hipSwayState.targetSide = 'left'; // Start with left
+              this.state.hipSwayState.centeringStartTime = null;
+            }
+          }
+        } else {
+          // Not centered, reset centering timer
+          this.state.hipSwayState.isCentered = false;
+          this.state.hipSwayState.centeringStartTime = null;
+        }
+        break;
+        
+      case 'targeting':
+        let inTargetRegion = false;
+        
+        if (this.state.hipSwayState.targetSide === 'left') {
+          inTargetRegion = (
+            (leftHipScreen.x >= hipRegions.leftRegion.x && 
+             leftHipScreen.x <= hipRegions.leftRegion.x + hipRegions.leftRegion.width &&
+             leftHipScreen.y >= hipRegions.leftRegion.y && 
+             leftHipScreen.y <= hipRegions.leftRegion.y + hipRegions.leftRegion.height) ||
+            (rightHipScreen.x >= hipRegions.leftRegion.x && 
+             rightHipScreen.x <= hipRegions.leftRegion.x + hipRegions.leftRegion.width &&
+             rightHipScreen.y >= hipRegions.leftRegion.y && 
+             rightHipScreen.y <= hipRegions.leftRegion.y + hipRegions.leftRegion.height)
+          );
+        } else if (this.state.hipSwayState.targetSide === 'right') {
+          inTargetRegion = (
+            (leftHipScreen.x >= hipRegions.rightRegion.x && 
+             leftHipScreen.x <= hipRegions.rightRegion.x + hipRegions.rightRegion.width &&
+             leftHipScreen.y >= hipRegions.rightRegion.y && 
+             leftHipScreen.y <= hipRegions.rightRegion.y + hipRegions.rightRegion.height) ||
+            (rightHipScreen.x >= hipRegions.rightRegion.x && 
+             rightHipScreen.x <= hipRegions.rightRegion.x + hipRegions.rightRegion.width &&
+             rightHipScreen.y >= hipRegions.rightRegion.y && 
+             rightHipScreen.y <= hipRegions.rightRegion.y + hipRegions.rightRegion.height)
+          );
+        }
+        
+        if (inTargetRegion && !this.state.hipSwayState.inTargetRegion && !this.state.hipSwayState.trialCompleted) {
+          // Hit the target - trigger animation
+          this.state.hipSwayState.trialCompleted = true;
+          this.state.hipSwayState.currentTrial++;
+          this.state.gameScore++;
+          
+          // Start animation with hip velocity
+          this.state.hipSwayState.animation = {
+            isAnimating: true,
+            animationStartTime: currentTime,
+            velocityX: velocityX * 0.3, // Scale down velocity for smoother animation
+            velocityY: velocityY * 0.3,
+            animationDuration: 800
+          };
+          
+          // Update side hit counters
+          if (this.state.hipSwayState.targetSide === 'left') {
+            this.state.hipSwayState.leftSideHits++;
+          } else {
+            this.state.hipSwayState.rightSideHits++;
+          }
+          
+          // Check if game is complete - either both sides have required hits, or total hits reached
+          const totalTargets = targetsPerSide * 2;
+          const totalHits = this.state.hipSwayState.leftSideHits + this.state.hipSwayState.rightSideHits;
+          const isComplete = (this.state.hipSwayState.leftSideHits >= targetsPerSide && 
+                             this.state.hipSwayState.rightSideHits >= targetsPerSide) ||
+                             totalHits >= totalTargets;
+          
+          if (isComplete) {
+            this.state.hipSwayState.phase = 'completed';
+            this.state.hipSwayState.targetSide = null;
+          } else {
+            // Alternate to the other side after animation completes
+            setTimeout(() => {
+              // Check if we've reached the maximum for the current side
+              const currentSideHits = this.state.hipSwayState.targetSide === 'left' ? 
+                this.state.hipSwayState.leftSideHits : this.state.hipSwayState.rightSideHits;
+              
+              // If current side has reached max targets, switch to other side
+              // Otherwise, just alternate normally
+              if (currentSideHits >= targetsPerSide) {
+                // Switch to the side that has fewer hits
+                this.state.hipSwayState.targetSide = this.state.hipSwayState.leftSideHits < this.state.hipSwayState.rightSideHits ? 'left' : 'right';
+              } else {
+                // Normal alternation: if current side is left, switch to right, and vice versa
+                this.state.hipSwayState.targetSide = this.state.hipSwayState.targetSide === 'left' ? 'right' : 'left';
+              }
+              
+              // Reset animation and trial state
+              this.state.hipSwayState.animation.isAnimating = false;
+              this.state.hipSwayState.animation.animationStartTime = null;
+              this.state.hipSwayState.trialCompleted = false;
+            }, this.state.hipSwayState.animation.animationDuration);
+          }
+          
+          this.state.hipSwayState.inTargetRegion = inTargetRegion;
+          
+          return { 
+            hit: true, 
+            hitType: `hip-${this.state.hipSwayState.targetSide}`,
+            playSound: true, // Flag to trigger sound effect
+            modeProgress: { 
+              completed: this.state.hipSwayState.leftSideHits + this.state.hipSwayState.rightSideHits, 
+              total: totalTargets,
+              leftHits: this.state.hipSwayState.leftSideHits,
+              rightHits: this.state.hipSwayState.rightSideHits
+            }
+          };
+        }
+        
+        this.state.hipSwayState.inTargetRegion = inTargetRegion;
+        break;
+        
+      case 'completed':
+        // Game is done, no more collisions to check
+        break;
+    }
+    
     return { hit: false };
   }
   
-  private checkFixedTargetCollisions(data: PoseData): { hit: boolean; hitType?: string; modeProgress?: any } {
+  private checkFixedTargetCollisions(data: PoseData): { hit: boolean; hitType?: string; modeProgress?: any; playSound?: boolean } {
     if (this.state.fixedTargets.length === 0 || this.state.currentFixedTargetIndex >= this.state.fixedTargets.length) {
       return { hit: false };
     }
@@ -447,7 +647,7 @@ export class GameService {
     return { hit: false };
   }
   
-  private checkRandomTargetCollisions(data: PoseData): { hit: boolean; hitType?: string; hitKeypoint?: string } {
+  private checkRandomTargetCollisions(data: PoseData): { hit: boolean; hitType?: string; hitKeypoint?: string; playSound?: boolean } {
     if (!this.state.currentTarget || !data) return { hit: false };
 
     let targetHit = false;
@@ -611,14 +811,16 @@ export class GameService {
       targetType: this.state.currentTargetData.targetType,
       targetX: this.state.currentTargetData.targetX,
       targetY: this.state.currentTargetData.targetY,
-      status: this.state.currentTargetData.status
+      status: this.state.currentTargetData.status,
+      hitTime: this.state.currentTargetData.hitTime
     } : {
       targetShowing: false,
       targetId: undefined,
       targetType: undefined,
       targetX: undefined,
       targetY: undefined,
-      status: undefined
+      status: undefined,
+      hitTime: undefined
     };
   }
 

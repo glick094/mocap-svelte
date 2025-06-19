@@ -9,6 +9,8 @@
   let ctx;
   let animationId;
   let gameService;
+  let audioContext;
+  let soundEnabled = true;
 
   // Component props
   export let width = 800;
@@ -22,6 +24,15 @@
     if (canvasElement) {
       ctx = canvasElement.getContext('2d');
       gameService = new GameService(width, height, gameMode);
+      
+      // Initialize audio context for sound effects
+      try {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      } catch (e) {
+        console.warn('AudioContext not supported, sounds disabled');
+        soundEnabled = false;
+      }
+      
       animate();
     }
   });
@@ -30,7 +41,39 @@
     if (animationId) {
       cancelAnimationFrame(animationId);
     }
+    if (audioContext) {
+      audioContext.close();
+    }
   });
+
+  // Function to play hit sound effect
+  function playHitSound() {
+    if (!soundEnabled || !audioContext) return;
+    
+    try {
+      // Create a short, pleasant hit sound using Web Audio API
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      // Set frequency for a pleasant "pop" sound
+      oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+      
+      // Set volume envelope
+      gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.3, audioContext.currentTime + 0.01);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+      
+      oscillator.type = 'sine';
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.15);
+    } catch (e) {
+      console.warn('Error playing sound:', e);
+    }
+  }
 
   function animate() {
     animationId = requestAnimationFrame(animate);
@@ -115,7 +158,12 @@
   }
 
   function handleCollision(collisionResult) {
-    const { hitType, modeProgress, hitKeypoint } = collisionResult;
+    const { hitType, modeProgress, hitKeypoint, playSound } = collisionResult;
+    
+    // Play sound effect if requested
+    if (playSound) {
+      playHitSound();
+    }
     
     dispatch('scoreUpdate', {
       score: gameService.getGameScore(),
@@ -224,81 +272,196 @@
     
     ctx.save();
     
-    // Only draw the current target region
-    ctx.globalAlpha = $hipSwaySettings.fillOpacity;
-    
-    if (hipSwayState.targetSide === 'left') {
-      ctx.fillStyle = $gameColors.hipLeft;
+    // Draw animated target if animation is playing
+    const animationPos = gameService.getHipSwayAnimationPosition(hipRegions);
+    if (animationPos && animationPos.opacity > 0) {
+      ctx.save();
+      ctx.globalAlpha = animationPos.opacity;
+      
+      // Draw the animated target being "bumped off"
+      const targetColor = hipSwayState.targetSide === 'left' ? $gameColors.hipLeft : $gameColors.hipRight;
+      ctx.fillStyle = targetColor;
+      ctx.shadowColor = targetColor;
+      ctx.shadowBlur = 15;
+      
+      // Draw animated rectangle
+      const animSize = 80 * (1 + (1 - animationPos.opacity) * 0.3); // Slightly grow as it fades
       ctx.fillRect(
-        hipRegions.leftRegion.x,
-        hipRegions.leftRegion.y,
-        hipRegions.leftRegion.width,
-        hipRegions.leftRegion.height
+        animationPos.x - animSize / 2,
+        animationPos.y - animSize / 2,
+        animSize,
+        animSize
       );
       
-      // Draw outline for current target
-      ctx.globalAlpha = $hipSwaySettings.outlineOpacity;
-      ctx.strokeStyle = $hipSwaySettings.outlineColor;
-      ctx.lineWidth = $hipSwaySettings.outlineWidth;
-      ctx.strokeRect(
-        hipRegions.leftRegion.x,
-        hipRegions.leftRegion.y,
-        hipRegions.leftRegion.width,
-        hipRegions.leftRegion.height
-      );
-    } else {
-      ctx.fillStyle = $gameColors.hipRight;
-      ctx.fillRect(
-        hipRegions.rightRegion.x,
-        hipRegions.rightRegion.y,
-        hipRegions.rightRegion.width,
-        hipRegions.rightRegion.height
-      );
-      
-      // Draw outline for current target
-      ctx.globalAlpha = $hipSwaySettings.outlineOpacity;
-      ctx.strokeStyle = $hipSwaySettings.outlineColor;
-      ctx.lineWidth = $hipSwaySettings.outlineWidth;
-      ctx.strokeRect(
-        hipRegions.rightRegion.x,
-        hipRegions.rightRegion.y,
-        hipRegions.rightRegion.width,
-        hipRegions.rightRegion.height
-      );
+      ctx.restore();
     }
     
-    // Draw center line for reference
-    ctx.globalAlpha = 0.3;
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(hipRegions.centerLine.x, hipRegions.centerLine.y);
-    ctx.lineTo(hipRegions.centerLine.x, hipRegions.centerLine.y + hipRegions.centerLine.height);
-    ctx.stroke();
+    switch (hipSwayState.phase) {
+      case 'centering':
+        // Only draw center line during centering phase
+        ctx.globalAlpha = 0.8;
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(hipRegions.centerLine.x, hipRegions.centerLine.y);
+        ctx.lineTo(hipRegions.centerLine.x, hipRegions.centerLine.y + hipRegions.centerLine.height);
+        ctx.stroke();
+        break;
+        
+      case 'targeting':
+        // Draw the current target region and center line
+        ctx.globalAlpha = $hipSwaySettings.fillOpacity;
+        
+        if (hipSwayState.targetSide === 'left') {
+          ctx.fillStyle = $gameColors.hipLeft;
+          ctx.fillRect(
+            hipRegions.leftRegion.x,
+            hipRegions.leftRegion.y,
+            hipRegions.leftRegion.width,
+            hipRegions.leftRegion.height
+          );
+          
+          // Draw outline for current target
+          ctx.globalAlpha = $hipSwaySettings.outlineOpacity;
+          ctx.strokeStyle = $hipSwaySettings.outlineColor;
+          ctx.lineWidth = $hipSwaySettings.outlineWidth;
+          ctx.strokeRect(
+            hipRegions.leftRegion.x,
+            hipRegions.leftRegion.y,
+            hipRegions.leftRegion.width,
+            hipRegions.leftRegion.height
+          );
+        } else if (hipSwayState.targetSide === 'right') {
+          ctx.fillStyle = $gameColors.hipRight;
+          ctx.fillRect(
+            hipRegions.rightRegion.x,
+            hipRegions.rightRegion.y,
+            hipRegions.rightRegion.width,
+            hipRegions.rightRegion.height
+          );
+          
+          // Draw outline for current target
+          ctx.globalAlpha = $hipSwaySettings.outlineOpacity;
+          ctx.strokeStyle = $hipSwaySettings.outlineColor;
+          ctx.lineWidth = $hipSwaySettings.outlineWidth;
+          ctx.strokeRect(
+            hipRegions.rightRegion.x,
+            hipRegions.rightRegion.y,
+            hipRegions.rightRegion.width,
+            hipRegions.rightRegion.height
+          );
+        }
+        
+        // Draw center line for reference
+        ctx.globalAlpha = 0.3;
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(hipRegions.centerLine.x, hipRegions.centerLine.y);
+        ctx.lineTo(hipRegions.centerLine.x, hipRegions.centerLine.y + hipRegions.centerLine.height);
+        ctx.stroke();
+        break;
+        
+      case 'completed':
+        // Draw both regions faded to show completion
+        ctx.globalAlpha = 0.2;
+        
+        ctx.fillStyle = $gameColors.hipLeft;
+        ctx.fillRect(
+          hipRegions.leftRegion.x,
+          hipRegions.leftRegion.y,
+          hipRegions.leftRegion.width,
+          hipRegions.leftRegion.height
+        );
+        
+        ctx.fillStyle = $gameColors.hipRight;
+        ctx.fillRect(
+          hipRegions.rightRegion.x,
+          hipRegions.rightRegion.y,
+          hipRegions.rightRegion.width,
+          hipRegions.rightRegion.height
+        );
+        
+        // Draw center line
+        ctx.globalAlpha = 0.3;
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(hipRegions.centerLine.x, hipRegions.centerLine.y);
+        ctx.lineTo(hipRegions.centerLine.x, hipRegions.centerLine.y + hipRegions.centerLine.height);
+        ctx.stroke();
+        break;
+    }
     
     ctx.restore();
     
-    // Draw progress text (flip back to correct orientation)
+    // Draw phase-appropriate text (flip back to correct orientation)
     ctx.save();
     ctx.scale(-1, 1); // Counter-flip the text horizontally
     ctx.fillStyle = '#ffffff';
     ctx.font = '24px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText(
-      `Trial: ${hipSwayState.currentTrial}/8`,
-      -width / 2, // Negative x because we flipped
-      50
-    );
     
-    // Draw instruction text
-    ctx.fillStyle = '#cccccc';
-    ctx.font = '18px Arial';
-    const sideText = hipSwayState.targetSide === 'left' ? 'LEFT' : 'RIGHT';
-    ctx.fillText(
-      `Move your hips to the ${sideText} rectangle`,
-      -width / 2, // Negative x because we flipped
-      height - 30
-    );
+    switch (hipSwayState.phase) {
+      case 'centering':
+        ctx.fillText(
+          'Position yourself at the center line',
+          -width / 2, // Negative x because we flipped
+          50
+        );
+        
+        ctx.fillStyle = '#cccccc';
+        ctx.font = '18px Arial';
+        if (hipSwayState.isCentered) {
+          ctx.fillText(
+            'Hold position to continue...',
+            -width / 2,
+            height - 30
+          );
+        } else {
+          ctx.fillText(
+            'Center your hips on the white line',
+            -width / 2,
+            height - 30
+          );
+        }
+        break;
+        
+      case 'targeting':
+        const totalTargets = (hipSwayState.leftSideHits + hipSwayState.rightSideHits);
+        ctx.fillText(
+          `Progress: ${totalTargets}/10 (L:${hipSwayState.leftSideHits} R:${hipSwayState.rightSideHits})`,
+          -width / 2, // Negative x because we flipped
+          50
+        );
+        
+        ctx.fillStyle = '#cccccc';
+        ctx.font = '18px Arial';
+        const sideText = hipSwayState.targetSide === 'left' ? 'LEFT' : 'RIGHT';
+        ctx.fillText(
+          `Move your hips to the ${sideText} rectangle`,
+          -width / 2, // Negative x because we flipped
+          height - 30
+        );
+        break;
+        
+      case 'completed':
+        ctx.fillText(
+          'Hip Sway Game Complete!',
+          -width / 2, // Negative x because we flipped
+          50
+        );
+        
+        ctx.fillStyle = '#cccccc';
+        ctx.font = '18px Arial';
+        ctx.fillText(
+          `Final Score: ${hipSwayState.leftSideHits + hipSwayState.rightSideHits}/10`,
+          -width / 2, // Negative x because we flipped
+          height - 30
+        );
+        break;
+    }
+    
     ctx.restore();
   }
   

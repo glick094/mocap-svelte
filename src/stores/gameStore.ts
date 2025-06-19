@@ -14,6 +14,11 @@ export interface ScoreBreakdown {
 export interface GameSettings {
   targetDuration: number;
   targetSize: number;
+  hipSwayGame: {
+    targetsPerSide: number;
+    centeringTolerance: number; // Pixels from center line
+    centeringTimeRequired: number; // ms to hold center position
+  };
 }
 
 export type TargetType = 'hand' | 'head' | 'knee' | null;
@@ -27,7 +32,12 @@ export const scoreBreakdown = writable<ScoreBreakdown>({ hand: 0, head: 0, knee:
 // Game settings
 export const gameSettings = writable<GameSettings>({
   targetDuration: 3000, // ms
-  targetSize: 50 // pixels
+  targetSize: 50, // pixels
+  hipSwayGame: {
+    targetsPerSide: 5,
+    centeringTolerance: 50, // pixels
+    centeringTimeRequired: 1000 // 1 second
+  }
 });
 
 // Derived stores
