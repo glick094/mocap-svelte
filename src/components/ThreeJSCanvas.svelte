@@ -272,29 +272,8 @@
     
     ctx.save();
     
-    // Draw animated target if animation is playing
-    const animationPos = gameService.getHipSwayAnimationPosition(hipRegions);
-    if (animationPos && animationPos.opacity > 0) {
-      ctx.save();
-      ctx.globalAlpha = animationPos.opacity;
-      
-      // Draw the animated target being "bumped off"
-      const targetColor = hipSwayState.targetSide === 'left' ? $gameColors.hipLeft : $gameColors.hipRight;
-      ctx.fillStyle = targetColor;
-      ctx.shadowColor = targetColor;
-      ctx.shadowBlur = 15;
-      
-      // Draw animated rectangle
-      const animSize = 80 * (1 + (1 - animationPos.opacity) * 0.3); // Slightly grow as it fades
-      ctx.fillRect(
-        animationPos.x - animSize / 2,
-        animationPos.y - animSize / 2,
-        animSize,
-        animSize
-      );
-      
-      ctx.restore();
-    }
+    // Get animation offset for the target rectangle
+    const animationOffset = gameService.getHipSwayAnimationOffset();
     
     switch (hipSwayState.phase) {
       case 'centering':
@@ -309,48 +288,52 @@
         break;
         
       case 'targeting':
-        // Draw the current target region and center line
-        ctx.globalAlpha = $hipSwaySettings.fillOpacity;
+        // Calculate position with animation offset
+        let targetRegion = hipSwayState.targetSide === 'left' ? hipRegions.leftRegion : hipRegions.rightRegion;
+        let targetColor = hipSwayState.targetSide === 'left' ? $gameColors.hipLeft : $gameColors.hipRight;
         
-        if (hipSwayState.targetSide === 'left') {
-          ctx.fillStyle = $gameColors.hipLeft;
-          ctx.fillRect(
-            hipRegions.leftRegion.x,
-            hipRegions.leftRegion.y,
-            hipRegions.leftRegion.width,
-            hipRegions.leftRegion.height
-          );
-          
-          // Draw outline for current target
-          ctx.globalAlpha = $hipSwaySettings.outlineOpacity;
-          ctx.strokeStyle = $hipSwaySettings.outlineColor;
-          ctx.lineWidth = $hipSwaySettings.outlineWidth;
-          ctx.strokeRect(
-            hipRegions.leftRegion.x,
-            hipRegions.leftRegion.y,
-            hipRegions.leftRegion.width,
-            hipRegions.leftRegion.height
-          );
-        } else if (hipSwayState.targetSide === 'right') {
-          ctx.fillStyle = $gameColors.hipRight;
-          ctx.fillRect(
-            hipRegions.rightRegion.x,
-            hipRegions.rightRegion.y,
-            hipRegions.rightRegion.width,
-            hipRegions.rightRegion.height
-          );
-          
-          // Draw outline for current target
-          ctx.globalAlpha = $hipSwaySettings.outlineOpacity;
-          ctx.strokeStyle = $hipSwaySettings.outlineColor;
-          ctx.lineWidth = $hipSwaySettings.outlineWidth;
-          ctx.strokeRect(
-            hipRegions.rightRegion.x,
-            hipRegions.rightRegion.y,
-            hipRegions.rightRegion.width,
-            hipRegions.rightRegion.height
-          );
+        let regionX = targetRegion.x;
+        let regionY = targetRegion.y;
+        let regionOpacity = $hipSwaySettings.fillOpacity;
+        
+        // Apply animation offset if animating
+        if (animationOffset) {
+          regionX += animationOffset.offsetX;
+          regionY += animationOffset.offsetY;
+          regionOpacity *= animationOffset.opacity;
         }
+        
+        // Draw the target region (with potential animation offset)
+        ctx.globalAlpha = regionOpacity;
+        ctx.fillStyle = targetColor;
+        
+        // Add extra glow effect during animation
+        if (animationOffset && animationOffset.opacity > 0) {
+          ctx.shadowColor = targetColor;
+          ctx.shadowBlur = 20 * animationOffset.opacity;
+        }
+        
+        ctx.fillRect(
+          regionX,
+          regionY,
+          targetRegion.width,
+          targetRegion.height
+        );
+        
+        // Reset shadow
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+        
+        // Draw outline for current target
+        ctx.globalAlpha = $hipSwaySettings.outlineOpacity * (animationOffset ? animationOffset.opacity : 1);
+        ctx.strokeStyle = $hipSwaySettings.outlineColor;
+        ctx.lineWidth = $hipSwaySettings.outlineWidth;
+        ctx.strokeRect(
+          regionX,
+          regionY,
+          targetRegion.width,
+          targetRegion.height
+        );
         
         // Draw center line for reference
         ctx.globalAlpha = 0.3;

@@ -184,7 +184,7 @@ export class GameService {
     return { ...this.state.hipSwayState };
   }
 
-  public getHipSwayAnimationPosition(hipRegions: HipRegions): { x: number; y: number; opacity: number } | null {
+  public getHipSwayAnimationOffset(): { offsetX: number; offsetY: number; opacity: number } | null {
     const hipSwayState = this.state.hipSwayState;
     
     if (!hipSwayState.animation.isAnimating || !hipSwayState.animation.animationStartTime) {
@@ -195,31 +195,19 @@ export class GameService {
     const elapsed = currentTime - hipSwayState.animation.animationStartTime;
     const progress = Math.min(elapsed / hipSwayState.animation.animationDuration, 1);
     
-    // Calculate the base position (center of the target region)
-    let baseX: number;
-    let baseY: number;
-    
-    if (hipSwayState.targetSide === 'left') {
-      baseX = hipRegions.leftRegion.x + hipRegions.leftRegion.width / 2;
-      baseY = hipRegions.leftRegion.y + hipRegions.leftRegion.height / 2;
-    } else {
-      baseX = hipRegions.rightRegion.x + hipRegions.rightRegion.width / 2;
-      baseY = hipRegions.rightRegion.y + hipRegions.rightRegion.height / 2;
-    }
-    
     // Apply easing function (ease-out cubic)
     const easeOut = 1 - Math.pow(1 - progress, 3);
     
-    // Calculate animated position based on velocity
-    const animatedX = baseX + (hipSwayState.animation.velocityX * elapsed / 1000);
-    const animatedY = baseY + (hipSwayState.animation.velocityY * elapsed / 1000);
+    // Calculate offset based on velocity and easing
+    const offsetX = hipSwayState.animation.velocityX * elapsed / 1000 * easeOut;
+    const offsetY = hipSwayState.animation.velocityY * elapsed / 1000 * easeOut;
     
     // Fade out as animation progresses
     const opacity = 1 - easeOut;
     
     return {
-      x: animatedX,
-      y: animatedY,
+      offsetX,
+      offsetY,
       opacity: Math.max(0, opacity)
     };
   }
@@ -536,8 +524,8 @@ export class GameService {
           this.state.hipSwayState.animation = {
             isAnimating: true,
             animationStartTime: currentTime,
-            velocityX: velocityX * 0.3, // Scale down velocity for smoother animation
-            velocityY: velocityY * 0.3,
+            velocityX: velocityX * 0.8, // Scale velocity for visible animation
+            velocityY: velocityY * 0.8,
             animationDuration: 800
           };
           
