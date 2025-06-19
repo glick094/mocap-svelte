@@ -3,6 +3,7 @@
   import { GameService, GAME_MODES, TARGET_TYPES } from '../services/gameService';
   import { gameColors, poseColors, hipSwaySettings } from '../stores/themeStore';
   import { gameSettings } from '../stores/gameStore';
+  import { audioService } from '../services/audioService';
 
   const dispatch = createEventDispatcher();
 
@@ -10,8 +11,6 @@
   let ctx;
   let animationId;
   let gameService;
-  let audioContext;
-  let soundEnabled = true;
 
   // Component props
   export let width = 800;
@@ -25,16 +24,6 @@
     if (canvasElement) {
       ctx = canvasElement.getContext('2d');
       gameService = new GameService(width, height, gameMode);
-      
-      // Initialize audio context for sound effects
-      try {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        console.log('AudioContext initialized, state:', audioContext.state);
-      } catch (e) {
-        console.warn('AudioContext not supported, sounds disabled');
-        soundEnabled = false;
-      }
-      
       animate();
     }
   });
@@ -43,94 +32,9 @@
     if (animationId) {
       cancelAnimationFrame(animationId);
     }
-    if (audioContext) {
-      audioContext.close();
-    }
+    audioService.destroy();
   });
 
-  // Function to play hit sound effect
-  async function playHitSound() {
-    if (!soundEnabled || !audioContext) return;
-    
-    try {
-      // Resume audio context if it's suspended (browser autoplay policy)
-      if (audioContext.state === 'suspended') {
-        await audioContext.resume();
-        console.log('Audio context resumed');
-      }
-      
-      // Create a realistic "thump" sound like a drum hit
-      const compressor = audioContext.createDynamicsCompressor();
-      const masterGain = audioContext.createGain();
-      
-      // Set up compressor for punch
-      compressor.threshold.setValueAtTime(-10, audioContext.currentTime);
-      compressor.knee.setValueAtTime(10, audioContext.currentTime);
-      compressor.ratio.setValueAtTime(8, audioContext.currentTime);
-      compressor.attack.setValueAtTime(0, audioContext.currentTime);
-      compressor.release.setValueAtTime(0.15, audioContext.currentTime);
-      
-      // Set master gain higher for overall volume boost
-      masterGain.gain.setValueAtTime(10.0, audioContext.currentTime);
-      
-      masterGain.connect(compressor);
-      compressor.connect(audioContext.destination);
-      
-      // Bass thump - low frequency for body
-      const bassOsc = audioContext.createOscillator();
-      const bassGain = audioContext.createGain();
-      bassOsc.connect(bassGain);
-      bassGain.connect(masterGain);
-      
-      // Noise burst for attack/click
-      const noiseBuffer = audioContext.createBuffer(1, audioContext.sampleRate * 0.1, audioContext.sampleRate);
-      const noiseData = noiseBuffer.getChannelData(0);
-      for (let i = 0; i < noiseData.length; i++) {
-        noiseData[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / noiseData.length, 2);
-      }
-      
-      const noiseSource = audioContext.createBufferSource();
-      const noiseGain = audioContext.createGain();
-      const noiseFilter = audioContext.createBiquadFilter();
-      
-      noiseSource.buffer = noiseBuffer;
-      noiseSource.connect(noiseFilter);
-      noiseFilter.connect(noiseGain);
-      noiseGain.connect(masterGain);
-      
-      // Filter the noise for more natural sound
-      noiseFilter.type = 'lowpass';
-      noiseFilter.frequency.setValueAtTime(800, audioContext.currentTime);
-      noiseFilter.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.05);
-      
-      // Bass frequency sweep (like a kick drum)
-      bassOsc.frequency.setValueAtTime(60, audioContext.currentTime);
-      bassOsc.frequency.exponentialRampToValueAtTime(30, audioContext.currentTime + 0.1);
-      
-      // Bass envelope - quick attack, longer decay (increased volume)
-      bassGain.gain.setValueAtTime(0, audioContext.currentTime);
-      bassGain.gain.linearRampToValueAtTime(1.2, audioContext.currentTime + 0.005);
-      bassGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-      
-      // Noise envelope - very quick attack for "thump" character (increased volume)
-      noiseGain.gain.setValueAtTime(0, audioContext.currentTime);
-      noiseGain.gain.linearRampToValueAtTime(0.7, audioContext.currentTime + 0.002);
-      noiseGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05);
-      
-      bassOsc.type = 'sine'; // Sine wave for clean bass
-      
-      // Start all sounds
-      bassOsc.start(audioContext.currentTime);
-      bassOsc.stop(audioContext.currentTime + 0.2);
-      noiseSource.start(audioContext.currentTime);
-      noiseSource.stop(audioContext.currentTime + 0.1);
-      
-      console.log('Sound played successfully');
-    } catch (e) {
-      console.warn('Error playing sound:', e);
-      soundEnabled = false; // Disable sound if there are repeated errors
-    }
-  }
 
   function animate() {
     animationId = requestAnimationFrame(animate);
@@ -139,6 +43,11 @@
 
   function drawFrame() {
     if (!ctx) return;
+    
+    // Update explosions
+    if (gameService) {
+      gameService.updateExplosions();
+    }
     
     // Clear canvas
     ctx.clearRect(0, 0, width, height);
@@ -159,6 +68,11 @@
       ctx.textAlign = 'center';
       ctx.fillText('Waiting for pose data...', -width / 2, height / 2);
       ctx.restore();
+    }
+    
+    // Draw explosions
+    if (gameService) {
+      drawExplosions();
     }
   }
 
@@ -217,10 +131,13 @@
   function handleCollision(collisionResult) {
     const { hitType, modeProgress, hitKeypoint, playSound } = collisionResult;
     
-    // Play sound effect if requested
+    // Play appropriate sound effect based on game mode
     if (playSound) {
-      console.log('Playing hit sound for collision:', hitType);
-      playHitSound();
+      if (gameMode === GAME_MODES.HIPS_SWAY) {
+        audioService.playHipSwaySound();
+      } else {
+        audioService.playPopSound();
+      }
     }
     
     dispatch('scoreUpdate', {
@@ -846,14 +763,55 @@
 
   // Handle canvas click to initialize audio (browser autoplay policy)
   async function handleCanvasClick() {
-    if (audioContext && audioContext.state === 'suspended') {
-      try {
-        await audioContext.resume();
-        console.log('Audio context activated by user interaction');
-      } catch (e) {
-        console.warn('Failed to activate audio context:', e);
-      }
-    }
+    await audioService.resumeAudioContext();
+  }
+
+  function drawExplosions() {
+    if (!gameService || !ctx) return;
+    
+    const explosions = gameService.getActiveExplosions();
+    
+    explosions.forEach(explosion => {
+      explosion.particles.forEach(particle => {
+        const alpha = particle.life / particle.maxLife;
+        const sizeMultiplier = 0.5 + (1 - alpha) * 0.5; // Particles grow slightly as they fade
+        const currentSize = particle.size * sizeMultiplier;
+        
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        
+        // Main particle with glow effect
+        ctx.fillStyle = particle.color;
+        ctx.shadowColor = particle.color;
+        ctx.shadowBlur = currentSize * 3;
+        
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, currentSize, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        // Add bright center core
+        ctx.shadowBlur = 0;
+        ctx.globalAlpha = alpha * 0.8;
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, currentSize * 0.4, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        // Add outer glow ring for larger particles
+        if (currentSize > 4) {
+          ctx.globalAlpha = alpha * 0.3;
+          ctx.strokeStyle = particle.color;
+          ctx.lineWidth = 1;
+          ctx.shadowColor = particle.color;
+          ctx.shadowBlur = currentSize * 4;
+          ctx.beginPath();
+          ctx.arc(particle.x, particle.y, currentSize * 1.5, 0, 2 * Math.PI);
+          ctx.stroke();
+        }
+        
+        ctx.restore();
+      });
+    });
   }
 
   // Reactive statement to handle prop changes

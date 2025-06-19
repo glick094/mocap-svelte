@@ -45,6 +45,27 @@ export interface Target {
   color: string;
 }
 
+export interface TargetExplosion {
+  id: string | number;
+  x: number;
+  y: number;
+  color: string;
+  startTime: number;
+  duration: number;
+  particles: ExplosionParticle[];
+}
+
+export interface ExplosionParticle {
+  x: number;
+  y: number;
+  velocityX: number;
+  velocityY: number;
+  size: number;
+  life: number;
+  maxLife: number;
+  color: string;
+}
+
 export interface HipRegions {
   leftRegion: {
     x: number;
@@ -104,6 +125,7 @@ export interface GameState {
   fixedTargets: Target[];
   currentFixedTargetIndex: number;
   currentTarget: Target | null;
+  activeExplosions: TargetExplosion[];
 }
 
 export interface PoseData {
@@ -163,7 +185,8 @@ export class GameService {
       },
       fixedTargets: [],
       currentFixedTargetIndex: 0,
-      currentTarget: null
+      currentTarget: null,
+      activeExplosions: []
     };
   }
 
@@ -224,16 +247,20 @@ export class GameService {
     return [...this.state.targetHistory];
   }
 
+  public getActiveExplosions(): TargetExplosion[] {
+    return [...this.state.activeExplosions];
+  }
+
   // Target generation functions
   public generateFigure8Targets(): Target[] {
     const centerX = this.width * 0.5;
     const centerY = this.height * 0.5;
-    const radiusX = this.width * 0.15;
-    const radiusY = this.height * 0.1;
+    const radiusX = this.width * 0.4;
+    const radiusY = this.height * 0.3;
     
     const targets: Target[] = [];
-    for (let i = 0; i < 8; i++) {
-      const t = (i / 8) * 2 * Math.PI;
+    for (let i = 0; i < 16; i++) {
+      const t = (i / 16) * 2 * Math.PI;
       const x = centerX + radiusX * Math.sin(t);
       const y = centerY + radiusY * Math.sin(2 * t);
       
@@ -251,11 +278,11 @@ export class GameService {
   public generateCircleTargets(): Target[] {
     const centerX = this.width * 0.5;
     const centerY = this.height * 0.3;
-    const radius = Math.min(this.width, this.height) * 0.12;
+    const radius = Math.min(this.width, this.height) * 0.20;
     
     const targets: Target[] = [];
-    for (let i = 0; i < 8; i++) {
-      const angle = (i / 8) * 2 * Math.PI;
+    for (let i = 0; i < 12; i++) {
+      const angle = (i / 12) * 2 * Math.PI;
       const x = centerX + radius * Math.cos(angle);
       const y = centerY + radius * Math.sin(angle);
       
@@ -340,6 +367,7 @@ export class GameService {
     this.state.hitTargetIds.clear();
     this.state.scoreBreakdown = { hand: 0, head: 0, knee: 0 };
     this.state.targetHistory = [];
+    this.state.activeExplosions = [];
     
     switch (this.gameMode) {
       case GAME_MODES.HIPS_SWAY:
@@ -615,6 +643,9 @@ export class GameService {
     }
     
     if (targetHit) {
+      // Create explosion animation
+      this.createExplosion(currentTarget);
+      
       this.state.currentFixedTargetIndex++;
       this.state.gameScore++;
       
@@ -625,6 +656,7 @@ export class GameService {
       return {
         hit: true,
         hitType: currentTarget.type,
+        playSound: true, // Add sound flag
         modeProgress: { 
           completed: this.state.currentFixedTargetIndex, 
           total: this.state.fixedTargets.length 
@@ -702,6 +734,9 @@ export class GameService {
     }
 
     if (targetHit && !this.state.hitTargetIds.has(this.state.currentTarget.id)) {
+      // Create explosion animation
+      this.createExplosion(this.state.currentTarget);
+      
       this.state.hitTargetIds.add(this.state.currentTarget.id);
       this.state.gameScore++;
       if (this.state.currentTarget.type in this.state.scoreBreakdown) {
@@ -727,7 +762,7 @@ export class GameService {
         this.createTargetData();
       }, 100);
       
-      return { hit: true, hitType: hitTargetType, hitKeypoint };
+      return { hit: true, hitType: hitTargetType, hitKeypoint: hitKeypoint || undefined, playSound: true };
     }
     
     return { hit: false };
@@ -821,5 +856,110 @@ export class GameService {
   // Update game mode
   public updateGameMode(gameMode: GameMode): void {
     this.gameMode = gameMode;
+  }
+
+  // Explosion management
+  private createExplosion(target: Target): void {
+    const particles: ExplosionParticle[] = [];
+    const targetRadius = this.state.targetRadius; // Use the actual target radius (50px)
+    
+    // Create multiple rings of particles for a fuller effect
+    const rings = [
+      { count: 8, radius: 0, speed: 150, size: 6 }, // Center burst
+      { count: 12, radius: targetRadius * 0.3, speed: 120, size: 5 }, // Inner ring
+      { count: 16, radius: targetRadius * 0.7, speed: 100, size: 4 }, // Middle ring  
+      { count: 20, radius: targetRadius, speed: 80, size: 3 } // Outer ring (target circumference)
+    ];
+    
+    rings.forEach(ring => {
+      for (let i = 0; i < ring.count; i++) {
+        const angle = (i / ring.count) * Math.PI * 2;
+        const baseSpeed = ring.speed + Math.random() * 50;
+        const life = 0.8 + Math.random() * 0.4; // 0.8-1.2 seconds
+        
+        // Starting position on the ring circumference
+        const startX = target.x + Math.cos(angle) * ring.radius;
+        const startY = target.y + Math.sin(angle) * ring.radius;
+        
+        particles.push({
+          x: startX,
+          y: startY,
+          velocityX: Math.cos(angle) * baseSpeed,
+          velocityY: Math.sin(angle) * baseSpeed,
+          size: ring.size + Math.random() * 3,
+          life: life,
+          maxLife: life,
+          color: target.color
+        });
+      }
+    });
+    
+    // Add some random scattered particles for extra flair
+    for (let i = 0; i < 8; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const distance = Math.random() * targetRadius;
+      const speed = 60 + Math.random() * 80;
+      const life = 0.6 + Math.random() * 0.5;
+      
+      particles.push({
+        x: target.x + Math.cos(angle) * distance,
+        y: target.y + Math.sin(angle) * distance,
+        velocityX: Math.cos(angle) * speed,
+        velocityY: Math.sin(angle) * speed,
+        size: 2 + Math.random() * 3,
+        life: life,
+        maxLife: life,
+        color: target.color
+      });
+    }
+    
+    const explosion: TargetExplosion = {
+      id: target.id,
+      x: target.x,
+      y: target.y,
+      color: target.color,
+      startTime: Date.now(),
+      duration: 1200, // 1.2s total duration for longer effect
+      particles: particles
+    };
+    
+    this.state.activeExplosions.push(explosion);
+  }
+
+  public updateExplosions(): void {
+    const currentTime = Date.now();
+    
+    // Update existing explosions
+    this.state.activeExplosions = this.state.activeExplosions.filter(explosion => {
+      const elapsed = (currentTime - explosion.startTime) / 1000; // Convert to seconds
+      
+      if (elapsed > explosion.duration / 1000) {
+        return false; // Remove expired explosions
+      }
+      
+      // Update particles
+      explosion.particles = explosion.particles.filter(particle => {
+        particle.life -= 1/60; // Assume 60fps
+        
+        if (particle.life <= 0) {
+          return false; // Remove dead particles
+        }
+        
+        // Update particle position
+        particle.x += particle.velocityX / 60;
+        particle.y += particle.velocityY / 60;
+        
+        // Apply gravity to Y velocity
+        particle.velocityY += 200 / 60; // 200 pixels/sec^2 gravity
+        
+        // Apply air resistance
+        particle.velocityX *= 0.98;
+        particle.velocityY *= 0.98;
+        
+        return true;
+      });
+      
+      return explosion.particles.length > 0;
+    });
   }
 }
