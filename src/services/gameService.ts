@@ -110,6 +110,24 @@ export interface HipSwayState {
   } | null;
 }
 
+export interface TargetData {
+  targetShowing: boolean;
+  targetId: string | number | null;
+  targetType: TargetType | null;
+  targetX: number | null; // Normalized 0-1
+  targetY: number | null; // Normalized 0-1
+  targetPixelX: number | null; // Absolute pixel coordinates
+  targetPixelY: number | null; // Absolute pixel coordinates
+  status: 'start' | 'unobtained' | 'obtained' | 'end' | null;
+  startTime: number | null;
+  hitTime: number | null;
+  hitKeypoint?: string | null;
+  gameMode: GameMode;
+  gamePhase: string;
+  targetIndex?: number | null; // For fixed target games
+  trialNumber?: number | null; // For hip sway trials
+}
+
 export interface GameState {
   gameScore: number;
   targetRadius: number;
@@ -119,8 +137,8 @@ export interface GameState {
     head: number;
     knee: number;
   };
-  targetHistory: any[];
-  currentTargetData: any;
+  targetHistory: TargetData[];
+  currentTargetData: TargetData | null;
   hipSwayState: HipSwayState;
   fixedTargets: Target[];
   currentFixedTargetIndex: number;
@@ -144,6 +162,12 @@ export class GameService {
   private width: number;
   private height: number;
   private gameMode: GameMode;
+  private randomTargetCounter: number = 1; // Counter for random targets
+
+  // Helper function for zero-padded trial numbers
+  private formatTrialNumber(num: number): string {
+    return num.toString().padStart(3, '0');
+  }
 
   constructor(width: number, height: number, gameMode: GameMode = GAME_MODES.RANDOM) {
     this.width = width;
@@ -265,7 +289,7 @@ export class GameService {
       const y = centerY + radiusY * Math.sin(2 * t);
       
       targets.push({
-        id: `figure8_${i}`,
+        id: `figure8_${this.formatTrialNumber(i + 1)}`, // 1-based with zero padding
         type: TARGET_TYPES.HAND,
         x: x,
         y: y,
@@ -287,7 +311,7 @@ export class GameService {
       const y = centerY + radius * Math.sin(angle);
       
       targets.push({
-        id: `circle_${i}`,
+        id: `circle_${this.formatTrialNumber(i + 1)}`, // 1-based with zero padding
         type: TARGET_TYPES.HEAD,
         x: x,
         y: y,
@@ -352,8 +376,11 @@ export class GameService {
         break;
     }
 
+    const targetId = `random_${targetType}_${this.formatTrialNumber(this.randomTargetCounter)}`;
+    this.randomTargetCounter++;
+
     return {
-      id: Date.now() + Math.random(),
+      id: targetId,
       type: targetType,
       x: x,
       y: y,
@@ -368,12 +395,13 @@ export class GameService {
     this.state.scoreBreakdown = { hand: 0, head: 0, knee: 0 };
     this.state.targetHistory = [];
     this.state.activeExplosions = [];
+    this.randomTargetCounter = 1; // Reset counter for new game
     
     switch (this.gameMode) {
       case GAME_MODES.HIPS_SWAY:
         this.state.hipSwayState = {
           phase: 'centering',
-          currentTrial: 0,
+          currentTrial: 1, // Start at trial 1
           targetSide: null,
           leftSideHits: 0,
           rightSideHits: 0,
@@ -391,18 +419,23 @@ export class GameService {
           lastHipPosition: null
         };
         this.state.currentTarget = null;
+        
+        // Create centering phase data
+        this.createHipSwayCenteringData();
         break;
         
       case GAME_MODES.HANDS_FIXED:
         this.state.fixedTargets = this.generateFigure8Targets();
-        this.state.currentFixedTargetIndex = 0;
-        this.state.currentTarget = this.state.fixedTargets[0];
+        this.state.currentFixedTargetIndex = 1; // Start at index 1
+        this.state.currentTarget = this.state.fixedTargets[0]; // Still use 0-based array access
+        this.createTargetData();
         break;
         
       case GAME_MODES.HEAD_FIXED:
         this.state.fixedTargets = this.generateCircleTargets();
-        this.state.currentFixedTargetIndex = 0;
-        this.state.currentTarget = this.state.fixedTargets[0];
+        this.state.currentFixedTargetIndex = 1; // Start at index 1
+        this.state.currentTarget = this.state.fixedTargets[0]; // Still use 0-based array access
+        this.createTargetData();
         break;
         
       case GAME_MODES.RANDOM:
@@ -502,10 +535,24 @@ export class GameService {
             // Check if centered long enough
             const centeringDuration = Date.now() - (this.state.hipSwayState.centeringStartTime || 0);
             if (centeringDuration >= centeringTimeRequired) {
+              // Complete centering phase data
+              if (this.state.currentTargetData) {
+                this.state.currentTargetData.status = 'obtained';
+                this.state.currentTargetData.hitTime = Date.now();
+                this.state.targetHistory.push({ ...this.state.currentTargetData });
+                
+                // Create end record for centering phase
+                this.state.currentTargetData.status = 'end';
+                this.state.targetHistory.push({ ...this.state.currentTargetData });
+              }
+              
               // Move to targeting phase
               this.state.hipSwayState.phase = 'targeting';
               this.state.hipSwayState.targetSide = 'left'; // Start with left
               this.state.hipSwayState.centeringStartTime = null;
+              
+              // Create target data for the first hip sway target
+              this.createHipSwayTargetData('left');
             }
           }
         } else {
@@ -543,6 +590,13 @@ export class GameService {
         }
         
         if (inTargetRegion && !this.state.hipSwayState.inTargetRegion && !this.state.hipSwayState.trialCompleted) {
+          // Hit the target - update target data
+          if (this.state.currentTargetData) {
+            this.state.currentTargetData.status = 'obtained';
+            this.state.currentTargetData.hitTime = Date.now();
+            this.state.targetHistory.push({ ...this.state.currentTargetData });
+          }
+          
           // Hit the target - trigger animation
           this.state.hipSwayState.trialCompleted = true;
           this.state.hipSwayState.currentTrial++;
@@ -574,7 +628,20 @@ export class GameService {
           if (isComplete) {
             this.state.hipSwayState.phase = 'completed';
             this.state.hipSwayState.targetSide = null;
+            
+            // Create end record for completed target
+            if (this.state.currentTargetData) {
+              this.state.currentTargetData.status = 'end';
+              this.state.targetHistory.push({ ...this.state.currentTargetData });
+              this.state.currentTargetData = null;
+            }
           } else {
+            // Create end record for completed target
+            if (this.state.currentTargetData) {
+              this.state.currentTargetData.status = 'end';
+              this.state.targetHistory.push({ ...this.state.currentTargetData });
+            }
+            
             // Alternate to the other side after animation completes
             setTimeout(() => {
               // Check if we've reached the maximum for the current side
@@ -589,6 +656,11 @@ export class GameService {
               } else {
                 // Normal alternation: if current side is left, switch to right, and vice versa
                 this.state.hipSwayState.targetSide = this.state.hipSwayState.targetSide === 'left' ? 'right' : 'left';
+              }
+              
+              // Create target data for next target
+              if (this.state.hipSwayState.targetSide) {
+                this.createHipSwayTargetData(this.state.hipSwayState.targetSide);
               }
               
               // Reset animation and trial state
@@ -625,11 +697,13 @@ export class GameService {
   }
   
   private checkFixedTargetCollisions(data: PoseData): { hit: boolean; hitType?: string; modeProgress?: any; playSound?: boolean } {
-    if (this.state.fixedTargets.length === 0 || this.state.currentFixedTargetIndex >= this.state.fixedTargets.length) {
+    if (this.state.fixedTargets.length === 0 || this.state.currentFixedTargetIndex > this.state.fixedTargets.length) {
       return { hit: false };
     }
     
-    const currentTarget = this.state.fixedTargets[this.state.currentFixedTargetIndex];
+    // Convert 1-based index to 0-based for array access
+    const arrayIndex = this.state.currentFixedTargetIndex - 1;
+    const currentTarget = this.state.fixedTargets[arrayIndex];
     if (!currentTarget) return { hit: false };
     
     let targetHit = false;
@@ -646,11 +720,35 @@ export class GameService {
       // Create explosion animation
       this.createExplosion(currentTarget);
       
+      // Update current target data
+      if (this.state.currentTargetData) {
+        this.state.currentTargetData.status = 'obtained';
+        this.state.currentTargetData.hitTime = Date.now();
+        this.state.targetHistory.push({ ...this.state.currentTargetData });
+      }
+      
       this.state.currentFixedTargetIndex++;
       this.state.gameScore++;
       
-      if (this.state.currentFixedTargetIndex < this.state.fixedTargets.length) {
-        this.state.currentTarget = this.state.fixedTargets[this.state.currentFixedTargetIndex];
+      // Create end record for completed target
+      if (this.state.currentTargetData) {
+        this.state.currentTargetData.status = 'end';
+        this.state.targetHistory.push({ ...this.state.currentTargetData });
+      }
+      
+      if (this.state.currentFixedTargetIndex <= this.state.fixedTargets.length) {
+        // Convert 1-based index to 0-based for array access
+        const nextArrayIndex = this.state.currentFixedTargetIndex - 1;
+        if (nextArrayIndex < this.state.fixedTargets.length) {
+          this.state.currentTarget = this.state.fixedTargets[nextArrayIndex];
+          this.createTargetData(); // Create data for next target
+        } else {
+          this.state.currentTarget = null;
+          this.state.currentTargetData = null;
+        }
+      } else {
+        this.state.currentTarget = null;
+        this.state.currentTargetData = null;
       }
       
       return {
@@ -811,40 +909,145 @@ export class GameService {
   private createTargetData(): void {
     if (!this.state.currentTarget) return;
     
+    // Determine current game phase
+    let gamePhase = 'targeting';
+    let targetIndex = null;
+    let trialNumber = null;
+    
+    switch (this.gameMode) {
+      case GAME_MODES.HIPS_SWAY:
+        gamePhase = this.state.hipSwayState.phase;
+        trialNumber = this.state.hipSwayState.currentTrial;
+        break;
+      case GAME_MODES.HANDS_FIXED:
+        gamePhase = this.state.currentFixedTargetIndex === 1 ? 'starting' : 'targeting';
+        targetIndex = this.state.currentFixedTargetIndex;
+        break;
+      case GAME_MODES.HEAD_FIXED:
+        gamePhase = this.state.currentFixedTargetIndex === 1 ? 'starting' : 'targeting';
+        targetIndex = this.state.currentFixedTargetIndex;
+        break;
+      case GAME_MODES.RANDOM:
+        gamePhase = 'targeting';
+        break;
+    }
+    
     this.state.currentTargetData = {
       targetShowing: true,
       targetId: this.state.currentTarget.id,
       targetType: this.state.currentTarget.type,
       targetX: this.state.currentTarget.x / this.width,
       targetY: this.state.currentTarget.y / this.height,
+      targetPixelX: this.state.currentTarget.x,
+      targetPixelY: this.state.currentTarget.y,
       status: 'start',
       startTime: Date.now(),
-      hitKeypoint: undefined,
-      hitTime: null
+      hitKeypoint: null,
+      hitTime: null,
+      gameMode: this.gameMode,
+      gamePhase: gamePhase,
+      targetIndex: targetIndex,
+      trialNumber: trialNumber
     };
     
     this.state.targetHistory.push({ ...this.state.currentTargetData });
     this.state.currentTargetData.status = 'unobtained';
   }
 
-  public getCurrentTargetData(): any {
+  public getCurrentTargetData(): TargetData {
     return this.state.currentTargetData ? {
-      targetShowing: !!this.state.currentTarget,
-      targetId: this.state.currentTargetData.targetId,
-      targetType: this.state.currentTargetData.targetType,
-      targetX: this.state.currentTargetData.targetX,
-      targetY: this.state.currentTargetData.targetY,
-      status: this.state.currentTargetData.status,
-      hitTime: this.state.currentTargetData.hitTime
+      ...this.state.currentTargetData,
+      targetShowing: !!this.state.currentTarget
     } : {
       targetShowing: false,
-      targetId: undefined,
-      targetType: undefined,
-      targetX: undefined,
-      targetY: undefined,
-      status: undefined,
-      hitTime: undefined
+      targetId: null,
+      targetType: null,
+      targetX: null,
+      targetY: null,
+      targetPixelX: null,
+      targetPixelY: null,
+      status: null,
+      startTime: null,
+      hitTime: null,
+      hitKeypoint: null,
+      gameMode: this.gameMode,
+      gamePhase: 'inactive',
+      targetIndex: null,
+      trialNumber: null
     };
+  }
+
+  // Hip sway centering phase data tracking
+  private createHipSwayCenteringData(): void {
+    const hipRegions = this.generateHipSwayRegions();
+    const trialNumber = this.formatTrialNumber(this.state.hipSwayState.currentTrial);
+    
+    // Create a virtual target for the centering line
+    const virtualTarget = {
+      id: `hip-centering-${trialNumber}`,
+      type: 'centering' as any, // Special type for centering phase
+      x: hipRegions.centerLine.x,
+      y: hipRegions.centerLine.y + hipRegions.centerLine.height / 2,
+      color: '#ffffff'
+    };
+    
+    this.state.currentTargetData = {
+      targetShowing: true,
+      targetId: virtualTarget.id,
+      targetType: 'centering' as any,
+      targetX: virtualTarget.x / this.width,
+      targetY: virtualTarget.y / this.height,
+      targetPixelX: virtualTarget.x,
+      targetPixelY: virtualTarget.y,
+      status: 'start',
+      startTime: Date.now(),
+      hitKeypoint: null,
+      hitTime: null,
+      gameMode: this.gameMode,
+      gamePhase: this.state.hipSwayState.phase,
+      targetIndex: null,
+      trialNumber: this.state.hipSwayState.currentTrial
+    };
+    
+    this.state.targetHistory.push({ ...this.state.currentTargetData });
+    this.state.currentTargetData.status = 'unobtained';
+  }
+
+  // Hip sway specific data tracking
+  private createHipSwayTargetData(targetSide: 'left' | 'right'): void {
+    const hipRegions = this.generateHipSwayRegions();
+    const targetRegion = targetSide === 'left' ? hipRegions.leftRegion : hipRegions.rightRegion;
+    const trialNumber = this.formatTrialNumber(this.state.hipSwayState.currentTrial);
+    
+    // Create a virtual target for the hip sway region
+    const virtualTarget = {
+      id: `hip-${targetSide}-${trialNumber}`,
+      type: targetSide === 'left' ? TARGET_TYPES.HIP_LEFT : TARGET_TYPES.HIP_RIGHT,
+      x: targetRegion.x + targetRegion.width / 2,
+      y: targetRegion.y + targetRegion.height / 2,
+      color: targetSide === 'left' ? TARGET_COLORS[TARGET_TYPES.HIP_LEFT] : TARGET_COLORS[TARGET_TYPES.HIP_RIGHT]
+    };
+    
+    this.state.currentTargetData = {
+      targetShowing: true,
+      targetId: virtualTarget.id,
+      targetType: virtualTarget.type,
+      targetX: virtualTarget.x / this.width,
+      targetY: virtualTarget.y / this.height,
+      targetPixelX: virtualTarget.x,
+      targetPixelY: virtualTarget.y,
+      status: 'start',
+      startTime: Date.now(),
+      hitKeypoint: null,
+      hitTime: null,
+      gameMode: this.gameMode,
+      gamePhase: this.state.hipSwayState.phase,
+      targetIndex: null,
+      trialNumber: this.state.hipSwayState.currentTrial
+    };
+    
+    this.state.targetHistory.push({ ...this.state.currentTargetData });
+    this.state.currentTargetData.status = 'unobtained';
   }
 
   // Update canvas dimensions

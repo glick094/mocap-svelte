@@ -215,10 +215,8 @@
   function drawGameElements() {
     if (!ctx || !gameService) return;
     
-    // Call emitTargetData for random mode
-    if (gameMode === GAME_MODES.RANDOM) {
-      emitTargetData();
-    }
+    // Emit target data for all game modes
+    emitTargetData();
     
     switch (gameMode) {
       case GAME_MODES.HIPS_SWAY:
@@ -431,10 +429,12 @@
     if (fixedTargets.length === 0) return;
     
     fixedTargets.forEach((target, index) => {
-      if (index === currentFixedTargetIndex) {
+      // Convert 0-based array index to 1-based for comparison
+      const displayIndex = index + 1;
+      if (displayIndex === currentFixedTargetIndex) {
         // Draw current target highlighted
         drawTarget(target, true);
-      } else if (index < currentFixedTargetIndex) {
+      } else if (displayIndex < currentFixedTargetIndex) {
         // Draw completed targets faded
         ctx.save();
         ctx.globalAlpha = 0.3;

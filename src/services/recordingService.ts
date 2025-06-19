@@ -21,11 +21,20 @@ export interface RecordingSession {
 
 export interface TargetData {
   targetShowing: boolean;
-  targetId: string | null;
+  targetId: string | number | null;
   targetType: string | null;
-  targetX: number | null;
-  targetY: number | null;
+  targetX: number | null; // Normalized 0-1
+  targetY: number | null; // Normalized 0-1
+  targetPixelX: number | null; // Absolute pixel coordinates
+  targetPixelY: number | null; // Absolute pixel coordinates
   status: string | null;
+  startTime: number | null;
+  hitTime: number | null;
+  hitKeypoint?: string | null;
+  gameMode: string;
+  gamePhase: string;
+  targetIndex?: number | null; // For fixed target games
+  trialNumber?: number | null; // For hip sway trials
 }
 
 /**
@@ -54,13 +63,22 @@ export function createCSVHeader() {
     'left_hand_landmarks_count', 
     'right_hand_landmarks_count',
     'face_landmarks_count',
-    // Target data columns
+    // Enhanced target data columns
     'target_showing',    // Boolean: is a target currently displayed
     'target_id',         // Unique identifier for the target
-    'target_type',       // Type: hand, head, or knee
+    'target_type',       // Type: hand, head, knee, hip-left, hip-right
     'target_x',          // Target X position (normalized 0-1, same as MediaPipe coordinates)
     'target_y',          // Target Y position (normalized 0-1, same as MediaPipe coordinates)
-    'target_status'      // Status: start, unobtained, obtained, end
+    'target_pixel_x',    // Target X position in absolute pixels
+    'target_pixel_y',    // Target Y position in absolute pixels
+    'target_status',     // Status: start, unobtained, obtained, end
+    'target_start_time', // Timestamp when target was created
+    'target_hit_time',   // Timestamp when target was hit (null if not hit)
+    'target_hit_keypoint', // Which body part hit the target
+    'game_mode',         // Game mode: hips-sway, hands-fixed, head-fixed, random
+    'game_phase',        // Game phase: centering, targeting, starting, completed, inactive
+    'target_index',      // Index in fixed target sequence (for hands/head games)
+    'trial_number'       // Trial number (for hip sway game)
   ];
 
   // Add pose landmark columns (33 landmarks, each with x, y, z, visibility)
@@ -101,7 +119,16 @@ export function formatPoseDataForCSV(
     targetType: null,
     targetX: null,
     targetY: null,
-    status: null
+    targetPixelX: null,
+    targetPixelY: null,
+    status: null,
+    startTime: null,
+    hitTime: null,
+    hitKeypoint: null,
+    gameMode: 'unknown',
+    gamePhase: 'inactive',
+    targetIndex: null,
+    trialNumber: null
   };
 
   const row = [
@@ -116,7 +143,16 @@ export function formatPoseDataForCSV(
     targetData.targetType,
     targetData.targetX,
     targetData.targetY,
-    targetData.status
+    targetData.targetPixelX,
+    targetData.targetPixelY,
+    targetData.status,
+    targetData.startTime,
+    targetData.hitTime,
+    targetData.hitKeypoint,
+    targetData.gameMode,
+    targetData.gamePhase,
+    targetData.targetIndex,
+    targetData.trialNumber
   ];
 
   // Add pose landmarks (33 landmarks)
