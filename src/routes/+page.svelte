@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { onMount } from 'svelte';
   
   // Suppress MediaPipe console warnings on mount
@@ -21,19 +21,63 @@
   } from '../services/recordingService.js';
   
   import { smoothLandmarks as smoothLandmarksService } from '../services/smoothingService.js';
-  import { GameFlowService } from '../services/gameFlowService.js';
+  import { GameFlowService, type GameFlowState } from '../services/gameFlowService.js';
+  import type { GameMode } from '../services/gameService.js';
+
+  // Type definitions
+  interface ScoreBreakdown {
+    hand: number;
+    head: number;
+    knee: number;
+  }
+
+  interface ParticipantInfo {
+    participantId: string;
+    age: number | null;
+    height: number | null;
+  }
+
+  interface CanvasSettings {
+    width: number;
+    height: number;
+  }
+
+  interface UserSettings {
+    username: string;
+    theme: string;
+    quality: string;
+    enableAudio: boolean;
+    fps: number;
+    enableSmoothing: boolean;
+    filterWindowSize: number;
+  }
+
+  interface RecordingSession {
+    filename: string;
+    csvContent: string;
+    startTime: number;
+    performanceStartTime: number;
+  }
+
+  interface GameDataSession {
+    gameMode: GameMode;
+    filename: string;
+    csvContent: string;
+    startTime: number;
+    performanceStartTime: number;
+  }
 
   // App state
   let showSettings = false;
   let isWebcamActive = true; // Start with webcam active
   let isGameActive = false; // Game state
   let gameScore = 0; // Current game score
-  let currentTargetType = null; // Current target type for display
-  let scoreBreakdown = { hand: 0, head: 0, knee: 0 }; // Score breakdown by body part
+  let currentTargetType: string | null = null; // Current target type for display
+  let scoreBreakdown: ScoreBreakdown = { hand: 0, head: 0, knee: 0 }; // Score breakdown by body part
   
   // Game flow state
-  let gameFlowService = null;
-  let gameFlowState = {
+  let gameFlowService: GameFlowService | null = null;
+  let gameFlowState: GameFlowState = {
     currentGameIndex: -1,
     currentGame: null,
     phase: 'waiting',
@@ -42,7 +86,7 @@
     delayRemaining: 0
   };
   let isFlowMode = true; // Whether we're in automatic flow mode vs manual mode (default to flow)
-  let randomGameTimer = null; // Timer for 1-minute random game
+  let randomGameTimer: number | null = null; // Timer for 1-minute random game
   let randomGameTimeRemaining = 0;
   
   // Game modes
@@ -53,15 +97,15 @@
     RANDOM: 'random'
   };
   
-  let currentGameMode = GAME_MODES.HIPS_SWAY; // Start with hips sway mode
+  let currentGameMode: GameMode = GAME_MODES.HIPS_SWAY as GameMode; // Start with hips sway mode
   let gameModeProgress = { completed: 0, total: 8 }; // Progress tracking for current mode
-  let canvasSettings = {
+  let canvasSettings: CanvasSettings = {
     width: window.innerWidth || 1920,
     height: window.innerHeight - 80 || 1000 // Subtract header height
   };
 
   // Settings data
-  let userSettings = {
+  let userSettings: UserSettings = {
     username: '',
     theme: 'dark',
     quality: 'high',
@@ -72,7 +116,7 @@
   };
 
   // Participant information
-  let participantInfo = {
+  let participantInfo: ParticipantInfo = {
     participantId: '',
     age: null,
     height: null
@@ -84,8 +128,8 @@
   let webcamHeight = 225;
   
   // Pose data for 3D visualization
-  let currentPoseData = null;
-  let poseHistory = [];
+  let currentPoseData: any = null;
+  let poseHistory: any[] = [];
   const maxPoseHistory = 60; // Keep last 60 frames for smoothing
   
   // Smoothing settings
@@ -95,20 +139,20 @@
 
   // Recording state
   let isRecording = false;
-  let recordingStartTime = null;
-  let poseDataBuffer = [];
+  let recordingStartTime: number | null = null;
+  let poseDataBuffer: any[] = [];
   let participantId = '';
-  let recordingSession = null;
+  let recordingSession: RecordingSession | null = null;
 
   // Video recording state
-  let mediaRecorder = null;
-  let videoChunks = [];
-  let videoStream = null;
+  let mediaRecorder: MediaRecorder | null = null;
+  let videoChunks: Blob[] = [];
+  let videoStream: MediaStream | null = null;
 
   // Game data recording state
-  let gameDataBuffer = [];
-  let gameDataSession = null;
-  let allGameDataSessions = []; // Track all game-specific recording sessions
+  let gameDataBuffer: any[] = [];
+  let gameDataSession: GameDataSession | null = null;
+  let allGameDataSessions: GameDataSession[] = []; // Track all game-specific recording sessions
 
   function openSettings() {
     showSettings = true;
@@ -118,7 +162,7 @@
     showSettings = false;
   }
 
-  function saveSettings(event) {
+  function saveSettings(event: CustomEvent) {
     const { userSettings: newUserSettings, canvasSettings: newCanvasSettings } = event.detail;
     userSettings = { ...userSettings, ...newUserSettings };
     if (newCanvasSettings) {
@@ -150,12 +194,12 @@
     isWebcamActive = !isWebcamActive;
   }
 
-  function handleCanvasUpdate(event) {
+  function handleCanvasUpdate(event: CustomEvent) {
     // Handle updates from the 3D canvas
     // Logging removed for performance
   }
 
-  function handleGameDataUpdate(event) {
+  function handleGameDataUpdate(event: CustomEvent) {
     // Receive game data from ThreeJSCanvas component (smoothed pose data)
     const gameData = event.detail;
     
@@ -174,13 +218,13 @@
   }
 
   // Game event handlers
-  function handleGameStarted(event) {
+  function handleGameStarted(event: CustomEvent) {
     console.log('Game started!', event.detail);
     gameScore = event.detail.score;
     scoreBreakdown = event.detail.scoreBreakdown;
   }
 
-  function handleScoreUpdate(event) {
+  function handleScoreUpdate(event: CustomEvent) {
     // Logging removed for performance
     gameScore = event.detail.score;
     currentTargetType = event.detail.targetType;
@@ -193,7 +237,7 @@
     
   }
 
-  function handleGameEnded(event) {
+  function handleGameEnded(event: CustomEvent) {
     console.log('Game ended!', event.detail);
     gameScore = event.detail.finalScore;
     currentTargetType = null;
@@ -206,20 +250,20 @@
     }
   }
 
-  function handleTargetChanged(event) {
+  function handleTargetChanged(event: CustomEvent) {
     currentTargetType = event.detail.targetType;
   }
 
-  function handleTargetDataUpdate(event) {
+  function handleTargetDataUpdate(event: CustomEvent) {
     // This will be called every frame with current target data
     // We'll add this data to our recording streams
     const targetData = event.detail;
     
     // Store in a global variable that can be accessed by recording functions
-    window.currentTargetData = targetData;
+    (window as any).currentTargetData = targetData;
   }
 
-  function handleQRCodeDetected(event) {
+  function handleQRCodeDetected(event: CustomEvent) {
     // Handle QR code data from the webcam
     const qrData = event.detail;
     try {
@@ -239,7 +283,7 @@
     }
   }
 
-  function handleParticipantIdChange(event) {
+  function handleParticipantIdChange(event: CustomEvent) {
     participantInfo.participantId = event.detail;
   }
 
@@ -393,7 +437,7 @@
     });
   }
   
-  function changeGameMode(newMode) {
+  function changeGameMode(newMode: GameMode) {
     if (isFlowMode) {
       // In flow mode, don't allow manual game mode changes
       return;
@@ -426,13 +470,13 @@
     }
   }
   
-  function handleStreamReady(event) {
+  function handleStreamReady(event: CustomEvent) {
     // Store video stream for recording
     videoStream = event.detail.stream;
     console.log('Video stream ready for recording');
   }
 
-  function handlePoseUpdate(event) {
+  function handlePoseUpdate(event: CustomEvent) {
     // Receive pose data from WebcamPose component
     const rawPoseData = event.detail;
     
@@ -474,7 +518,7 @@
   }
 
   // Savitzky-Golay filter implementation
-  function savgolFilter(data, windowSize, polynomialOrder) {
+  function savgolFilter(data: number[], windowSize: number, polynomialOrder: number): number[] {
     if (data.length < windowSize) return data;
     
     const halfWindow = Math.floor(windowSize / 2);
@@ -494,9 +538,9 @@
     return result;
   }
 
-  function computeSavgolCoefficients(windowSize, polynomialOrder) {
+  function computeSavgolCoefficients(windowSize: number, polynomialOrder: number): number[] {
     const halfWindow = Math.floor(windowSize / 2);
-    const A = [];
+    const A: number[][] = [];
     const b = new Array(windowSize).fill(0);
     b[halfWindow] = 1; // Central point
     
@@ -529,11 +573,11 @@
   }
 
   // Helper functions for matrix operations
-  function transpose(matrix) {
+  function transpose(matrix: number[][]): number[][] {
     return matrix[0].map((_, i) => matrix.map(row => row[i]));
   }
 
-  function matrixMultiply(a, b) {
+  function matrixMultiply(a: number[][], b: number[][]): number[][] {
     const result = [];
     for (let i = 0; i < a.length; i++) {
       result[i] = [];
@@ -547,13 +591,13 @@
     return result;
   }
 
-  function matrixVectorMultiply(matrix, vector) {
+  function matrixVectorMultiply(matrix: number[][], vector: number[]): number[] {
     return matrix.map(row => 
       row.reduce((sum, val, i) => sum + val * vector[i], 0)
     );
   }
 
-  function solveLinearSystem(A, b) {
+  function solveLinearSystem(A: number[][], b: number[]): number[] {
     // Simple Gaussian elimination for small matrices
     const n = A.length;
     const augmented = A.map((row, i) => [...row, b[i]]);
@@ -591,7 +635,7 @@
     return solution;
   }
 
-  function smoothLandmarks(landmarks) {
+  function smoothLandmarks(landmarks: any[]): any[] {
     if (!enableSmoothing || poseHistory.length < filterWindowSize) {
       return landmarks;
     }
@@ -629,7 +673,7 @@
   }
 
   // Recording functions
-  function startLocalVideoRecording(participant, timestamp) {
+  function startLocalVideoRecording(participant: string, timestamp: string): boolean {
     if (!videoStream) {
       console.warn('Video stream not available for recording');
       return false;
@@ -731,7 +775,7 @@
     console.log('Performance start time:', recordingSession.performanceStartTime);
   }
   
-  function startGameDataRecording(gameMode) {
+  function startGameDataRecording(gameMode: GameMode): void {
     if (!recordingSession) {
       console.error('Cannot start game data recording without pose data session');
       return;
