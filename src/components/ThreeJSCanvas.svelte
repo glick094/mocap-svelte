@@ -1014,14 +1014,24 @@
   function drawDelayVisuals() {
     if (!ctx || !gameFlowState) return;
     
+    // Get the next game mode (during delay, we want to show what's coming next)
+    const gameSequence = [GAME_MODES.HIPS_SWAY, GAME_MODES.HANDS_FIXED, GAME_MODES.HEAD_FIXED, GAME_MODES.RANDOM];
+    const nextGameIndex = gameFlowState.currentGameIndex + 1;
+    const nextGame = nextGameIndex < gameSequence.length ? gameSequence[nextGameIndex] : null;
+    
+    if (!nextGame) return; // No next game to show
+    
     const centerX = width / 2;
     const centerY = height / 2;
     const radius = Math.min(width, height) * 0.15; // 15% of smaller dimension
     
     // Calculate progress (0 to 1)
-    const progress = 1 - (gameFlowState.delayRemaining / (gameFlowState.delayStartTime ? 10000 : 1)); // Assuming 10s delay
+    const totalDelay = 10000; // 10 seconds
+    const progress = 1 - (gameFlowState.delayRemaining / totalDelay);
     
     ctx.save();
+    // Apply horizontal flip to match the rest of the canvas
+    ctx.scale(-1, 1);
     
     // Draw countdown circle timer
     ctx.globalAlpha = 0.8;
@@ -1030,7 +1040,7 @@
     ctx.strokeStyle = '#333';
     ctx.lineWidth = 8;
     ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+    ctx.arc(-centerX, centerY, radius, 0, 2 * Math.PI); // Negative X due to flip
     ctx.stroke();
     
     // Progress circle (counts down)
@@ -1040,63 +1050,34 @@
     ctx.beginPath();
     // Start from top (-π/2) and draw clockwise, but reverse progress for countdown
     const endAngle = -Math.PI / 2 + (1 - progress) * 2 * Math.PI;
-    ctx.arc(centerX, centerY, radius, -Math.PI / 2, endAngle);
+    ctx.arc(-centerX, centerY, radius, -Math.PI / 2, endAngle); // Negative X due to flip
     ctx.stroke();
     
     // Draw countdown number in center
     const secondsRemaining = Math.ceil(gameFlowState.delayRemaining / 1000);
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 48px Arial';
+    ctx.font = 'bold 64px Arial'; // Increased size
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(secondsRemaining.toString(), centerX, centerY);
+    ctx.fillText(secondsRemaining.toString(), -centerX, centerY); // Negative X due to flip
     
     // Draw next game mode text
-    const nextGameText = getGameModeDisplayName(gameFlowState.currentGame);
+    const nextGameText = $gameSettings.gameModeTexts.displayNames[nextGame] || 'GAME';
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 36px Arial';
+    ctx.font = 'bold 48px Arial'; // Increased size
     ctx.textAlign = 'center';
-    ctx.fillText(`Next: ${nextGameText}`, centerX, centerY - radius - 80);
+    ctx.fillText(`Next: ${nextGameText}`, -centerX, centerY - radius - 100); // Negative X due to flip
     
     // Draw task description
-    const taskDescription = getGameModeDescription(gameFlowState.currentGame);
+    const taskDescription = $gameSettings.gameModeTexts.descriptions[nextGame] || 'Follow the on-screen instructions';
     ctx.fillStyle = '#cccccc';
-    ctx.font = '24px Arial';
+    ctx.font = '32px Arial'; // Increased size
     ctx.textAlign = 'center';
-    ctx.fillText(taskDescription, centerX, centerY - radius - 40);
+    ctx.fillText(taskDescription, -centerX, centerY - radius - 50); // Negative X due to flip
     
     ctx.restore();
   }
   
-  function getGameModeDisplayName(gameMode) {
-    switch(gameMode) {
-      case GAME_MODES.HIPS_SWAY:
-        return 'Hip Sway';
-      case GAME_MODES.HANDS_FIXED:
-        return 'Hand Targets';
-      case GAME_MODES.HEAD_FIXED:
-        return 'Head Targets';
-      case GAME_MODES.RANDOM:
-        return 'Random Targets';
-      default:
-        return 'Game';
-    }
-  }
-  
-  function getGameModeDescription(gameMode) {
-    switch(gameMode) {
-      case GAME_MODES.HIPS_SWAY:
-        return 'Lean your hips left and right to hit the target regions';
-      case GAME_MODES.HANDS_FIXED:
-        return 'Touch targets with your hands following the figure-8 pattern';
-      case GAME_MODES.HEAD_FIXED:
-        return 'Move your head to touch targets arranged in a circle';
-      case GAME_MODES.RANDOM:
-        return 'Hit random targets with hands, head, and knees';
-      default:
-        return 'Follow the on-screen instructions';
-    }
-  }
 
   // Reactive statement to handle prop changes
   $: if (canvasElement) {

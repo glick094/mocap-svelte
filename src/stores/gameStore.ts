@@ -27,6 +27,15 @@ export interface HipSwayTextPrompts {
   };
 }
 
+export interface GameModeTexts {
+  displayNames: {
+    [key: string]: string;
+  };
+  descriptions: {
+    [key: string]: string;
+  };
+}
+
 export interface GameSettings {
   targetDuration: number;
   targetSize: number;
@@ -36,6 +45,7 @@ export interface GameSettings {
     centeringTimeRequired: number; // ms to hold center position
   };
   hipSwayTextPrompts: HipSwayTextPrompts;
+  gameModeTexts: GameModeTexts;
 }
 
 export type TargetType = 'hand' | 'head' | 'knee' | null;
@@ -71,6 +81,20 @@ export const gameSettings = writable<GameSettings>({
       main: 'Hip Sway Game Complete!',
       score: (score: number, total: number) => 
         `Final Score: ${score}/${total}`
+    }
+  },
+  gameModeTexts: {
+    displayNames: {
+      'hips-sway': 'HIPS',
+      'hands-fixed': 'HANDS', 
+      'head-fixed': 'HEAD',
+      'random': 'RANDOM'
+    },
+    descriptions: {
+      'hips-sway': 'Sway your hips left and right to hit the target regions',
+      'hands-fixed': 'Hit targets with either of your hands',
+      'head-fixed': 'Hit targets by moving your head', 
+      'random': 'Hit targets with your hands, head, and knees'
     }
   }
 });

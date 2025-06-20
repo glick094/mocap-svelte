@@ -41,7 +41,7 @@
     delayStartTime: null,
     delayRemaining: 0
   };
-  let isFlowMode = false; // Whether we're in automatic flow mode vs manual mode
+  let isFlowMode = true; // Whether we're in automatic flow mode vs manual mode (default to flow)
   let randomGameTimer = null; // Timer for 1-minute random game
   let randomGameTimeRemaining = 0;
   
@@ -942,7 +942,7 @@
         on:click={() => isFlowMode = !isFlowMode}
         disabled={isGameActive || gameFlowState.isActive}
       >
-        {isFlowMode ? '🔄 Flow Mode' : '🎯 Manual Mode'}
+        {isFlowMode ? '🔄 Default' : '🎯 Manual'}
       </button>
       
       <!-- Recording Button (only in manual mode) -->
