@@ -1,7 +1,30 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher } from 'svelte';
 
-  export let userSettings = {
+  // Type definitions
+  interface UserSettings {
+    username: string;
+    theme: string;
+    quality: string;
+    enableAudio: boolean;
+    fps: number;
+    enableSmoothing: boolean;
+    filterWindowSize: number;
+  }
+
+  interface CanvasSettings {
+    width: number;
+    height: number;
+  }
+
+  interface CanvasPreset {
+    name: string;
+    width: number;
+    height: number;
+  }
+
+  // Component props
+  export let userSettings: UserSettings = {
     username: '',
     theme: 'dark',
     quality: 'high',
@@ -11,43 +34,46 @@
     filterWindowSize: 5
   };
 
-  export let canvasSettings = {
+  export let canvasSettings: CanvasSettings = {
     width: 800,
     height: 600
   };
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{
+    close: void;
+    save: { userSettings: UserSettings; canvasSettings: CanvasSettings };
+  }>();
 
   // Local copy for editing
-  let localSettings = { ...userSettings };
-  let localCanvasSettings = { ...canvasSettings };
+  let localSettings: UserSettings = { ...userSettings };
+  let localCanvasSettings: CanvasSettings = { ...canvasSettings };
 
   // Canvas presets
-  const canvasPresets = [
+  const canvasPresets: CanvasPreset[] = [
     { name: 'Small', width: 600, height: 400 },
     { name: 'Medium', width: 800, height: 600 },
     { name: 'Large', width: 1200, height: 800 },
     { name: 'HD', width: 1920, height: 1080 }
   ];
 
-  function applyCanvasPreset(preset) {
+  function applyCanvasPreset(preset: CanvasPreset): void {
     localCanvasSettings.width = preset.width;
     localCanvasSettings.height = preset.height;
     localCanvasSettings = { ...localCanvasSettings }; // Trigger reactivity
   }
 
-  function closeModal() {
+  function closeModal(): void {
     dispatch('close');
   }
 
-  function saveSettings() {
+  function saveSettings(): void {
     dispatch('save', { 
       userSettings: localSettings,
       canvasSettings: localCanvasSettings 
     });
   }
 
-  function resetToDefaults() {
+  function resetToDefaults(): void {
     localSettings = {
       username: '',
       theme: 'dark',
@@ -64,14 +90,14 @@
   }
 
   // Handle escape key
-  function handleKeydown(event) {
+  function handleKeydown(event: KeyboardEvent): void {
     if (event.key === 'Escape') {
       closeModal();
     }
   }
 
   // Click outside to close
-  function handleBackdropClick(event) {
+  function handleBackdropClick(event: MouseEvent): void {
     if (event.target === event.currentTarget) {
       closeModal();
     }

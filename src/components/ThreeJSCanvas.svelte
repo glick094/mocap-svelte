@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { onMount, onDestroy, createEventDispatcher } from 'svelte';
   import { GameService, GAME_MODES, TARGET_TYPES } from '../services/gameService';
   import { gameColors, poseColors, hipSwaySettings } from '../stores/themeStore';
@@ -19,7 +19,7 @@
   export let gameActive = false;
   export let gameMode = 'hips-sway';
   export const gameModeProgress = { completed: 0, total: 8 };
-  export let gameFlowState = null;
+  export let gameFlowState: any = null;
 
   onMount(() => {
     if (canvasElement) {

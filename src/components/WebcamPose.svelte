@@ -8,7 +8,7 @@
   export let height = 480;
   export let gameActive = false;
   export let gameScore = 0;
-  export let currentTargetType = null;
+  export let currentTargetType: string | null = null;
   export let scoreBreakdown = { hand: 0, head: 0, knee: 0 };
   export let participantInfo = { participantId: '', age: null, height: null };
   export let gameMode = 'hips-sway';

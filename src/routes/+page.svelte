@@ -57,6 +57,8 @@
     csvContent: string;
     startTime: number;
     performanceStartTime: number;
+    timestamp?: string;
+    participantId?: string;
   }
 
   interface GameDataSession {
@@ -65,6 +67,8 @@
     csvContent: string;
     startTime: number;
     performanceStartTime: number;
+    participantId?: string;
+    timestamp?: string;
   }
 
   // App state
@@ -336,8 +340,8 @@
     }
     
     // Start the flow
-    gameFlowService.startFlow();
-    gameFlowState = gameFlowService.getState();
+    gameFlowService!.startFlow();
+    gameFlowState = gameFlowService!.getState();
   }
   
   function stopGameFlow() {
@@ -367,7 +371,7 @@
   
   function initializeGameFlow() {
     gameFlowService = new GameFlowService({
-      games: [GAME_MODES.HIPS_SWAY, GAME_MODES.HANDS_FIXED, GAME_MODES.HEAD_FIXED, GAME_MODES.RANDOM],
+      games: [GAME_MODES.HIPS_SWAY, GAME_MODES.HANDS_FIXED, GAME_MODES.HEAD_FIXED, GAME_MODES.RANDOM] as GameMode[],
       delayBetweenGames: 10000, // 10 seconds
       autoStartRecording: true
     });
@@ -395,7 +399,7 @@
         
         // Stop random game timer if active
         if (randomGameTimer) {
-          clearInterval(randomGameTimer);
+          if (randomGameTimer !== null) clearInterval(randomGameTimer);
           randomGameTimer = null;
           randomGameTimeRemaining = 0;
         }
@@ -411,7 +415,7 @@
       },
       
       onDelayUpdate: (remaining) => {
-        gameFlowState = gameFlowService.getState();
+        gameFlowState = gameFlowService!.getState();
       },
       
       onFlowComplete: () => {
@@ -421,7 +425,7 @@
         
         // Stop random game timer if still active
         if (randomGameTimer) {
-          clearInterval(randomGameTimer);
+          if (randomGameTimer !== null) clearInterval(randomGameTimer);
           randomGameTimer = null;
           randomGameTimeRemaining = 0;
         }
@@ -578,7 +582,7 @@
   }
 
   function matrixMultiply(a: number[][], b: number[][]): number[][] {
-    const result = [];
+    const result: number[][] = [];
     for (let i = 0; i < a.length; i++) {
       result[i] = [];
       for (let j = 0; j < b[0].length; j++) {
@@ -684,19 +688,19 @@
       videoChunks = [];
       
       // Create MediaRecorder with video stream
-      const options = {
+      let options: MediaRecorderOptions = {
         mimeType: 'video/webm;codecs=vp9', // Try VP9 first
         videoBitsPerSecond: 2500000 // 2.5 Mbps for good quality
       };
       
       // Fallback to VP8 if VP9 not supported
-      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+      if (!MediaRecorder.isTypeSupported(options.mimeType!)) {
         options.mimeType = 'video/webm;codecs=vp8';
       }
       
       // Final fallback to default
-      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-        delete options.mimeType;
+      if (!MediaRecorder.isTypeSupported(options.mimeType!)) {
+        options = {};
       }
 
       mediaRecorder = new MediaRecorder(videoStream, options);
@@ -759,6 +763,7 @@
       timestamp: timestamp,
       filename: `pose_data_${participant}_${timestamp}.csv`,
       csvContent: createCSVHeader(),
+      startTime: Date.now(), // Unix timestamp for absolute timing
       performanceStartTime: performance.now() // High-precision start time for relative timing
     };
 
@@ -769,10 +774,10 @@
     // Start video recording
     const videoStarted = startLocalVideoRecording(participant, timestamp);
 
-    console.log('Started recording pose data:', recordingSession.filename);
+    console.log('Started recording pose data:', recordingSession!.filename);
     console.log('Video recording started:', videoStarted);
     console.log('Recording start time (Unix):', recordingStartTime);
-    console.log('Performance start time:', recordingSession.performanceStartTime);
+    console.log('Performance start time:', recordingSession!.performanceStartTime);
   }
   
   function startGameDataRecording(gameMode: GameMode): void {
@@ -790,13 +795,15 @@
       gameMode: gameMode,
       filename: `game_data_${gameName}_${recordingSession.participantId}_${timestamp}.csv`,
       csvContent: createCSVHeader(), // Same format as MediaPipe data
+      startTime: recordingSession.startTime, // Same start time for synchronization
       performanceStartTime: recordingSession.performanceStartTime // Same start time for synchronization
     };
     
     gameDataBuffer = [];
-    allGameDataSessions.push(gameDataSession);
-    
-    console.log('Started recording game data:', gameDataSession.filename);
+    if (gameDataSession) {
+      allGameDataSessions.push(gameDataSession);
+      console.log('Started recording game data:', gameDataSession.filename);
+    }
   }
   
   function stopGameDataRecording() {
@@ -816,7 +823,7 @@
       
       if (randomGameTimeRemaining <= 0) {
         console.log('Random game time expired');
-        clearInterval(randomGameTimer);
+        if (randomGameTimer !== null) clearInterval(randomGameTimer);
         randomGameTimer = null;
         randomGameTimeRemaining = 0;
         
@@ -1016,7 +1023,7 @@
         <select 
           class="header-select"
           bind:value={currentGameMode}
-          on:change={(e) => changeGameMode(e.target.value)}
+          on:change={(e) => changeGameMode((e.target as HTMLSelectElement).value as GameMode)}
           disabled={isGameActive}
         >
           <option value={GAME_MODES.HIPS_SWAY}>🕺 Hips Sway</option>
@@ -1047,7 +1054,7 @@
       {#if isFlowMode && gameFlowState.isActive}
         <div class="flow-status">
           {#if gameFlowState.phase === 'playing'}
-            <span class="flow-game">Playing: {gameFlowService?.getGameDisplayName(gameFlowState.currentGame) || ''}</span>
+            <span class="flow-game">Playing: {gameFlowService && gameFlowState.currentGame ? gameFlowService.getGameDisplayName(gameFlowState.currentGame) : ''}</span>
             {#if gameFlowState.currentGame === GAME_MODES.RANDOM && randomGameTimeRemaining > 0}
               <span class="random-timer">Time: {randomGameTimeRemaining}s</span>
             {/if}
@@ -1098,10 +1105,9 @@
             gameScore={gameScore}
             currentTargetType={currentTargetType}
             scoreBreakdown={scoreBreakdown}
-            participantInfo={participantInfo}
+            participantInfo={participantInfo as { participantId: string; age: null; height: null }}
             gameMode={currentGameMode}
             gameModeProgress={gameModeProgress}
-            qrScanEnabled={qrScanEnabled && !isGameActive}
             on:poseUpdate={handlePoseUpdate}
             on:streamReady={handleStreamReady}
             on:qrCodeDetected={handleQRCodeDetected}
