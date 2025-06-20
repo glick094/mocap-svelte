@@ -196,8 +196,8 @@
 </script>
 
 {#if isOpen}
-  <div class="modal-overlay" on:click={close}>
-    <div class="modal-content" on:click|stopPropagation>
+  <div class="modal-overlay" on:click={close} on:keydown={(e) => e.key === 'Escape' && close()} role="button" tabindex="0">
+    <div class="modal-content" on:click|stopPropagation on:keydown role="dialog" tabindex="0">
       <div class="modal-header">
         <h3>Scan QR Code</h3>
         <button class="close-btn" on:click={close}>&times;</button>

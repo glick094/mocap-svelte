@@ -935,15 +935,25 @@
       <button class="header-btn" class:active={isWebcamActive} on:click={toggleWebcam}>
         {isWebcamActive ? '📹 Stop Camera' : '📷 Start Camera'}
       </button>
-      <!-- Flow Mode Toggle -->
-      <button 
-        class="header-btn flow-btn" 
-        class:active={isFlowMode}
-        on:click={() => isFlowMode = !isFlowMode}
-        disabled={isGameActive || gameFlowState.isActive}
-      >
-        {isFlowMode ? '🔄 Default' : '🎯 Manual'}
-      </button>
+      <!-- Mode Toggle Switch -->
+      <div class="toggle-switch" class:disabled={isGameActive || gameFlowState.isActive}>
+        <button 
+          class="toggle-option"
+          class:active={isFlowMode}
+          on:click={() => isFlowMode = true}
+          disabled={isGameActive || gameFlowState.isActive}
+        >
+          🔄 Default
+        </button>
+        <button 
+          class="toggle-option"
+          class:active={!isFlowMode}
+          on:click={() => isFlowMode = false}
+          disabled={isGameActive || gameFlowState.isActive}
+        >
+          🎯 Manual
+        </button>
+      </div>
       
       <!-- Recording Button (only in manual mode) -->
       {#if !isFlowMode}
@@ -1187,6 +1197,51 @@
     transform: none;
   }
 
+  /* Toggle Switch Styles */
+  .toggle-switch {
+    display: flex;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+  }
+
+  .toggle-switch.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .toggle-option {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    border-radius: 0;
+    position: relative;
+  }
+
+  .toggle-option:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .toggle-option.active {
+    background: rgba(0, 255, 136, 0.2);
+    color: #00ff88;
+    font-weight: 600;
+  }
+
+  .toggle-option:disabled {
+    cursor: not-allowed;
+  }
+
+  .toggle-option:first-child {
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
   .score-badge {
     background: rgba(255, 255, 255, 0.9);
     color: #ff8800;
@@ -1197,20 +1252,6 @@
     margin-left: 0.5rem;
   }
   
-  .flow-btn {
-    background: rgba(128, 0, 255, 0.2);
-    border-color: rgba(128, 0, 255, 0.5);
-    color: #8000ff;
-  }
-  
-  .flow-btn:hover {
-    background: rgba(128, 0, 255, 0.3);
-  }
-  
-  .flow-btn.active {
-    background: rgba(128, 0, 255, 0.4);
-    box-shadow: 0 0 10px rgba(128, 0, 255, 0.5);
-  }
   
   .flow-status {
     display: flex;

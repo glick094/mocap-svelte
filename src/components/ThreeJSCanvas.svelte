@@ -18,7 +18,7 @@
   export let poseData = null;
   export let gameActive = false;
   export let gameMode = 'hips-sway';
-  export let gameModeProgress = { completed: 0, total: 8 };
+  export const gameModeProgress = { completed: 0, total: 8 };
   export let gameFlowState = null;
 
   onMount(() => {
