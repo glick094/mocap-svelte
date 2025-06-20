@@ -166,8 +166,8 @@ export const colorblindAccessibleTheme: GameTheme = {
     // Knees use blue for knee tracking
     knee: '#0173B2',      // Blue - for knee targets and leg landmarks
     // Hips use orange and reddish purple for left/right distinction
-    hipLeft: '#E69F00',   // Orange - for left hip region (matches hand color)
-    hipRight: '#CC79A7'   // Reddish purple - for right hip region
+    hipRight: '#E69F00',   // Orange - for left hip region (matches hand color)
+    hipLeft: '#CC79A7'   // Reddish purple - for right hip region
   },
   hipSwayRegions: {
     fillOpacity: 0.6,
