@@ -1,23 +1,28 @@
-<script>
+<script lang="ts">
   import { onMount, onDestroy } from 'svelte';
 
-  export let active = false;
-  export let settings = {};
-  export let fps = 15;
+  // Type definitions
+  interface Settings {
+    [key: string]: any;
+  }
 
-  let videoElement; // Hidden video for capture
-  let displayCanvas; // Main display canvas
-  let videoContainer;
-  let stream = null;
-  let error = null;
-  let holistic = null;
-  let isMediaPipeLoaded = false;
+  export let active: boolean = false;
+  export let settings: Settings = {};
+  export let fps: number = 15;
+
+  let videoElement: HTMLVideoElement; // Hidden video for capture
+  let displayCanvas: HTMLCanvasElement; // Main display canvas
+  let videoContainer: HTMLDivElement;
+  let stream: MediaStream | null = null;
+  let error: string | null = null;
+  let holistic: any = null;
+  let isMediaPipeLoaded: boolean = false;
 
   // Processing state
-  let currentResults = null;
-  let frameCount = 0;
-  let isRunning = false;
-  let animationId = null;
+  let currentResults: any = null;
+  let frameCount: number = 0;
+  let isRunning: boolean = false;
+  let animationId: number | null = null;
 
   onMount(async () => {
     await loadMediaPipe();
@@ -71,13 +76,13 @@
       holistic.onResults(onResults);
       isMediaPipeLoaded = true;
       console.log('MediaPipe Holistic loaded successfully');
-    } catch (err) {
+    } catch (err: any) {
       error = `MediaPipe loading error: ${err.message}`;
       console.error('MediaPipe error:', err);
     }
   }
 
-  function onResults(results) {
+  function onResults(results: any): void {
     currentResults = results;
     frameCount++;
   }
@@ -122,7 +127,7 @@
           processFrameLoop();
         };
       }
-    } catch (err) {
+    } catch (err: any) {
       error = err.message;
       console.error('Webcam error:', err);
     }
@@ -157,10 +162,11 @@
     animationId = requestAnimationFrame(processFrameLoop);
   }
 
-  function drawVideoFrame() {
+  function drawVideoFrame(): void {
     if (!displayCanvas || !videoElement) return;
     
     const ctx = displayCanvas.getContext('2d');
+    if (!ctx) return;
     const canvas = displayCanvas;
     
     // Ensure canvas matches video aspect ratio
@@ -190,11 +196,12 @@
     }
   }
 
-  function drawLandmarks() {
+  function drawLandmarks(): void {
     if (!displayCanvas || !currentResults) return;
     
     const ctx = displayCanvas.getContext('2d');
-    const { drawConnectors, drawLandmarks } = window.mpDrawing || {};
+    if (!ctx) return;
+    const { drawConnectors, drawLandmarks } = (window as any).mpDrawing || {};
 
     // Draw frame counter and debug info
     ctx.fillStyle = '#FF00FF';
@@ -322,7 +329,7 @@
 
     if (displayCanvas) {
       const ctx = displayCanvas.getContext('2d');
-      ctx.clearRect(0, 0, displayCanvas.width, displayCanvas.height);
+      ctx!.clearRect(0, 0, displayCanvas.width, displayCanvas.height);
     }
     
     currentResults = null;

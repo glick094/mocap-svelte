@@ -70,7 +70,7 @@
         (result) => {
           if (!isClosing) {
             console.log('QR Code detected:', result);
-            const resultString = result.data || result;
+            const resultString = (typeof result === 'string') ? result : result.data;
             console.log('QR Code result string:', resultString);
             scanResult = resultString;
             handleQRResult(resultString);

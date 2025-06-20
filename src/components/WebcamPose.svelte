@@ -2,45 +2,75 @@
   import { onMount, onDestroy, createEventDispatcher } from 'svelte';
   import QRScanModal from './QRScanModal.svelte';
   
-  const dispatch = createEventDispatcher();
+  // Type definitions
+  interface ScoreBreakdown {
+    hand: number;
+    head: number;
+    knee: number;
+  }
 
-  export let width = 640;
-  export let height = 480;
-  export let gameActive = false;
-  export let gameScore = 0;
+  interface ParticipantInfo {
+    participantId: string;
+    age: number | null;
+    height: number | null;
+  }
+
+  interface GameModeProgress {
+    completed: number;
+    total: number;
+  }
+
+  interface MediaPipeLandmark {
+    x: number;
+    y: number;
+    z?: number;
+    visibility?: number;
+  }
+
+  const dispatch = createEventDispatcher<{
+    poseUpdate: any;
+    streamReady: MediaStream;
+    qrCodeDetected: string;
+    participantIdChange: string;
+  }>();
+
+  export let width: number = 640;
+  export let height: number = 480;
+  export let gameActive: boolean = false;
+  export let gameScore: number = 0;
   export let currentTargetType: string | null = null;
-  export let scoreBreakdown = { hand: 0, head: 0, knee: 0 };
-  export let participantInfo = { participantId: '', age: null, height: null };
-  export let gameMode = 'hips-sway';
-  export let gameModeProgress = { completed: 0, total: 8 };
+  export let scoreBreakdown: ScoreBreakdown = { hand: 0, head: 0, knee: 0 };
+  export let participantInfo: ParticipantInfo = { participantId: '', age: null, height: null };
+  export let gameMode: string = 'hips-sway';
+  export let gameModeProgress: GameModeProgress = { completed: 0, total: 8 };
 
-  let videoElement;
-  let canvasElement;
-  let canvasCtx;
-  let stream;
-  let isLoading = true;
-  let error = null;
-  let mounted = false;
-  let retryCount = 0;
-  let maxRetries = 3;
-  let initializationInProgress = false;
-  let mediaPipeInitInProgress = false;
+  let videoElement: HTMLVideoElement;
+  let canvasElement: HTMLCanvasElement;
+  let canvasCtx: CanvasRenderingContext2D | null;
+  let stream: MediaStream | null;
+  let isLoading: boolean = true;
+  let error: string | null = null;
+  let mounted: boolean = false;
+  let retryCount: number = 0;
+  let maxRetries: number = 3;
+  let initializationInProgress: boolean = false;
+  let mediaPipeInitInProgress: boolean = false;
 
   // MediaPipe variables
-  let holistic = null;
-  let camera = null;
-  let poseTrackingActive = false;
-  let mediaPipeReady = false;
+  let holistic: any = null;
+  let camera: any = null;
+  let poseTrackingActive: boolean = false;
+  let mediaPipeReady: boolean = false;
 
   // Toggle controls
-  let showPose = true;
-  let showHands = true;
-  let showFace = true;
+  let showPose: boolean = true;
+  let showHands: boolean = true;
+  let showFace: boolean = true;
 
   // QR Scanner modal state
-  let isQRModalOpen = false;
-  let lastQrScanTime = 0;
-  const QR_SCAN_THROTTLE = 500; // Reduced to 500ms to allow more frequent detection
+  let isQRModalOpen: boolean = false;
+  let lastQrScanTime: number = 0;
+  const QR_SCAN_THROTTLE: number = 500; // Reduced to 500ms to allow more frequent detection
 
 
   // MediaPipe landmark connections
@@ -69,7 +99,7 @@
     [162, 21], [21, 54], [54, 103], [103, 67], [67, 109], [109, 10]
   ];
 
-  function drawLandmarks(ctx, landmarks, color = '#FF0000', radius = 3) {
+  function drawLandmarks(ctx: CanvasRenderingContext2D, landmarks: MediaPipeLandmark[], color: string = '#FF0000', radius: number = 3): void {
     if (!landmarks || !Array.isArray(landmarks) || !ctx) return;
     
     ctx.fillStyle = color;
@@ -86,7 +116,7 @@
     }
   }
 
-  function drawConnections(ctx, landmarks, connections, color = '#00FF00', lineWidth = 2) {
+  function drawConnections(ctx: CanvasRenderingContext2D, landmarks: MediaPipeLandmark[], connections: number[][], color: string = '#00FF00', lineWidth: number = 2): void {
     if (!landmarks || !Array.isArray(landmarks) || !connections || !ctx) return;
     
     ctx.strokeStyle = color;
@@ -110,7 +140,7 @@
   }
 
 
-  function onPoseResults(results) {
+  function onPoseResults(results: any): void {
     // Early return if no valid results and no canvas to draw on
     const hasLandmarks = results.poseLandmarks || results.leftHandLandmarks || results.rightHandLandmarks || results.faceLandmarks;
     if (!hasLandmarks && !canvasCtx) return;
@@ -181,7 +211,7 @@
       'https://unpkg.com/@mediapipe/holistic'
     ];
     
-    const tryInitializeWithCdn = async (cdnUrl) => {
+    const tryInitializeWithCdn = async (cdnUrl: string): Promise<void> => {
       console.log(`Trying MediaPipe initialization with CDN: ${cdnUrl}`);
       
       try {
@@ -352,7 +382,7 @@
       console.log('Video playing');
 
       // Emit stream ready event for video recording
-      dispatch('streamReady', { stream });
+      dispatch('streamReady', stream);
 
       // Set up canvas
       canvasCtx = canvasElement.getContext('2d');
@@ -455,8 +485,8 @@
     }, 500);
   }
 
-  function getTargetColor(targetType) {
-    const colors = {
+  function getTargetColor(targetType: string): string {
+    const colors: { [key: string]: string } = {
       'hand': '#ff0000',
       'head': '#00ff88', 
       'knee': '#0000ff'
@@ -464,7 +494,7 @@
     return colors[targetType] || '#ffffff';
   }
 
-  function getBarWidth(score) {
+  function getBarWidth(score: number): number {
     if (gameScore === 0) return 0;
     return Math.max((score / gameScore) * 100, 0);
   }
@@ -481,7 +511,7 @@
     isQRModalOpen = true;
   }
 
-  function handleQRResult(event) {
+  function handleQRResult(event: CustomEvent): void {
     const result = event.detail;
     const now = Date.now();
     if (now - lastQrScanTime < QR_SCAN_THROTTLE) return;
@@ -538,8 +568,8 @@
     dispatch('participantIdChange', participantInfo.participantId);
   }
   
-  function getGameModeDisplayName(mode) {
-    const modeNames = {
+  function getGameModeDisplayName(mode: string): string {
+    const modeNames: { [key: string]: string } = {
       'hips-sway': 'Hips Sway',
       'hands-fixed': 'Hands Figure-8',
       'head-fixed': 'Head Circle',
@@ -548,7 +578,7 @@
     return modeNames[mode] || mode;
   }
   
-  function getProgressPercentage() {
+  function getProgressPercentage(): number {
     if (gameModeProgress.total === Infinity) return 0;
     return Math.round((gameModeProgress.completed / gameModeProgress.total) * 100);
   }

@@ -1,30 +1,39 @@
 <script lang="ts">
   import { onMount, onDestroy, createEventDispatcher } from 'svelte';
-  import { GameService, GAME_MODES, TARGET_TYPES } from '../services/gameService';
+  import { GameService, GAME_MODES, TARGET_TYPES, type GameMode } from '../services/gameService';
   import { gameColors, poseColors, hipSwaySettings } from '../stores/themeStore';
   import { gameSettings } from '../stores/gameStore';
   import { audioService } from '../services/audioService';
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{
+    targetHit: { type: string; score: number };
+    gameComplete: { score: number; totalTargets: number };
+    gameDataUpdate: any;
+    scoreUpdate: any;
+    gameEnded: any;
+    targetChanged: any;
+    targetDataUpdate: any;
+    gameStarted: any;
+  }>();
 
-  let canvasElement;
-  let ctx;
-  let animationId;
-  let gameService;
+  let canvasElement: HTMLCanvasElement;
+  let ctx: CanvasRenderingContext2D | null;
+  let animationId: number;
+  let gameService: GameService;
 
   // Component props
-  export let width = 800;
-  export let height = 600;
-  export let poseData = null;
-  export let gameActive = false;
-  export let gameMode = 'hips-sway';
+  export let width: number = 800;
+  export let height: number = 600;
+  export let poseData: any = null;
+  export let gameActive: boolean = false;
+  export let gameMode: string = 'hips-sway';
   export const gameModeProgress = { completed: 0, total: 8 };
   export let gameFlowState: any = null;
 
   onMount(() => {
     if (canvasElement) {
       ctx = canvasElement.getContext('2d');
-      gameService = new GameService(width, height, gameMode);
+      gameService = new GameService(width, height, gameMode as GameMode);
       animate();
     }
   });
@@ -77,7 +86,7 @@
     }
   }
 
-  function drawPoseVisualization(data) {
+  function drawPoseVisualization(data: any): void {
     if (!ctx) return;
     
     // Draw pose landmarks and connections
@@ -117,7 +126,7 @@
     }
   }
 
-  function emitGameData(data) {
+  function emitGameData(data: any): void {
     // Create game data structure that matches MediaPipe format but with smoothed data
     const gameData = {
       poseLandmarks: data.poseLandmarks || null,
@@ -131,7 +140,7 @@
     dispatch('gameDataUpdate', gameData);
   }
 
-  function handleCollision(collisionResult) {
+  function handleCollision(collisionResult: any): void {
     const { hitType, modeProgress, hitKeypoint, playSound } = collisionResult;
     
     // Play appropriate sound effect based on game mode
@@ -163,8 +172,9 @@
     }
     
     // For random mode, dispatch target change
-    if (gameMode === GAME_MODES.RANDOM && gameService.getCurrentTarget()) {
-      dispatch('targetChanged', { targetType: gameService.getCurrentTarget().type });
+    const currentTarget = gameService.getCurrentTarget();
+    if (gameMode === GAME_MODES.RANDOM && currentTarget) {
+      dispatch('targetChanged', { targetType: currentTarget.type });
     }
   }
 
@@ -205,7 +215,7 @@
   // Update game service when dimensions or mode change (must happen first)
   $: if (gameService) {
     gameService.updateDimensions(width, height);
-    gameService.updateGameMode(gameMode);
+    gameService.updateGameMode(gameMode as GameMode);
   }
   
   // Reactive statement to handle game state changes (depends on mode being set)
@@ -242,7 +252,7 @@
   }
   
   function drawHipSwayRegions() {
-    if (!gameService) return;
+    if (!gameService || !ctx) return;
     
     const hipRegions = gameService.generateHipSwayRegions();
     const hipSwayState = gameService.getHipSwayState();
@@ -399,7 +409,7 @@
         ctx.fillStyle = '#cccccc';
         ctx.font = '18px Arial';
         ctx.fillText(
-          $gameSettings.hipSwayTextPrompts.targeting.instruction(hipSwayState.targetSide),
+          $gameSettings.hipSwayTextPrompts.targeting.instruction(hipSwayState.targetSide || 'center'),
           -width / 2, // Negative x because we flipped
           height - 30
         );
@@ -426,7 +436,7 @@
   }
   
   function drawHandsFixedGame() {
-    if (!gameService) return;
+    if (!gameService || !ctx) return;
     
     const handsCenteringState = gameService.getHandsCenteringState();
     
@@ -444,7 +454,7 @@
   }
   
   function drawHeadFixedGame() {
-    if (!gameService) return;
+    if (!gameService || !ctx) return;
     
     const headCenteringState = gameService.getHeadCenteringState();
     
@@ -461,7 +471,7 @@
     }
   }
 
-  function drawHandsCenteringPhase(handsState) {
+  function drawHandsCenteringPhase(handsState: any): void {
     if (!ctx) return;
     
     ctx.save();
@@ -552,7 +562,7 @@
     ctx.restore();
   }
   
-  function drawHeadCenteringPhase(headState) {
+  function drawHeadCenteringPhase(headState: any): void {
     if (!ctx) return;
     
     ctx.save();
@@ -618,7 +628,7 @@
   }
 
   function drawFixedTargets() {
-    if (!gameService) return;
+    if (!gameService || !ctx) return;
     
     const fixedTargets = gameService.getFixedTargets();
     const currentFixedTargetIndex = gameService.getCurrentFixedTargetIndex();
@@ -633,16 +643,16 @@
         drawTarget(target, true);
       } else if (displayIndex < currentFixedTargetIndex) {
         // Draw completed targets faded
-        ctx.save();
-        ctx.globalAlpha = 0.3;
+        ctx!.save();
+        ctx!.globalAlpha = 0.3;
         drawTarget(target, false);
-        ctx.restore();
+        ctx!.restore();
       } else {
         // Draw upcoming targets dimmed
-        ctx.save();
-        ctx.globalAlpha = 0.1;
+        ctx!.save();
+        ctx!.globalAlpha = 0.1;
         drawTarget(target, false);
-        ctx.restore();
+        ctx!.restore();
       }
     });
     
@@ -660,7 +670,7 @@
     ctx.restore();
   }
 
-  function drawTarget(target, highlighted = false) {
+  function drawTarget(target: any, highlighted: boolean = false): void {
     if (!ctx) return;
     
     const { x, y, color, type } = target;
@@ -687,7 +697,7 @@
     
     // Draw icon based on target type
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 36px Arial';
+    ctx.font = 'bold 72px Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     
@@ -713,8 +723,8 @@
     ctx.restore();
   }
 
-  function drawPoseLandmarks(landmarks) {
-    if (!landmarks || landmarks.length === 0) return;
+  function drawPoseLandmarks(landmarks: any): void {
+    if (!landmarks || landmarks.length === 0 || !ctx) return;
     
     // MediaPipe pose connections (excluding face connections)
     const connections = [
@@ -747,46 +757,46 @@
         if (start.visibility > 0.5 && end.visibility > 0.5) {
           // Color code connections based on body parts
           if (legLandmarks.has(startIdx) && legLandmarks.has(endIdx)) {
-            ctx.strokeStyle = $poseColors.legs;
+            ctx!.strokeStyle = $poseColors.legs;
           } else if (armLandmarks.has(startIdx) && armLandmarks.has(endIdx)) {
-            ctx.strokeStyle = $poseColors.arms;
+            ctx!.strokeStyle = $poseColors.arms;
           } else if (headLandmarks.has(startIdx) || headLandmarks.has(endIdx)) {
-            ctx.strokeStyle = $poseColors.head;
+            ctx!.strokeStyle = $poseColors.head;
           } else {
-            ctx.strokeStyle = $poseColors.torso;
+            ctx!.strokeStyle = $poseColors.torso;
           }
           
-          ctx.beginPath();
-          ctx.moveTo(start.x * width, start.y * height);
-          ctx.lineTo(end.x * width, end.y * height);
-          ctx.stroke();
+          ctx!.beginPath();
+          ctx!.moveTo(start.x * width, start.y * height);
+          ctx!.lineTo(end.x * width, end.y * height);
+          ctx!.stroke();
         }
       }
     });
     
     // Draw landmark points (excluding face points 1-10) with color coding
-    landmarks.forEach((landmark, index) => {
+    landmarks.forEach((landmark: any, index: number) => {
       if (!excludedIndices.has(index) && landmark.visibility && landmark.visibility > 0.5) {
         // Color code landmarks based on body parts
         if (headLandmarks.has(index)) {
-          ctx.fillStyle = $poseColors.head;
+          ctx!.fillStyle = $poseColors.head;
         } else if (legLandmarks.has(index)) {
-          ctx.fillStyle = $poseColors.legs;
+          ctx!.fillStyle = $poseColors.legs;
         } else if (armLandmarks.has(index)) {
-          ctx.fillStyle = $poseColors.arms;
+          ctx!.fillStyle = $poseColors.arms;
         } else {
-          ctx.fillStyle = $poseColors.torso;
+          ctx!.fillStyle = $poseColors.torso;
         }
         
-        ctx.beginPath();
-        ctx.arc(landmark.x * width, landmark.y * height, 6, 0, 2 * Math.PI);
-        ctx.fill();
+        ctx!.beginPath();
+        ctx!.arc(landmark.x * width, landmark.y * height, 6, 0, 2 * Math.PI);
+        ctx!.fill();
       }
     });
   }
 
-  function drawHandLandmarks(landmarks, hand) {
-    if (!landmarks || landmarks.length === 0) return;
+  function drawHandLandmarks(landmarks: any, hand: any): void {
+    if (!landmarks || landmarks.length === 0 || !ctx) return;
     
     const color = $poseColors.hands;
     
@@ -809,24 +819,24 @@
         const start = landmarks[startIdx];
         const end = landmarks[endIdx];
         
-        ctx.beginPath();
-        ctx.moveTo(start.x * width, start.y * height);
-        ctx.lineTo(end.x * width, end.y * height);
-        ctx.stroke();
+        ctx!.beginPath();
+        ctx!.moveTo(start.x * width, start.y * height);
+        ctx!.lineTo(end.x * width, end.y * height);
+        ctx!.stroke();
       }
     });
     
     // Draw landmark points
     ctx.fillStyle = color;
-    landmarks.forEach((landmark) => {
-      ctx.beginPath();
-      ctx.arc(landmark.x * width, landmark.y * height, 4, 0, 2 * Math.PI);
-      ctx.fill();
+    landmarks.forEach((landmark: any) => {
+      ctx!.beginPath();
+      ctx!.arc(landmark.x * width, landmark.y * height, 4, 0, 2 * Math.PI);
+      ctx!.fill();
     });
   }
 
-  function drawFaceLandmarks(landmarks) {
-    if (!landmarks || landmarks.length === 0) return;
+  function drawFaceLandmarks(landmarks: any): void {
+    if (!landmarks || landmarks.length === 0 || !ctx) return;
     
     // Key facial feature landmarks
     const facialFeatures = {
@@ -857,7 +867,7 @@
     
     // Draw each facial feature with theme color
     const faceColor = $poseColors.face;
-    const featureColors = {
+    const featureColors: { [key: string]: string } = {
       faceContour: faceColor,
       leftEyebrow: faceColor,
       rightEyebrow: faceColor, 
@@ -868,7 +878,7 @@
       mouthInner: faceColor
     };
     
-    const featureSizes = {
+    const featureSizes: { [key: string]: number } = {
       faceContour: 2,
       leftEyebrow: 3,
       rightEyebrow: 3,
@@ -881,15 +891,15 @@
     
     // Draw landmarks for each feature
     Object.entries(facialFeatures).forEach(([featureName, indices]) => {
-      ctx.fillStyle = featureColors[featureName];
+      ctx!.fillStyle = featureColors[featureName];
       const pointSize = featureSizes[featureName];
       
       indices.forEach((index) => {
         if (index < landmarks.length) {
           const landmark = landmarks[index];
-          ctx.beginPath();
-          ctx.arc(landmark.x * width, landmark.y * height, pointSize, 0, 2 * Math.PI);
-          ctx.fill();
+          ctx!.beginPath();
+          ctx!.arc(landmark.x * width, landmark.y * height, pointSize, 0, 2 * Math.PI);
+          ctx!.fill();
         }
       });
     });
@@ -898,27 +908,28 @@
     drawFaceConnections(landmarks, facialFeatures);
   }
 
-  function drawFaceConnections(landmarks, facialFeatures) {
+  function drawFaceConnections(landmarks: any, facialFeatures: any): void {
+    if (!ctx) return;
     // Define connections for key facial features
     const connections = {
-      leftEyebrow: facialFeatures.leftEyebrow.map((_, i, arr) => 
+      leftEyebrow: facialFeatures.leftEyebrow.map((_: any, i: number, arr: any[]) => 
         i < arr.length - 1 ? [arr[i], arr[i + 1]] : null
       ).filter(Boolean),
       
-      rightEyebrow: facialFeatures.rightEyebrow.map((_, i, arr) => 
+      rightEyebrow: facialFeatures.rightEyebrow.map((_: any, i: number, arr: any[]) => 
         i < arr.length - 1 ? [arr[i], arr[i + 1]] : null
       ).filter(Boolean),
       
-      leftEye: [...facialFeatures.leftEye.map((_, i, arr) => 
+      leftEye: [...facialFeatures.leftEye.map((_: any, i: number, arr: any[]) => 
         [arr[i], arr[(i + 1) % arr.length]]
       )],
       
-      rightEye: [...facialFeatures.rightEye.map((_, i, arr) => 
+      rightEye: [...facialFeatures.rightEye.map((_: any, i: number, arr: any[]) => 
         [arr[i], arr[(i + 1) % arr.length]]
       )],
       
       // Connect mouth inner as individual line segments
-      mouthInner: facialFeatures.mouthInner.map((_, i, arr) => 
+      mouthInner: facialFeatures.mouthInner.map((_: any, i: number, arr: any[]) => 
         i < arr.length - 1 ? [arr[i], arr[i + 1]] : null
       ).filter(Boolean)
     };
@@ -926,25 +937,25 @@
     // Draw connections
     Object.entries(connections).forEach(([featureName, featureConnections]) => {
       if (featureName.includes('Eye')) {
-        ctx.strokeStyle = $poseColors.face;
-        ctx.lineWidth = 1;
+        ctx!.strokeStyle = $poseColors.face;
+        ctx!.lineWidth = 1;
       } else if (featureName.includes('Eyebrow')) {
-        ctx.strokeStyle = $poseColors.face;
-        ctx.lineWidth = 1;
+        ctx!.strokeStyle = $poseColors.face;
+        ctx!.lineWidth = 1;
       } else if (featureName.includes('mouth')) {
-        ctx.strokeStyle = $poseColors.face;
-        ctx.lineWidth = 3;
+        ctx!.strokeStyle = $poseColors.face;
+        ctx!.lineWidth = 3;
       }
       
-      featureConnections.forEach(([startIdx, endIdx]) => {
+      featureConnections.forEach(([startIdx, endIdx]: [number, number]) => {
         if (startIdx < landmarks.length && endIdx < landmarks.length) {
           const start = landmarks[startIdx];
           const end = landmarks[endIdx];
           
-          ctx.beginPath();
-          ctx.moveTo(start.x * width, start.y * height);
-          ctx.lineTo(end.x * width, end.y * height);
-          ctx.stroke();
+          ctx!.beginPath();
+          ctx!.moveTo(start.x * width, start.y * height);
+          ctx!.lineTo(end.x * width, end.y * height);
+          ctx!.stroke();
         }
       });
     });
@@ -974,39 +985,39 @@
         const sizeMultiplier = 0.5 + (1 - alpha) * 0.5; // Particles grow slightly as they fade
         const currentSize = particle.size * sizeMultiplier;
         
-        ctx.save();
-        ctx.globalAlpha = alpha;
+        ctx!.save();
+        ctx!.globalAlpha = alpha;
         
         // Main particle with glow effect
-        ctx.fillStyle = particle.color;
-        ctx.shadowColor = particle.color;
-        ctx.shadowBlur = currentSize * 3;
+        ctx!.fillStyle = particle.color;
+        ctx!.shadowColor = particle.color;
+        ctx!.shadowBlur = currentSize * 3;
         
-        ctx.beginPath();
-        ctx.arc(particle.x, particle.y, currentSize, 0, 2 * Math.PI);
-        ctx.fill();
+        ctx!.beginPath();
+        ctx!.arc(particle.x, particle.y, currentSize, 0, 2 * Math.PI);
+        ctx!.fill();
         
         // Add bright center core
-        ctx.shadowBlur = 0;
-        ctx.globalAlpha = alpha * 0.8;
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        ctx.arc(particle.x, particle.y, currentSize * 0.4, 0, 2 * Math.PI);
-        ctx.fill();
+        ctx!.shadowBlur = 0;
+        ctx!.globalAlpha = alpha * 0.8;
+        ctx!.fillStyle = '#ffffff';
+        ctx!.beginPath();
+        ctx!.arc(particle.x, particle.y, currentSize * 0.4, 0, 2 * Math.PI);
+        ctx!.fill();
         
         // Add outer glow ring for larger particles
         if (currentSize > 4) {
-          ctx.globalAlpha = alpha * 0.3;
-          ctx.strokeStyle = particle.color;
-          ctx.lineWidth = 1;
-          ctx.shadowColor = particle.color;
-          ctx.shadowBlur = currentSize * 4;
-          ctx.beginPath();
-          ctx.arc(particle.x, particle.y, currentSize * 1.5, 0, 2 * Math.PI);
-          ctx.stroke();
+          ctx!.globalAlpha = alpha * 0.3;
+          ctx!.strokeStyle = particle.color;
+          ctx!.lineWidth = 1;
+          ctx!.shadowColor = particle.color;
+          ctx!.shadowBlur = currentSize * 4;
+          ctx!.beginPath();
+          ctx!.arc(particle.x, particle.y, currentSize * 1.5, 0, 2 * Math.PI);
+          ctx!.stroke();
         }
         
-        ctx.restore();
+        ctx!.restore();
       });
     });
   }
