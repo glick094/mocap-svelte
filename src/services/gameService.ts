@@ -393,6 +393,33 @@ export class GameService {
     }
     return targets;
   }
+
+  // Generate targets starting with grey first target
+  public generateNeutralFirstTargets(): Target[] {
+    const centerX = this.width * 0.5;
+    const centerY = this.height * 0.5;
+    const radiusX = this.width * 0.4;
+    const radiusY = this.height * 0.3;
+    
+    const targets: Target[] = [];
+    for (let i = 0; i < 16; i++) {
+      const t = (i / 16) * 2 * Math.PI;
+      const x = centerX + radiusX * Math.sin(t);
+      const y = centerY + radiusY * Math.sin(2 * t);
+      
+      // First target is grey (neutral), rest will be set later based on primary hand
+      const color = i === 0 ? '#999999' : '#666666'; // Grey for first, darker grey for others (will be updated)
+      
+      targets.push({
+        id: `neutral_figure8_${this.formatTrialNumber(i + 1)}`, 
+        type: TARGET_TYPES.HAND,
+        x: x,
+        y: y,
+        color: color
+      });
+    }
+    return targets;
+  }
   
   public generateCircleTargets(): Target[] {
     const centerX = this.width * 0.5;
@@ -534,8 +561,8 @@ export class GameService {
         this.state.handsCenteringState.isCentered = false;
         this.state.handsCenteringState.centeringStartTime = null;
         
-        // Don't generate targets yet - will be generated after centering determines primary hand
-        this.state.fixedTargets = [];
+        // Generate targets with first target as grey (neutral color)
+        this.state.fixedTargets = this.generateNeutralFirstTargets();
         this.state.currentFixedTargetIndex = 0;
         this.state.currentTarget = null;
         this.createHandsCenteringData();
@@ -824,83 +851,121 @@ export class GameService {
     
     switch (handsState.phase) {
       case 'centering':
-        // Check for primary hand detection (only for the first centering)
-        if (handsState.primaryHand === null) {
-          // Check which hand hits first - this will be the primary hand
+        if (handsState.currentTrial === 1) {
+          // Trial 1: Standard centering - require both hands on crosses simultaneously
           const leftHandCentered = this.checkHandCollisionAtPosition(data, handsState.leftCenterX, handsState.leftCenterY, handsState.centeringTolerance);
           const rightHandCentered = this.checkHandCollisionAtPosition(data, handsState.rightCenterX, handsState.rightCenterY, handsState.centeringTolerance);
+          const bothHandsCentered = leftHandCentered && rightHandCentered;
           
-          if (leftHandCentered && !rightHandCentered) {
-            handsState.primaryHand = 'left';
-            handsState.activeHand = 'left';
-            console.log('Primary hand detected: LEFT');
-          } else if (rightHandCentered && !leftHandCentered) {
-            handsState.primaryHand = 'right';
-            handsState.activeHand = 'right';
-            console.log('Primary hand detected: RIGHT');
-          }
+          console.log('Trial 1 hands centering debug:', {
+            leftHandCentered,
+            rightHandCentered,
+            bothHandsCentered,
+            leftCenter: { x: handsState.leftCenterX, y: handsState.leftCenterY },
+            rightCenter: { x: handsState.rightCenterX, y: handsState.rightCenterY },
+            tolerance: handsState.centeringTolerance
+          });
           
-          // If primary hand is detected, generate targets for trial 1
-          if (handsState.primaryHand) {
-            this.state.fixedTargets = this.generateHandTrialTargets(handsState.primaryHand, 1);
-            console.log(`Generated ${this.state.fixedTargets.length} targets for ${handsState.primaryHand} hand trial 1`);
-          }
-        }
-        
-        // For actual centering, require specific hand based on current trial
-        const requiredHand = handsState.activeHand;
-        if (!requiredHand) return { hit: false };
-        
-        const targetCenterX = requiredHand === 'left' ? handsState.leftCenterX : handsState.rightCenterX;
-        const targetCenterY = requiredHand === 'left' ? handsState.leftCenterY : handsState.rightCenterY;
-        const handCentered = this.checkSpecificHandCollisionAtPosition(data, requiredHand, targetCenterX, targetCenterY, handsState.centeringTolerance);
-        
-        console.log(`Trial ${handsState.currentTrial} centering debug:`, {
-          requiredHand,
-          handCentered,
-          center: { x: targetCenterX, y: targetCenterY },
-          tolerance: handsState.centeringTolerance
-        });
-        
-        if (handCentered) {
-          if (!handsState.isCentered) {
-            handsState.isCentered = true;
-            handsState.centeringStartTime = Date.now();
-          } else {
-            const centeringDuration = Date.now() - (handsState.centeringStartTime || 0);
-            if (centeringDuration >= handsState.centeringTimeRequired) {
-              // Complete centering phase
-              if (this.state.currentTargetData) {
-                this.state.currentTargetData.status = 'obtained';
-                this.state.currentTargetData.hitTime = Date.now();
-                this.state.targetHistory.push({ ...this.state.currentTargetData });
-                
-                this.state.currentTargetData.status = 'end';
-                this.state.targetHistory.push({ ...this.state.currentTargetData });
-              }
-              
-              // Move to targeting phase
-              handsState.phase = 'targeting';
-              this.state.currentFixedTargetIndex = 1;
-              this.state.currentTarget = this.state.fixedTargets[0];
-              this.createTargetData();
-              
-              return {
-                hit: true,
-                hitType: 'centering',
-                playSound: false,
-                modeProgress: { 
-                  completed: 1, 
-                  total: this.state.fixedTargets.length + 1,
-                  currentTrial: handsState.currentTrial,
-                  activeHand: handsState.activeHand
+          if (bothHandsCentered) {
+            if (!handsState.isCentered) {
+              handsState.isCentered = true;
+              handsState.centeringStartTime = Date.now();
+            } else {
+              const centeringDuration = Date.now() - (handsState.centeringStartTime || 0);
+              if (centeringDuration >= handsState.centeringTimeRequired) {
+                // Complete centering phase
+                if (this.state.currentTargetData) {
+                  this.state.currentTargetData.status = 'obtained';
+                  this.state.currentTargetData.hitTime = Date.now();
+                  this.state.targetHistory.push({ ...this.state.currentTargetData });
+                  
+                  this.state.currentTargetData.status = 'end';
+                  this.state.targetHistory.push({ ...this.state.currentTargetData });
                 }
-              };
+                
+                // Move to targeting phase with first (grey) target
+                handsState.phase = 'targeting';
+                this.state.currentFixedTargetIndex = 1;
+                this.state.currentTarget = this.state.fixedTargets[0];
+                this.createTargetData();
+                
+                return {
+                  hit: true,
+                  hitType: 'centering',
+                  playSound: false,
+                  modeProgress: { 
+                    completed: 1, 
+                    total: this.state.fixedTargets.length + 1,
+                    currentTrial: handsState.currentTrial,
+                    activeHand: handsState.activeHand
+                  }
+                };
+              }
             }
+          } else {
+            handsState.isCentered = false;
+            handsState.centeringStartTime = null;
           }
         } else {
-          handsState.isCentered = false;
-          handsState.centeringStartTime = null;
+          // Trial 2: Recentering - only check the active hand
+          const activeHand = handsState.activeHand;
+          if (!activeHand) return { hit: false };
+          
+          // Determine which center position to check (flip due to canvas flip)
+          const centerX = activeHand === 'left' ? handsState.rightCenterX : handsState.leftCenterX;
+          const centerY = activeHand === 'left' ? handsState.rightCenterY : handsState.leftCenterY;
+          
+          // Check if the specific active hand is centered
+          const activeHandCentered = this.checkSpecificHandCollisionAtPosition(data, activeHand, centerX, centerY, handsState.centeringTolerance);
+          
+          console.log('Trial 2 recentering debug:', {
+            activeHand,
+            activeHandCentered,
+            centerX,
+            centerY,
+            tolerance: handsState.centeringTolerance
+          });
+          
+          if (activeHandCentered) {
+            if (!handsState.isCentered) {
+              handsState.isCentered = true;
+              handsState.centeringStartTime = Date.now();
+            } else {
+              const centeringDuration = Date.now() - (handsState.centeringStartTime || 0);
+              if (centeringDuration >= handsState.centeringTimeRequired) {
+                // Complete recentering phase
+                if (this.state.currentTargetData) {
+                  this.state.currentTargetData.status = 'obtained';
+                  this.state.currentTargetData.hitTime = Date.now();
+                  this.state.targetHistory.push({ ...this.state.currentTargetData });
+                  
+                  this.state.currentTargetData.status = 'end';
+                  this.state.targetHistory.push({ ...this.state.currentTargetData });
+                }
+                
+                // Move to targeting phase for trial 2
+                handsState.phase = 'targeting';
+                this.state.currentFixedTargetIndex = 1;
+                this.state.currentTarget = this.state.fixedTargets[0];
+                this.createTargetData();
+                
+                return {
+                  hit: true,
+                  hitType: 'recentering',
+                  playSound: false,
+                  modeProgress: { 
+                    completed: 1, 
+                    total: this.state.fixedTargets.length + 1,
+                    currentTrial: handsState.currentTrial,
+                    activeHand: handsState.activeHand
+                  }
+                };
+              }
+            }
+          } else {
+            handsState.isCentered = false;
+            handsState.centeringStartTime = null;
+          }
         }
         break;
         
@@ -1229,26 +1294,70 @@ export class GameService {
   // Hand-specific target collision detection for trials
   private checkHandSpecificTargetCollisions(data: PoseData): { hit: boolean; hitType?: string; modeProgress?: any; playSound?: boolean; hitKeypoint?: string } {
     const handsState = this.state.handsCenteringState;
-    const requiredHand = handsState.activeHand;
     
-    if (!requiredHand || !this.state.currentTarget) return { hit: false };
-    
-    const landmarks = requiredHand === 'left' ? data.leftHandLandmarks : data.rightHandLandmarks;
-    if (!landmarks) return { hit: false };
+    if (!this.state.currentTarget) return { hit: false };
     
     const target = this.state.currentTarget;
     let hitKeypoint: string | null = null;
+    let hitHand: 'left' | 'right' | null = null;
     
-    // Check if the required hand hits the target
-    for (let i = 0; i < landmarks.length; i++) {
-      const landmark = landmarks[i];
-      if (landmark && this.checkDistance(landmark.x * this.width, landmark.y * this.height, target.x, target.y)) {
-        hitKeypoint = `${requiredHand}_hand_${i}`;
-        break;
+    // For the first target, check both hands to determine primary hand
+    if (handsState.primaryHand === null && this.state.currentFixedTargetIndex === 1) {
+      // Check both hands for the first (grey) target
+      if (data.leftHandLandmarks) {
+        for (let i = 0; i < data.leftHandLandmarks.length; i++) {
+          const landmark = data.leftHandLandmarks[i];
+          if (landmark && this.checkDistance(landmark.x * this.width, landmark.y * this.height, target.x, target.y)) {
+            hitKeypoint = `left_hand_${i}`;
+            hitHand = 'left';
+            break;
+          }
+        }
+      }
+      
+      if (!hitKeypoint && data.rightHandLandmarks) {
+        for (let i = 0; i < data.rightHandLandmarks.length; i++) {
+          const landmark = data.rightHandLandmarks[i];
+          if (landmark && this.checkDistance(landmark.x * this.width, landmark.y * this.height, target.x, target.y)) {
+            hitKeypoint = `right_hand_${i}`;
+            hitHand = 'right';
+            break;
+          }
+        }
+      }
+      
+      // If hit detected, set primary hand and regenerate targets with proper colors
+      if (hitHand) {
+        handsState.primaryHand = hitHand;
+        handsState.activeHand = hitHand;
+        console.log(`Primary hand detected on first target: ${hitHand.toUpperCase()}`);
+        
+        // Regenerate targets with hand-specific colors, starting from the first target
+        this.state.fixedTargets = this.generateHandTrialTargets(hitHand, 1);
+        // Update current target to use the new colored version
+        this.state.currentTarget = this.state.fixedTargets[0];
+        this.state.currentTarget.color = hitHand === 'left' ? '#E69F00' : '#CC79A7';
+      }
+    } else {
+      // For subsequent targets or trial 2, only check the active hand
+      const requiredHand = handsState.activeHand;
+      if (!requiredHand) return { hit: false };
+      
+      const landmarks = requiredHand === 'left' ? data.leftHandLandmarks : data.rightHandLandmarks;
+      if (!landmarks) return { hit: false };
+      
+      // Check if the required hand hits the target
+      for (let i = 0; i < landmarks.length; i++) {
+        const landmark = landmarks[i];
+        if (landmark && this.checkDistance(landmark.x * this.width, landmark.y * this.height, target.x, target.y)) {
+          hitKeypoint = `${requiredHand}_hand_${i}`;
+          hitHand = requiredHand;
+          break;
+        }
       }
     }
     
-    if (hitKeypoint) {
+    if (hitKeypoint && hitHand) {
       // Handle target hit
       this.state.gameScore += 10;
       this.state.scoreBreakdown.hand += 10;
@@ -1297,6 +1406,9 @@ export class GameService {
       // Trial 1 completed, start trial 2 with the other hand
       handsState.trial1Completed = true;
       handsState.currentTrial = 2;
+      // Set secondary hand (opposite of primary)
+      // If primary was 'left', secondary should be 'right'
+      // If primary was 'right', secondary should be 'left'
       handsState.activeHand = handsState.primaryHand === 'left' ? 'right' : 'left';
       handsState.phase = 'centering';
       handsState.isCentered = false;

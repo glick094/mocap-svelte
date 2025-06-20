@@ -491,9 +491,11 @@
       drawHandCenter('left', handsState.leftCenterX, handsState.leftCenterY, tolerance, crossSize, false, false);
       drawHandCenter('right', handsState.rightCenterX, handsState.rightCenterY, tolerance, crossSize, false, false);
     } else if (activeHand) {
-      // Show only the active hand's center
-      const centerX = activeHand === 'left' ? handsState.leftCenterX : handsState.rightCenterX;
-      const centerY = activeHand === 'left' ? handsState.leftCenterY : handsState.rightCenterY;
+      // Show only the active hand's center (flip positions due to canvas flip)
+      // When activeHand is 'left', user uses left hand, so show circle on left side (rightCenterX)
+      // When activeHand is 'right', user uses right hand, so show circle on right side (leftCenterX)
+      const centerX = activeHand === 'left' ? handsState.rightCenterX : handsState.leftCenterX;
+      const centerY = activeHand === 'left' ? handsState.rightCenterY : handsState.leftCenterY;
       drawHandCenter(activeHand, centerX, centerY, tolerance, crossSize, true, handsState.isCentered);
     }
     
@@ -514,6 +516,7 @@
       );
     } else {
       const trialText = handsState.currentTrial === 1 ? 'Primary Hand Trial' : 'Secondary Hand Trial';
+      // The activeHand already represents the correct physical hand
       const handText = activeHand === 'left' ? 'Left Hand' : 'Right Hand';
       ctx.fillText(
         `${trialText}: ${handText}`,
@@ -537,6 +540,7 @@
         height - 30
       );
     } else {
+      // The activeHand already represents the correct physical hand
       ctx.fillText(
         `Position your ${activeHand} hand on the center cross`,
         -width / 2,
@@ -681,6 +685,7 @@
     if (gameMode === GAME_MODES.HANDS_FIXED) {
       const handsState = gameService.getHandsCenteringState();
       const trialText = handsState.currentTrial === 1 ? 'Primary Hand Trial' : 'Secondary Hand Trial';
+      // The activeHand already represents the correct physical hand
       const handText = handsState.activeHand === 'left' ? 'Left Hand' : 'Right Hand';
       ctx.fillText(
         `${trialText}: ${handText} - ${currentFixedTargetIndex}/${fixedTargets.length}`,
@@ -724,7 +729,7 @@
     
     // Draw icon based on target type
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 72px Arial';
+    ctx.font = 'bold 50px Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     

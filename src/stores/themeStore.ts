@@ -161,7 +161,8 @@ export const colorblindAccessibleTheme: GameTheme = {
     // Left hand uses orange for hand tracking
     hand: '#E69F00',      // Orange - for hand targets and left hand landmarks
     // Head uses sky blue for head/face tracking  
-    head: '#56B4E9',      // Sky blue - for head targets and face landmarks
+    // head: '#56B4E9',      // Sky blue - for head targets and face landmarks
+    head: '#44AA99',      // Light green - for head targets and face landmarks
     // Knees use blue for knee tracking
     knee: '#0173B2',      // Blue - for knee targets and leg landmarks
     // Hips use orange and reddish purple for left/right distinction
@@ -176,13 +177,15 @@ export const colorblindAccessibleTheme: GameTheme = {
   },
   poses: {
     // Match tracking colors to target colors for visual consistency
-    head: '#56B4E9',      // Sky blue - matches head targets
+    // head: '#56B4E9',      // Sky blue - matches head targets
+    head: '#44AA99',      // Light green - matches head targets
     arms: '#CC79A7',      // Reddish purple - for arm structure
     legs: '#0173B2',      // Blue - matches knee targets
     hands: '#E69F00',     // Orange - default hand color
     leftHand: '#E69F00',  // Orange - matches hand targets (left hand)
     rightHand: '#CC79A7', // Reddish purple - distinguishable from left
-    face: '#56B4E9',      // Sky blue - matches head targets
+    // face: '#56B4E9',      // Sky blue - matches head targets
+    face: '#44AA99',      // Light Green - matches head targets
     torso: '#999999'      // Gray - neutral for torso/body structure
   }
 };
