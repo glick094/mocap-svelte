@@ -1434,6 +1434,8 @@ export class GameService {
   // Update game mode
   public updateGameMode(gameMode: GameMode): void {
     this.gameMode = gameMode;
+    // Reset game state when switching modes to prevent stale data
+    this.state = this.initializeGameState();
   }
 
   // Explosion management

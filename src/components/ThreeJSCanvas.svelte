@@ -19,6 +19,7 @@
   export let gameActive = false;
   export let gameMode = 'hips-sway';
   export let gameModeProgress = { completed: 0, total: 8 };
+  export let gameFlowState = null;
 
   onMount(() => {
     if (canvasElement) {
@@ -108,8 +109,10 @@
       }
     }
     
-    // Draw game targets and UI
-    if (gameActive && gameService) {
+    // Draw delay visuals or game elements
+    if (gameFlowState && gameFlowState.phase === 'delay') {
+      drawDelayVisuals();
+    } else if (gameActive && gameService) {
       drawGameElements();
     }
   }
@@ -199,17 +202,17 @@
     });
   }
 
-  // Reactive statement to handle game state changes
+  // Update game service when dimensions or mode change (must happen first)
+  $: if (gameService) {
+    gameService.updateDimensions(width, height);
+    gameService.updateGameMode(gameMode);
+  }
+  
+  // Reactive statement to handle game state changes (depends on mode being set)
   $: if (gameActive && gameService && !gameService.getCurrentTarget()) {
     startGame();
   } else if (!gameActive && gameService && gameService.getCurrentTarget()) {
     stopGame();
-  }
-  
-  // Update game service when dimensions or mode change
-  $: if (gameService) {
-    gameService.updateDimensions(width, height);
-    gameService.updateGameMode(gameMode);
   }
 
   function drawGameElements() {
@@ -1006,6 +1009,93 @@
         ctx.restore();
       });
     });
+  }
+
+  function drawDelayVisuals() {
+    if (!ctx || !gameFlowState) return;
+    
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const radius = Math.min(width, height) * 0.15; // 15% of smaller dimension
+    
+    // Calculate progress (0 to 1)
+    const progress = 1 - (gameFlowState.delayRemaining / (gameFlowState.delayStartTime ? 10000 : 1)); // Assuming 10s delay
+    
+    ctx.save();
+    
+    // Draw countdown circle timer
+    ctx.globalAlpha = 0.8;
+    
+    // Background circle
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 8;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+    ctx.stroke();
+    
+    // Progress circle (counts down)
+    ctx.strokeStyle = '#4CAF50';
+    ctx.lineWidth = 8;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    // Start from top (-π/2) and draw clockwise, but reverse progress for countdown
+    const endAngle = -Math.PI / 2 + (1 - progress) * 2 * Math.PI;
+    ctx.arc(centerX, centerY, radius, -Math.PI / 2, endAngle);
+    ctx.stroke();
+    
+    // Draw countdown number in center
+    const secondsRemaining = Math.ceil(gameFlowState.delayRemaining / 1000);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 48px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(secondsRemaining.toString(), centerX, centerY);
+    
+    // Draw next game mode text
+    const nextGameText = getGameModeDisplayName(gameFlowState.currentGame);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 36px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(`Next: ${nextGameText}`, centerX, centerY - radius - 80);
+    
+    // Draw task description
+    const taskDescription = getGameModeDescription(gameFlowState.currentGame);
+    ctx.fillStyle = '#cccccc';
+    ctx.font = '24px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(taskDescription, centerX, centerY - radius - 40);
+    
+    ctx.restore();
+  }
+  
+  function getGameModeDisplayName(gameMode) {
+    switch(gameMode) {
+      case GAME_MODES.HIPS_SWAY:
+        return 'Hip Sway';
+      case GAME_MODES.HANDS_FIXED:
+        return 'Hand Targets';
+      case GAME_MODES.HEAD_FIXED:
+        return 'Head Targets';
+      case GAME_MODES.RANDOM:
+        return 'Random Targets';
+      default:
+        return 'Game';
+    }
+  }
+  
+  function getGameModeDescription(gameMode) {
+    switch(gameMode) {
+      case GAME_MODES.HIPS_SWAY:
+        return 'Lean your hips left and right to hit the target regions';
+      case GAME_MODES.HANDS_FIXED:
+        return 'Touch targets with your hands following the figure-8 pattern';
+      case GAME_MODES.HEAD_FIXED:
+        return 'Move your head to touch targets arranged in a circle';
+      case GAME_MODES.RANDOM:
+        return 'Hit random targets with hands, head, and knees';
+      default:
+        return 'Follow the on-screen instructions';
+    }
   }
 
   // Reactive statement to handle prop changes

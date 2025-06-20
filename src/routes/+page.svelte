@@ -1021,6 +1021,7 @@
         gameActive={isGameActive}
         gameMode={currentGameMode}
         gameModeProgress={gameModeProgress}
+        gameFlowState={gameFlowState}
         on:update={handleCanvasUpdate}
         on:gameDataUpdate={handleGameDataUpdate}
         on:gameStarted={handleGameStarted}
