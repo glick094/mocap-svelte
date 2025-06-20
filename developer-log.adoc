@@ -70,6 +70,27 @@
 
 * `npm install @mediapipe/holistic @mediapipe/camera_utils @mediapipe/drawing_utils`
 
+== Knee movement
+
+more force generation 
+don't want coordination task to measure strength
+
+height & handedness & 
+
+what provide info about coordination? 
+
+different ways we can look at coordination: 
+1. able to organize body segments in relation to environment/obstacles in a smooth way
+2. trajectory of movement
+3. self organizing nature - adapt to new movement patterns
+
+for hands the background 
+
+hula hoops
+yellow boxes with bubbles that move
+
+-- this thing doesn't look like me! -- if we can get this more character
+
 == Next steps: 
 
 * [x] continue updating target csv outputs. 
@@ -90,3 +111,10 @@
 // - Session 4: 282 → 243 (39 errors)
 // - Session 5: 243 → 175 (68 errors)
 // - Session 6: 175 → 135 (40 errors)
+* [ ] hand trials, start with dominate (one they hit first, then second time will be other hand)
+* [ ] add enjoyment scale "game/survey"
+
+== Analysis Next Steps: 
+
+* [ ] add signal to noise ratio
+* [ ] 

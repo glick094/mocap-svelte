@@ -55,6 +55,7 @@ The interface consists of three main areas:
 ### Side Panel ([WebcamPose.svelte](src/components/WebcamPose.svelte))
 
 ### Side Panel ([WebcamPose.svelte](src/lib/WebcamPose.svelte))
+
 - **Participant Input**: Manual ID entry with automatic QR code scanning
 - **Webcam Feed**: Live camera view with pose overlay
 - **MediaPipe Status**: Connection and processing status
@@ -134,9 +135,11 @@ Implementation: [recordingService.ts](src/services/recordingService.ts) and [+pa
 ## Participant Management
 
 ### QR Code Integration
+
 The platform supports automatic participant setup via QR code scanning:
 
 **QR Code Format**:
+
 ```json
 {
   "participantid": "P001",
@@ -146,6 +149,7 @@ The platform supports automatic participant setup via QR code scanning:
 ```
 
 **Enhanced QR Scanner Features**:
+
 - **Shared Camera Stream**: QR scanner uses the same camera feed as MediaPipe to prevent conflicts
 - **Modal Interface**: Full-screen scanning modal with live camera preview
 - **Real-time Detection**: Up to 10 scans per second with optimized scan region
@@ -153,6 +157,7 @@ The platform supports automatic participant setup via QR code scanning:
 - **Improved Reliability**: Fixed infinite restart loops and stream conflicts
 
 **Behavior**:
+
 - QR scanning is active only when the game is **not** running
 - Scans every 500ms with 500ms throttling to prevent duplicate reads
 - Manual participant ID entry overrides QR code data
@@ -160,12 +165,15 @@ The platform supports automatic participant setup via QR code scanning:
 - Automatic modal closure after successful scan
 
 **Camera Stream Management**:
+
 The QR scanner now shares the camera stream with MediaPipe instead of requesting separate access:
+
 - Prevents "device busy" errors
 - Ensures clean video feed without pose tracking overlays
 - Seamless transition between pose tracking and QR scanning modes
 
 **Test QR Generator**:
+
 Use `test-qr.html` to generate QR codes for testing. Open the file in a browser and enter participant information.
 
 Implementation: [QRScanModal.svelte](src/lib/QRScanModal.svelte) and [WebcamPose.svelte](src/lib/WebcamPose.svelte#L476-L539)
@@ -257,6 +265,7 @@ This project includes a comprehensive test suite covering services, stores, and 
 ### QR Code Scanning Issues
 
 **QR Code Not Detected**:
+
 1. Ensure QR code contains valid JSON with `participantid` field
 2. Hold QR code steady in the center of the camera view
 3. Ensure adequate lighting on the QR code
@@ -264,12 +273,14 @@ This project includes a comprehensive test suite covering services, stores, and 
 5. Check browser console for any error messages
 
 **Camera Access Problems**:
+
 - Make sure you're accessing the site via HTTPS (required for camera access)
 - Grant camera permissions when prompted by the browser
 - Close other applications that might be using the camera
 - The application automatically shares camera stream between MediaPipe and QR scanner
 
 **Performance Issues**:
+
 - Reduce MediaPipe model complexity in settings if scanning is slow
 - Ensure good lighting conditions for both pose tracking and QR scanning
 - Consider using a dedicated QR code reader app if browser scanning fails
