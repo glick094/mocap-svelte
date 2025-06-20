@@ -1358,6 +1358,9 @@ export class GameService {
     }
     
     if (hitKeypoint && hitHand) {
+      // Create explosion animation
+      this.createExplosion(target);
+      
       // Handle target hit
       this.state.gameScore += 10;
       this.state.scoreBreakdown.hand += 10;
