@@ -241,13 +241,17 @@ export class GameFlowService {
   public getGameDisplayName(gameMode: GameMode): string {
     switch (gameMode) {
       case GAME_MODES.HIPS_SWAY:
-        return 'Hip Sway';
+        // return 'Hip Sway';
+        return 'Hips';
       case GAME_MODES.HANDS_FIXED:
-        return 'Hands Figure-8';
+        // return 'Hands Figure-8';
+        return 'Hands';
       case GAME_MODES.HEAD_FIXED:
-        return 'Head Circle';
+        // return 'Head Circle';
+        return 'Head';
       case GAME_MODES.RANDOM:
-        return 'Random Targets';
+        // return 'Random Targets';
+        return 'Random';
       default:
         return gameMode;
     }

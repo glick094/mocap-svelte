@@ -422,8 +422,12 @@ export class GameService {
         y = Math.random() * (headUsableHeight / 3) + headBorderY;
         break;
       case TARGET_TYPES.KNEE:
-        x = Math.random() * usableWidth + borderX;
-        y = Math.random() * (usableHeight / 4) + (borderY + 3 * usableHeight / 5);
+        const kneeBorderY = this.height * 0.1;
+        const kneeUsableHeight = this.height * 0.8;
+        const kneeBorderX = this.width * 0.1;
+        const kneeUsableWidth = this.width * 0.7;
+        x = Math.random() * kneeUsableWidth + kneeBorderX;
+        y = Math.random() * (kneeUsableHeight / 4) + (kneeBorderY + 5 * kneeUsableHeight / 7);
         break;
       case TARGET_TYPES.HAND:
       default:
