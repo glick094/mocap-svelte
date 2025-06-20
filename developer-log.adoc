@@ -80,4 +80,13 @@
 * [x] the flow mode is not showing head trials (shows hands)
 * [x] the flow mode is not showing random trials
 * [x] add a visual circle timer in short delay
-* [ ] remove initial delay. 
+* [ ] remove initial delay??
+* [ ] update saving, so it includes participant ID correctly, 
+* [ ] add pop-up box for participant ID if not added
+* [ ] fix errors/warnings from `npm run check` ()
+// - Session 1: 483 → 463 (20 errors)
+// - Session 2: 463 → 374 (89 errors)
+// - Session 3: 374 → 282 (92 errors)
+// - Session 4: 282 → 243 (39 errors)
+// - Session 5: 243 → 175 (68 errors)
+// - Session 6: 175 → 135 (40 errors)
