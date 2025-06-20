@@ -236,7 +236,7 @@
       console.log('Drawing pose landmarks:', currentResults.poseLandmarks.length);
       
       // Draw simple circles first to test coordinate system
-      currentResults.poseLandmarks.forEach((landmark, index) => {
+      currentResults.poseLandmarks.forEach((landmark: any, index: number) => {
         const x = landmark.x * displayCanvas.width;
         const y = landmark.y * displayCanvas.height;
         
@@ -289,7 +289,7 @@
     // Draw hand landmarks
     if (currentResults.leftHandLandmarks) {
       ctx.fillStyle = '#00CCFF';
-      currentResults.leftHandLandmarks.forEach(landmark => {
+      currentResults.leftHandLandmarks.forEach((landmark: any) => {
         const x = landmark.x * displayCanvas.width;
         const y = landmark.y * displayCanvas.height;
         ctx.beginPath();
@@ -300,7 +300,7 @@
 
     if (currentResults.rightHandLandmarks) {
       ctx.fillStyle = '#FFCC00';
-      currentResults.rightHandLandmarks.forEach(landmark => {
+      currentResults.rightHandLandmarks.forEach((landmark: any) => {
         const x = landmark.x * displayCanvas.width;
         const y = landmark.y * displayCanvas.height;
         ctx.beginPath();

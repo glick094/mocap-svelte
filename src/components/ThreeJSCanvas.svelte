@@ -278,6 +278,8 @@
       case 'targeting':
         // Calculate position with animation offset
         let targetRegion = hipSwayState.targetSide === 'left' ? hipRegions.leftRegion : hipRegions.rightRegion;
+        // NOTE: Canvas is flipped, so we need to reverse the color assignment
+        // When targeting 'left', we want leftRegion (which appears visually right) to use hipRight color
         let targetColor = hipSwayState.targetSide === 'left' ? $gameColors.hipLeft : $gameColors.hipRight;
         
         let regionX = targetRegion.x;
@@ -335,9 +337,10 @@
         
       case 'completed':
         // Draw both regions faded to show completion
+        // NOTE: Canvas is flipped, so leftRegion is visually on the right, rightRegion is visually on the left
         ctx.globalAlpha = 0.2;
         
-        ctx.fillStyle = $gameColors.hipLeft;
+        ctx.fillStyle = $gameColors.hipRight; // leftRegion appears on visual right due to flip
         ctx.fillRect(
           hipRegions.leftRegion.x,
           hipRegions.leftRegion.y,
@@ -345,7 +348,7 @@
           hipRegions.leftRegion.height
         );
         
-        ctx.fillStyle = $gameColors.hipRight;
+        ctx.fillStyle = $gameColors.hipLeft; // rightRegion appears on visual left due to flip
         ctx.fillRect(
           hipRegions.rightRegion.x,
           hipRegions.rightRegion.y,
@@ -741,9 +744,9 @@
     const excludedIndices = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
     
     // Define body part landmark groups for color coding
-    const headLandmarks = new Set([0]); // Nose center
-    const legLandmarks = new Set([23, 24, 25, 26, 27, 28, 29, 30, 31, 32]); // Hips to feet
-    const armLandmarks = new Set([11, 12, 13, 14, 15, 16]); // Shoulders to wrists
+    const headLandmarks = new Set([0]); // Nose center - used for head tracking
+    const hipLandmarks = new Set([23, 24]); // Hip landmarks - used for hip sway tracking
+    const kneeLandmarks = new Set([25, 26]); // Knee landmarks - used for knee tracking
     
     // Draw connections first (behind landmarks)
     ctx.lineWidth = 3;
@@ -755,15 +758,21 @@
         const end = landmarks[endIdx];
         
         if (start.visibility > 0.5 && end.visibility > 0.5) {
-          // Color code connections based on body parts
-          if (legLandmarks.has(startIdx) && legLandmarks.has(endIdx)) {
-            ctx!.strokeStyle = $poseColors.legs;
-          } else if (armLandmarks.has(startIdx) && armLandmarks.has(endIdx)) {
-            ctx!.strokeStyle = $poseColors.arms;
+          // Color code connections based on body parts and tracking importance
+          if (hipLandmarks.has(startIdx) && hipLandmarks.has(endIdx)) {
+            // Hip connection - NOTE: Canvas is flipped, so 23=right hip visually, 24=left hip visually
+            if (startIdx === 23 || endIdx === 23) {
+              ctx!.strokeStyle = $gameColors.hipRight; // Landmark 23 = visually right hip (due to flip)
+            } else {
+              ctx!.strokeStyle = $gameColors.hipLeft; // Landmark 24 = visually left hip (due to flip)
+            }
+          } else if (kneeLandmarks.has(startIdx) || kneeLandmarks.has(endIdx)) {
+            ctx!.strokeStyle = $gameColors.knee; // Knee tracking color
           } else if (headLandmarks.has(startIdx) || headLandmarks.has(endIdx)) {
-            ctx!.strokeStyle = $poseColors.head;
+            ctx!.strokeStyle = $gameColors.head; // Head tracking color
           } else {
-            ctx!.strokeStyle = $poseColors.torso;
+            // All other connections (shoulders, feet, arms) are grey
+            ctx!.strokeStyle = '#999999';
           }
           
           ctx!.beginPath();
@@ -774,22 +783,36 @@
       }
     });
     
-    // Draw landmark points (excluding face points 1-10) with color coding
+    // Draw landmark points (excluding face points 1-10) with color coding based on tracking importance
     landmarks.forEach((landmark: any, index: number) => {
       if (!excludedIndices.has(index) && landmark.visibility && landmark.visibility > 0.5) {
-        // Color code landmarks based on body parts
+        // Color code landmarks based on their role in collision detection
         if (headLandmarks.has(index)) {
-          ctx!.fillStyle = $poseColors.head;
-        } else if (legLandmarks.has(index)) {
-          ctx!.fillStyle = $poseColors.legs;
-        } else if (armLandmarks.has(index)) {
-          ctx!.fillStyle = $poseColors.arms;
+          ctx!.fillStyle = $gameColors.head; // Head tracking color (matches head targets)
+        } else if (index === 23) {
+          // NOTE: Canvas is flipped, so landmark 23 = visually right hip
+          ctx!.fillStyle = $gameColors.hipRight; // Visually right hip
+        } else if (index === 24) {
+          // NOTE: Canvas is flipped, so landmark 24 = visually left hip
+          ctx!.fillStyle = $gameColors.hipLeft; // Visually left hip
+        } else if (index === 25 || index === 26) {
+          ctx!.fillStyle = $gameColors.knee; // Knee tracking color (matches knee targets)
         } else {
-          ctx!.fillStyle = $poseColors.torso;
+          // All other points (shoulders, feet, arms) are grey
+          ctx!.fillStyle = '#999999';
+        }
+        
+        // Use larger radius for tracking keypoints to make them more visible
+        // Hip points get extra large radius for hip sway game
+        let radius = 6; // Default size
+        if (headLandmarks.has(index) || index === 25 || index === 26) {
+          radius = 8; // Larger for head and knee tracking
+        } else if (index === 23 || index === 24) {
+          radius = 10; // Extra large for hip tracking
         }
         
         ctx!.beginPath();
-        ctx!.arc(landmark.x * width, landmark.y * height, 6, 0, 2 * Math.PI);
+        ctx!.arc(landmark.x * width, landmark.y * height, radius, 0, 2 * Math.PI);
         ctx!.fill();
       }
     });
@@ -798,7 +821,8 @@
   function drawHandLandmarks(landmarks: any, hand: any): void {
     if (!landmarks || landmarks.length === 0 || !ctx) return;
     
-    const color = $poseColors.hands;
+    // Use specific colors for left and right hands that match the target colors
+    const color = hand === 'left' ? $poseColors.leftHand : $poseColors.rightHand;
     
     // Hand connections for better visualization
     const handConnections = [

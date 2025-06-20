@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount, onDestroy, createEventDispatcher } from 'svelte';
   import QRScanModal from './QRScanModal.svelte';
+  import { gameColors, poseColors } from '../stores/themeStore';
   
   // Type definitions
   interface ScoreBreakdown {
@@ -168,26 +169,26 @@
         canvasCtx.drawImage(videoElement, 0, 0, width, height);
       }
       
-      // Draw pose landmarks based on toggle states
+      // Draw pose landmarks based on toggle states using theme colors
       if (showPose && results.poseLandmarks) {
-        drawConnections(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, '#00FF00', 2);
-        drawLandmarks(canvasCtx, results.poseLandmarks, '#00FF00', 4);
+        drawConnections(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, $poseColors.torso, 2);
+        drawLandmarks(canvasCtx, results.poseLandmarks, $poseColors.torso, 4);
       }
       
       if (showHands) {
         if (results.leftHandLandmarks) {
-          drawConnections(canvasCtx, results.leftHandLandmarks, HAND_CONNECTIONS, '#FF0000', 2);
-          drawLandmarks(canvasCtx, results.leftHandLandmarks, '#FF0000', 3);
+          drawConnections(canvasCtx, results.leftHandLandmarks, HAND_CONNECTIONS, $poseColors.leftHand, 2);
+          drawLandmarks(canvasCtx, results.leftHandLandmarks, $poseColors.leftHand, 3);
         }
         if (results.rightHandLandmarks) {
-          drawConnections(canvasCtx, results.rightHandLandmarks, HAND_CONNECTIONS, '#0000FF', 2);
-          drawLandmarks(canvasCtx, results.rightHandLandmarks, '#0000FF', 3);
+          drawConnections(canvasCtx, results.rightHandLandmarks, HAND_CONNECTIONS, $poseColors.rightHand, 2);
+          drawLandmarks(canvasCtx, results.rightHandLandmarks, $poseColors.rightHand, 3);
         }
       }
       
       if (showFace && results.faceLandmarks) {
-        drawConnections(canvasCtx, results.faceLandmarks, FACE_OVAL_CONNECTIONS, '#FFFF00', 1);
-        drawLandmarks(canvasCtx, results.faceLandmarks, '#FFFF00', 1);
+        drawConnections(canvasCtx, results.faceLandmarks, FACE_OVAL_CONNECTIONS, $poseColors.face, 1);
+        drawLandmarks(canvasCtx, results.faceLandmarks, $poseColors.face, 1);
       }
       
     }
@@ -486,10 +487,11 @@
   }
 
   function getTargetColor(targetType: string): string {
+    // Use theme colors for consistency
     const colors: { [key: string]: string } = {
-      'hand': '#ff0000',
-      'head': '#00ff88', 
-      'knee': '#0000ff'
+      'hand': $gameColors.hand,
+      'head': $gameColors.head, 
+      'knee': $gameColors.knee
     };
     return colors[targetType] || '#ffffff';
   }
@@ -749,39 +751,39 @@
             
             <div class="chart-item">
               <div class="chart-label">
-                <span class="chart-icon" style="color: #ff0000;">✋</span>
+                <span class="chart-icon" style="color: {$gameColors.hand};">✋</span>
                 <span>Hands: {scoreBreakdown.hand}</span>
               </div>
               <div class="chart-bar">
                 <div 
                   class="chart-fill" 
-                  style="width: {getBarWidth(scoreBreakdown.hand)}%; background-color: #ff0000;"
+                  style="width: {getBarWidth(scoreBreakdown.hand)}%; background-color: {$gameColors.hand};"
                 ></div>
               </div>
             </div>
             
             <div class="chart-item">
               <div class="chart-label">
-                <span class="chart-icon" style="color: #00ff88;">😀</span>
+                <span class="chart-icon" style="color: {$gameColors.head};">😀</span>
                 <span>Head: {scoreBreakdown.head}</span>
               </div>
               <div class="chart-bar">
                 <div 
                   class="chart-fill" 
-                  style="width: {getBarWidth(scoreBreakdown.head)}%; background-color: #00ff88;"
+                  style="width: {getBarWidth(scoreBreakdown.head)}%; background-color: {$gameColors.head};"
                 ></div>
               </div>
             </div>
             
             <div class="chart-item">
               <div class="chart-label">
-                <span class="chart-icon" style="color: #0000ff;">🦵</span>
+                <span class="chart-icon" style="color: {$gameColors.knee};">🦵</span>
                 <span>Knees: {scoreBreakdown.knee}</span>
               </div>
               <div class="chart-bar">
                 <div 
                   class="chart-fill" 
-                  style="width: {getBarWidth(scoreBreakdown.knee)}%; background-color: #0000ff;"
+                  style="width: {getBarWidth(scoreBreakdown.knee)}%; background-color: {$gameColors.knee};"
                 ></div>
               </div>
             </div>
