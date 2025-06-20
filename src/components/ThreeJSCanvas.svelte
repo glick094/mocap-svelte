@@ -479,59 +479,23 @@
     
     ctx.save();
     
-    // Draw center crosses for hands
-    const leftCenterX = handsState.leftCenterX;
-    const leftCenterY = handsState.leftCenterY;
-    const rightCenterX = handsState.rightCenterX;
-    const rightCenterY = handsState.rightCenterY;
     const tolerance = handsState.centeringTolerance;
-    const crossSize = tolerance * 0.5; // Make cross smaller than tolerance
+    const crossSize = tolerance * 0.5;
     
-    // Left center cross
-    ctx.strokeStyle = handsState.isCentered ? '#00ff00' : '#ff0000'; // Green when centered, red otherwise
-    ctx.lineWidth = 4;
-    ctx.globalAlpha = 0.8;
+    // Determine which hand to show based on trial state
+    const activeHand = handsState.activeHand;
+    const primaryHand = handsState.primaryHand;
     
-    // Horizontal line
-    ctx.beginPath();
-    ctx.moveTo(leftCenterX - crossSize, leftCenterY);
-    ctx.lineTo(leftCenterX + crossSize, leftCenterY);
-    ctx.stroke();
-    
-    // Vertical line
-    ctx.beginPath();
-    ctx.moveTo(leftCenterX, leftCenterY - crossSize);
-    ctx.lineTo(leftCenterX, leftCenterY + crossSize);
-    ctx.stroke();
-    
-    // Draw tolerance circle (faint)
-    ctx.globalAlpha = 0.2;
-    ctx.beginPath();
-    ctx.arc(leftCenterX, leftCenterY, tolerance, 0, 2 * Math.PI);
-    ctx.stroke();
-    
-    // Right center cross
-    ctx.strokeStyle = handsState.isCentered ? '#00ff00' : '#ff0000'; // Green when centered, red otherwise
-    ctx.lineWidth = 4;
-    ctx.globalAlpha = 0.8;
-    
-    // Horizontal line
-    ctx.beginPath();
-    ctx.moveTo(rightCenterX - crossSize, rightCenterY);
-    ctx.lineTo(rightCenterX + crossSize, rightCenterY);
-    ctx.stroke();
-    
-    // Vertical line
-    ctx.beginPath();
-    ctx.moveTo(rightCenterX, rightCenterY - crossSize);
-    ctx.lineTo(rightCenterX, rightCenterY + crossSize);
-    ctx.stroke();
-    
-    // Draw tolerance circle (faint)
-    ctx.globalAlpha = 0.2;
-    ctx.beginPath();
-    ctx.arc(rightCenterX, rightCenterY, tolerance, 0, 2 * Math.PI);
-    ctx.stroke();
+    if (primaryHand === null) {
+      // Show both centers during primary hand detection
+      drawHandCenter('left', handsState.leftCenterX, handsState.leftCenterY, tolerance, crossSize, false, false);
+      drawHandCenter('right', handsState.rightCenterX, handsState.rightCenterY, tolerance, crossSize, false, false);
+    } else if (activeHand) {
+      // Show only the active hand's center
+      const centerX = activeHand === 'left' ? handsState.leftCenterX : handsState.rightCenterX;
+      const centerY = activeHand === 'left' ? handsState.leftCenterY : handsState.rightCenterY;
+      drawHandCenter(activeHand, centerX, centerY, tolerance, crossSize, true, handsState.isCentered);
+    }
     
     ctx.restore();
     
@@ -541,11 +505,22 @@
     ctx.fillStyle = '#ffffff';
     ctx.font = '24px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText(
-      'Position both hands on the crosses',
-      -width / 2,
-      50
-    );
+    
+    if (primaryHand === null) {
+      ctx.fillText(
+        'Touch either center cross to select primary hand',
+        -width / 2,
+        50
+      );
+    } else {
+      const trialText = handsState.currentTrial === 1 ? 'Primary Hand Trial' : 'Secondary Hand Trial';
+      const handText = activeHand === 'left' ? 'Left Hand' : 'Right Hand';
+      ctx.fillText(
+        `${trialText}: ${handText}`,
+        -width / 2,
+        50
+      );
+    }
     
     ctx.fillStyle = '#cccccc';
     ctx.font = '18px Arial';
@@ -555,14 +530,50 @@
         -width / 2,
         height - 30
       );
+    } else if (primaryHand === null) {
+      ctx.fillText(
+        'The first hand to touch a center will be your primary hand',
+        -width / 2,
+        height - 30
+      );
     } else {
       ctx.fillText(
-        'Move hands to the center crosses of each lobe',
+        `Position your ${activeHand} hand on the center cross`,
         -width / 2,
         height - 30
       );
     }
     ctx.restore();
+  }
+  
+  function drawHandCenter(hand: 'left' | 'right', centerX: number, centerY: number, tolerance: number, crossSize: number, isActive: boolean, isCentered: boolean): void {
+    if (!ctx) return;
+    
+    // Use hand-specific colors
+    const handColor = hand === 'left' ? $gameColors.hipLeft : $gameColors.hipRight; // Orange for left, reddish purple for right
+    const statusColor = isCentered ? '#00ff00' : (isActive ? handColor : '#666666');
+    
+    ctx.strokeStyle = statusColor;
+    ctx.lineWidth = isActive ? 6 : 3;
+    ctx.globalAlpha = isActive ? 0.9 : 0.5;
+    
+    // Horizontal line
+    ctx.beginPath();
+    ctx.moveTo(centerX - crossSize, centerY);
+    ctx.lineTo(centerX + crossSize, centerY);
+    ctx.stroke();
+    
+    // Vertical line
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY - crossSize);
+    ctx.lineTo(centerX, centerY + crossSize);
+    ctx.stroke();
+    
+    // Draw tolerance circle
+    ctx.globalAlpha = isActive ? 0.3 : 0.1;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, tolerance, 0, 2 * Math.PI);
+    ctx.stroke();
   }
   
   function drawHeadCenteringPhase(headState: any): void {
@@ -665,11 +676,24 @@
     ctx.fillStyle = '#ffffff';
     ctx.font = '24px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText(
-      `Progress: ${currentFixedTargetIndex}/${fixedTargets.length}`,
-      -width / 2, // Negative x because we flipped
-      50
-    );
+    
+    // Show trial-specific progress for hands game
+    if (gameMode === GAME_MODES.HANDS_FIXED) {
+      const handsState = gameService.getHandsCenteringState();
+      const trialText = handsState.currentTrial === 1 ? 'Primary Hand Trial' : 'Secondary Hand Trial';
+      const handText = handsState.activeHand === 'left' ? 'Left Hand' : 'Right Hand';
+      ctx.fillText(
+        `${trialText}: ${handText} - ${currentFixedTargetIndex}/${fixedTargets.length}`,
+        -width / 2, // Negative x because we flipped
+        50
+      );
+    } else {
+      ctx.fillText(
+        `Progress: ${currentFixedTargetIndex}/${fixedTargets.length}`,
+        -width / 2, // Negative x because we flipped
+        50
+      );
+    }
     ctx.restore();
   }
 

@@ -463,7 +463,7 @@
         gameModeProgress = { completed: 0, total: 8 }; // 4 times each side
         break;
       case GAME_MODES.HANDS_FIXED:
-        gameModeProgress = { completed: 0, total: 17 }; // 1 centering + 16 figure-8 points
+        gameModeProgress = { completed: 0, total: 34 }; // 2 trials × (1 centering + 16 figure-8 points)
         break;
       case GAME_MODES.HEAD_FIXED:
         gameModeProgress = { completed: 0, total: 13 }; // 1 centering + 12 circle points
@@ -994,7 +994,7 @@
           on:click={() => isFlowMode = true}
           disabled={isGameActive || gameFlowState.isActive}
         >
-          🔄 Default
+          Default
         </button>
         <button 
           class="toggle-option"
@@ -1002,7 +1002,7 @@
           on:click={() => isFlowMode = false}
           disabled={isGameActive || gameFlowState.isActive}
         >
-          🎯 Manual
+          Manual
         </button>
       </div>
       
@@ -1026,10 +1026,10 @@
           on:change={(e) => changeGameMode((e.target as HTMLSelectElement).value as GameMode)}
           disabled={isGameActive}
         >
-          <option value={GAME_MODES.HIPS_SWAY}>🕺 Hips Sway</option>
-          <option value={GAME_MODES.HANDS_FIXED}>✋ Hands Figure-8</option>
-          <option value={GAME_MODES.HEAD_FIXED}>🟡 Head Circle</option>
-          <option value={GAME_MODES.RANDOM}>🎯 Random Targets</option>
+          <option value={GAME_MODES.HIPS_SWAY}>Hips</option>
+          <option value={GAME_MODES.HANDS_FIXED}>Hands</option>
+          <option value={GAME_MODES.HEAD_FIXED}>Head</option>
+          <option value={GAME_MODES.RANDOM}>Random</option>
         </select>
       {/if}
       
@@ -1041,7 +1041,7 @@
         disabled={!isWebcamActive}
       >
         {#if isFlowMode}
-          {gameFlowState.isActive ? '⏹️ Stop Flow' : '🚀 Start Flow'}
+          {gameFlowState.isActive ? '⏹️ Stop games' : '🎮 Play games'}
         {:else}
           {isGameActive ? '⏹️ Stop Game' : '🎮 Start Game'}
         {/if}
