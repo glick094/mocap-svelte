@@ -92,6 +92,7 @@
   let isFlowMode = true; // Whether we're in automatic flow mode vs manual mode (default to flow)
   let randomGameTimer: number | null = null; // Timer for 1-minute random game
   let randomGameTimeRemaining = 0;
+  let visualizationMode: 'basic' | 'advanced' = 'basic'; // Toggle between 2D stick figure and 3D character
   
   // Game modes
   const GAME_MODES = {
@@ -164,6 +165,19 @@
 
   function closeSettings() {
     showSettings = false;
+  }
+
+  function toggleVisualizationMode() {
+    const newMode = visualizationMode === 'basic' ? 'advanced' : 'basic';
+    visualizationMode = newMode;
+    
+    // Give a moment for the component to process the change
+    setTimeout(() => {
+      // Check if mode was forced back to basic due to WebGL issues
+      if (newMode === 'advanced' && visualizationMode === 'basic') {
+        console.log('Advanced mode not available, staying in basic mode');
+      }
+    }, 100);
   }
 
   function saveSettings(event: CustomEvent) {
@@ -1065,6 +1079,9 @@
           {/if}
         </div>
       {/if}
+      <button class="header-btn visualization-toggle-btn" on:click={toggleVisualizationMode}>
+        {visualizationMode === 'basic' ? '🎭 Advanced' : '📐 Basic'}
+      </button>
       <button class="header-btn settings-btn" on:click={openSettings}>
         ⚙️ Settings
       </button>
@@ -1083,6 +1100,7 @@
         gameMode={currentGameMode}
         gameModeProgress={gameModeProgress}
         gameFlowState={gameFlowState}
+        visualizationMode={visualizationMode}
         on:update={handleCanvasUpdate}
         on:gameDataUpdate={handleGameDataUpdate}
         on:gameStarted={handleGameStarted}
