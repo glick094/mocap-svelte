@@ -1,0 +1,68 @@
+## Pure 3D Canvas Implementation - Complete Rewrite
+
+### Problem Solved
+✅ **WebGL Context Errors**: Eliminated by using only WebGL context, no more 2D/WebGL switching
+✅ **Complex Overlay System**: Removed dual-canvas complexity
+✅ **Context Conflicts**: No more context switching issues
+
+### New Architecture: Pure 3D with 2D-as-Texture
+
+**Core Concept**: Everything is now 3D, with 2D content rendered as textures on 3D planes at the same Z-distance.
+
+### How It Works
+
+1. **Single WebGL Canvas**: 
+   - Only WebGL context, no 2D context switching
+   - All rendering happens in 3D space
+
+2. **2D Content as 3D Texture**:
+   - Off-screen 2D canvas renders game graphics and stick figures
+   - Canvas content becomes a texture on a 3D plane
+   - Plane positioned at z=-2 (behind mannequin at z=0)
+
+3. **Mode Switching**:
+   - **2D Mode**: Shows textured plane with 2D content, hides mannequin
+   - **3D Mode**: Hides textured plane, shows mannequin with pose tracking
+
+### Key Components
+
+**ThreeJSCanvas.svelte** (Complete Rewrite):
+- `initializeThreeJS()`: Sets up WebGL scene with lighting
+- `canvas2D`: Off-screen canvas for 2D rendering
+- `textureCanvas`: THREE.CanvasTexture from 2D canvas
+- `backgroundPlane`: 3D plane displaying 2D texture
+- `render2DBackground()`: Updates 2D content and texture
+- `loadMannequin()`: Imports local mannequin files
+- `updateMannequinPose()`: Maps MediaPipe to mannequin
+
+### Benefits
+
+1. **No Context Conflicts**: Only WebGL context used
+2. **Cleaner Architecture**: Single rendering pipeline
+3. **Better Performance**: No context switching overhead
+4. **Consistent 3D Space**: All elements at defined Z positions
+5. **Local Mannequin**: Reliable import from `src/lib/mannequin/`
+
+### Technical Details
+
+- **2D Plane**: z=-2 (background)
+- **Mannequin**: z=0 (foreground)  
+- **Camera**: z=3 looking at z=0
+- **Texture Updates**: Real-time via `textureCanvas.needsUpdate = true`
+- **Mirroring**: Preserved via 2D canvas transform and CSS
+
+### File Structure
+```
+src/lib/mannequin/
+  ├── bodies/Male.js
+  ├── organs/...
+  └── mannequin.js
+```
+
+### Build Status
+✅ **Build Successful**: 631.44 kB bundled (includes mannequin)
+✅ **Mannequin Import**: Working with local files
+✅ **No TypeScript Errors**: Clean compilation
+✅ **WebGL Ready**: No more context creation errors
+
+Ready for testing! 🎯

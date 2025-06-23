@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebGL Context Test</title>
+    <style>
+        body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .canvas-container { position: relative; width: 400px; height: 300px; border: 1px solid #ccc; }
+        .canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        .webgl-canvas { z-index: 10; }
+        button { margin: 10px 0; padding: 10px 20px; }
+        .log { margin-top: 20px; padding: 10px; background: #f0f0f0; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>WebGL Context Test</h1>
+        <p>This test verifies that we can create a 2D canvas and overlay a WebGL canvas without conflicts.</p>
+        
+        <div class="canvas-container">
+            <canvas id="canvas2d" class="canvas" width="400" height="300"></canvas>
+        </div>
+        
+        <button onclick="create2DContext()">Create 2D Context</button>
+        <button onclick="createWebGLOverlay()">Create WebGL Overlay</button>
+        <button onclick="cleanup()">Cleanup</button>
+        
+        <div class="log" id="log"></div>
+    </div>
+
+    <script>
+        let canvas2d = document.getElementById('canvas2d');
+        let ctx2d = null;
+        let webglCanvas = null;
+        let webglContext = null;
+
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            logDiv.innerHTML += new Date().toLocaleTimeString() + ': ' + message + '<br>';
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function create2DContext() {
+            try {
+                ctx2d = canvas2d.getContext('2d');
+                if (ctx2d) {
+                    log('✓ 2D context created successfully');
+                    // Draw something on the 2D canvas
+                    ctx2d.fillStyle = 'lightblue';
+                    ctx2d.fillRect(0, 0, 400, 300);
+                    ctx2d.fillStyle = 'blue';
+                    ctx2d.fillText('2D Canvas Background', 20, 30);
+                } else {
+                    log('✗ Failed to create 2D context');
+                }
+            } catch (error) {
+                log('✗ Error creating 2D context: ' + error.message);
+            }
+        }
+
+        function createWebGLOverlay() {
+            try {
+                // Create overlay canvas
+                if (webglCanvas) {
+                    webglCanvas.remove();
+                }
+                
+                webglCanvas = document.createElement('canvas');
+                webglCanvas.width = 400;
+                webglCanvas.height = 300;
+                webglCanvas.className = 'canvas webgl-canvas';
+                webglCanvas.style.backgroundColor = 'transparent';
+                
+                // Add to container
+                const container = document.querySelector('.canvas-container');
+                container.appendChild(webglCanvas);
+                
+                // Create WebGL context
+                webglContext = webglCanvas.getContext('webgl') || webglCanvas.getContext('experimental-webgl');
+                
+                if (webglContext) {
+                    log('✓ WebGL context created successfully on overlay canvas');
+                    
+                    // Clear with transparent background
+                    webglContext.clearColor(0, 0, 0, 0);
+                    webglContext.clear(webglContext.COLOR_BUFFER_BIT);
+                    
+                    // Draw a simple triangle
+                    const vertexShader = webglContext.createShader(webglContext.VERTEX_SHADER);
+                    webglContext.shaderSource(vertexShader, `
+                        attribute vec2 position;
+                        void main() {
+                            gl_Position = vec4(position, 0.0, 1.0);
+                        }
+                    `);
+                    webglContext.compileShader(vertexShader);
+                    
+                    const fragmentShader = webglContext.createShader(webglContext.FRAGMENT_SHADER);
+                    webglContext.shaderSource(fragmentShader, `
+                        precision mediump float;
+                        void main() {
+                            gl_FragColor = vec4(1.0, 0.0, 0.0, 0.8);
+                        }
+                    `);
+                    webglContext.compileShader(fragmentShader);
+                    
+                    const program = webglContext.createProgram();
+                    webglContext.attachShader(program, vertexShader);
+                    webglContext.attachShader(program, fragmentShader);
+                    webglContext.linkProgram(program);
+                    webglContext.useProgram(program);
+                    
+                    const vertices = new Float32Array([
+                        0.0, 0.5,
+                        -0.5, -0.5,
+                        0.5, -0.5
+                    ]);
+                    
+                    const buffer = webglContext.createBuffer();
+                    webglContext.bindBuffer(webglContext.ARRAY_BUFFER, buffer);
+                    webglContext.bufferData(webglContext.ARRAY_BUFFER, vertices, webglContext.STATIC_DRAW);
+                    
+                    const positionLocation = webglContext.getAttribLocation(program, 'position');
+                    webglContext.enableVertexAttribArray(positionLocation);
+                    webglContext.vertexAttribPointer(positionLocation, 2, webglContext.FLOAT, false, 0, 0);
+                    
+                    webglContext.enable(webglContext.BLEND);
+                    webglContext.blendFunc(webglContext.SRC_ALPHA, webglContext.ONE_MINUS_SRC_ALPHA);
+                    
+                    webglContext.drawArrays(webglContext.TRIANGLES, 0, 3);
+                    
+                    log('✓ WebGL triangle drawn successfully');
+                } else {
+                    log('✗ Failed to create WebGL context');
+                }
+            } catch (error) {
+                log('✗ Error creating WebGL overlay: ' + error.message);
+            }
+        }
+
+        function cleanup() {
+            if (webglCanvas) {
+                webglCanvas.remove();
+                webglCanvas = null;
+                webglContext = null;
+                log('✓ WebGL resources cleaned up');
+            }
+            if (ctx2d) {
+                ctx2d.clearRect(0, 0, 400, 300);
+                log('✓ 2D canvas cleared');
+            }
+        }
+
+        // Initialize
+        log('WebGL Context Test initialized');
+    </script>
+</body>
+</html>

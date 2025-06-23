@@ -1,0 +1,290 @@
+<!-- <!doctype html>
+
+<html>
+	<head>
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+					"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/",
+					"mannequin": "https://cdn.jsdelivr.net/npm/mannequin-js@latest/src/mannequin.js"
+				}
+			}
+		</script>
+	</head>
+
+	<body>
+		<script type="module">
+			// import { createStage, Male, Female, Child } from 'mannequin';
+			// createStage(animate);
+			// // new Male();
+
+			// var man = new Male();
+			// man.position.x = 0.6;
+			// man.turn = -120;
+
+			// // overall body position
+			// man.body.tilt = -5;
+			// man.body.bend = 15.2;
+
+			// // torso and head
+			// man.torso.turn -= 30;
+			// man.head.turn -= 70;
+			// // right leg
+			// man.r_leg.turn = 50;
+			// man.r_knee.bend = 90;
+			// man.r_ankle.bend = 15;
+			// // left leg
+			// man.l_leg.raise = -20;
+			// man.l_knee.bend = 30;
+			// man.l_ankle.bend = 42;
+			// // left arm
+			// man.l_arm.straddle = 70;
+			// man.l_elbow.bend = 155;
+			// man.l_wrist.bend = -20;
+			// // right arm
+			// man.r_arm.straddle += 70;
+			// man.r_elbow.bend += 40;
+			// man.r_wrist.turn -= 60;
+
+			// var woman = new Female();
+			// woman.position.x = -0.65;
+			// woman.turn = -60;
+
+			// var child = new Child();
+			// child.position.z = -0.18;
+
+			// function animate(t)
+			// {
+			//     var time1 = Math.sin( 2*t ),
+			//         time2 = Math.sin( 2*t-60 );
+
+			//     // ball.position.x = 0.06*time1;
+
+			//     child.position.y = 0.31 + 0.05*Math.cos(time1 * Math.PI/2);
+
+			//     child.turn = -90-20*time1+20*time2;
+			//     child.tilt = 10*time1;
+			// }
+			import { blend, createStage, Female, Male } from 'mannequin';
+			import * as THREE from 'three';
+
+			createStage(animate);
+
+			var man = new Male();
+			man.position.x = -1;
+
+			var woman = new Female();
+			woman.position.x = 1;
+
+			// stick
+			var geometry = new THREE.CylinderGeometry(0.4, 0.4, 72),
+				material = new THREE.MeshPhongMaterial({ color: 'crimson' }),
+				stick = new THREE.Mesh(geometry, material);
+
+			stick.rotation.x = Math.PI / 2;
+			stick.position.set(-1, 0.25, 0);
+			stick.castShadow = true;
+
+			man.r_fingers.attach(stick);
+			woman.r_fingers.attach(stick.clone());
+
+			// posture from example-posture.html
+			var A = {
+				version: 7,
+				data: [
+					[0, -7.2, 0],
+					[90, -85, 74.8],
+					[16.1, -29.5, 26.3],
+					[3.5, -34.8, 6.1],
+					[14.1, -2.9, -19.8],
+					[30],
+					[-6, -6, -42.6],
+					[14.6, -46.9, 98.9],
+					[90],
+					[4.9, 9, -15.4],
+					[68.9, -34.7, -2.1],
+					[155],
+					[-20, 0, 0],
+					[-90, 70, 85, 0, -5, 0, -5],
+					[0, 0, -10, 0, -10, 0, -10],
+					[0, 0, -10, 0, -10, 0, -10],
+					[0, 0, -10, 0, -10, 0, -10],
+					[0, 0, -10, 0, -10, 0, -10],
+					[-77, 4.9, -1.1],
+					[55],
+					[-5, -60, -20],
+					[148.7, -4.4, 127.3, 0, 50, 0, 35],
+					[0, 0, 70, 0, 70, 0, 70],
+					[0, 0, 70, 0, 70, 0, 70],
+					[0, 0, 70, 0, 70, 0, 70],
+					[0, 0, 70, 0, 70, 0, 70]
+				]
+			};
+
+			// posture from example-posture-standing.html
+			var B = {
+				version: 7,
+				data: [
+					[0, 2.8, 0],
+					[0, -90, 0],
+					[0, 0, -2],
+					[0, 0, 5],
+					[16, 0, 0],
+					[0],
+					[-16.1, -5.8, -1.7],
+					[-16, 0, 0],
+					[0],
+					[16.1, 5.8, -1.7],
+					[15.1, -11.3, -12],
+					[30],
+					[5, 0, 0],
+					[-90, 70, 100, 0, 10, 0, 10],
+					[0, 0, 20, 0, 20, 0, 20],
+					[0, 0, 20, 0, 20, 0, 20],
+					[0, 0, 20, 0, 20, 0, 20],
+					[0, 0, 20, 0, 20, 0, 20],
+					[-28.4, 8.1, -18.3],
+					[70],
+					[-5, 28, 37.4],
+					[148.7, -4.4, 127.3, 0, 50, 0, 35],
+					[0, 0, 70, 0, 70, 0, 70],
+					[0, 0, 70, 0, 70, 0, 70],
+					[0, 0, 70, 0, 70, 0, 70],
+					[0, 0, 70, 0, 70, 0, 70]
+				]
+			};
+
+			man.posture = A;
+			woman.posture = A;
+
+			function animate(t) {
+				var k = THREE.MathUtils.clamp(0.5 + Math.sin(t), 0, 1);
+
+				// blend posture between A and B
+				man.posture = blend(A, B, k);
+				man.rotation.y = Math.PI / 2;
+
+				// copy posture from one figure to another
+				woman.posture = man.posture;
+				woman.rotation.y = -Math.PI / 2;
+
+				man.stepOnGround();
+				woman.stepOnGround();
+			}
+		</script>
+	</body>
+</html> -->
+
+
+<!doctype html>
+<html>
+<head>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    video.input_video {
+      position: fixed;
+      right: 10px;
+      bottom: 10px;
+      width: 200px;
+      z-index: 10;
+      border: 2px solid white;
+    }
+  </style>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/",
+        "mannequin": "https://cdn.jsdelivr.net/npm/mannequin-js@latest/src/mannequin.js"
+      }
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469240/pose.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+</head>
+
+<body>
+  <video class="input_video" autoplay></video>
+
+  <script type="module">
+    import { createStage, Male } from 'mannequin';
+    import * as THREE from 'three';
+
+    createStage();
+    const man = new Male();
+
+    const videoElement = document.querySelector('.input_video');
+
+    const pose = new Pose.Pose({
+      locateFile: (file) =>
+        `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469240/${file}`
+    });
+
+    pose.setOptions({
+      modelComplexity: 1,
+      smoothLandmarks: true,
+      enableSegmentation: false,
+      minDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.5
+    });
+
+    pose.onResults(onPoseResults);
+
+    const camera = new Camera(videoElement, {
+      onFrame: async () => {
+        await pose.send({ image: videoElement });
+      },
+      width: 640,
+      height: 480
+    });
+    camera.start();
+
+    // Helper: angle between three points
+    function getAngle(a, b, c) {
+      const ab = { x: b.x - a.x, y: b.y - a.y, z: b.z - a.z };
+      const cb = { x: b.x - c.x, y: b.y - c.y, z: b.z - c.z };
+      const dot = ab.x * cb.x + ab.y * cb.y + ab.z * cb.z;
+      const magAB = Math.sqrt(ab.x ** 2 + ab.y ** 2 + ab.z ** 2);
+      const magCB = Math.sqrt(cb.x ** 2 + cb.y ** 2 + cb.z ** 2);
+      return Math.acos(dot / (magAB * magCB)) * (180 / Math.PI);
+    }
+
+    function onPoseResults(results) {
+      if (!results.poseLandmarks) return;
+      const lm = results.poseLandmarks;
+
+      // ARMS
+      const lShoulder = lm[11], lElbow = lm[13], lWrist = lm[15];
+      const rShoulder = lm[12], rElbow = lm[14], rWrist = lm[16];
+
+      const lElbowAngle = getAngle(lShoulder, lElbow, lWrist);  // 0° = fully bent
+      const rElbowAngle = getAngle(rShoulder, rElbow, rWrist);
+
+      man.l_elbow.bend = 180 - lElbowAngle;
+      man.r_elbow.bend = 180 - rElbowAngle;
+
+      // LEGS
+      const lHip = lm[23], lKnee = lm[25], lAnkle = lm[27];
+      const rHip = lm[24], rKnee = lm[26], rAnkle = lm[28];
+
+      const lKneeAngle = getAngle(lHip, lKnee, lAnkle);
+      const rKneeAngle = getAngle(rHip, rKnee, rAnkle);
+
+      man.l_knee.bend = 180 - lKneeAngle;
+      man.r_knee.bend = 180 - rKneeAngle;
+
+      // HEAD ROTATION (approximate)
+      const nose = lm[0];
+      const headPitch = (lm[0].y - lm[7].y) * 100;
+      const headYaw = (lm[0].x - lm[7].x) * 200;
+      man.head.tilt = headPitch;
+      man.head.turn = headYaw;
+
+      // Update position to simulate live movement (optional)
+      man.stepOnGround();
+    }
+  </script>
+</body>
+</html>

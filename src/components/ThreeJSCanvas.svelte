@@ -4,6 +4,7 @@
   import { gameColors, poseColors, hipSwaySettings } from '../stores/themeStore';
   import { gameSettings } from '../stores/gameStore';
   import { audioService } from '../services/audioService';
+  import * as THREE from 'three';
 
   const dispatch = createEventDispatcher<{
     targetHit: { type: string; score: number };
@@ -17,9 +18,17 @@
   }>();
 
   let canvasElement: HTMLCanvasElement;
+  let webglCanvas: HTMLCanvasElement | null = null;
   let ctx: CanvasRenderingContext2D | null;
   let animationId: number;
   let gameService: GameService;
+
+  // Three.js and mannequin variables
+  let scene: THREE.Scene;
+  let camera: THREE.PerspectiveCamera;
+  let renderer: THREE.WebGLRenderer | null = null;
+  let mannequin: any = null;
+  let isThreeJSInitialized = false;
 
   // Component props
   export let width: number = 800;
@@ -29,26 +38,556 @@
   export let gameMode: string = 'hips-sway';
   export const gameModeProgress = { completed: 0, total: 8 };
   export let gameFlowState: any = null;
+  export let visualizationMode: 'basic' | 'advanced' = 'basic';
 
   onMount(() => {
     if (canvasElement) {
+      // Initialize 2D context first
       ctx = canvasElement.getContext('2d');
       gameService = new GameService(width, height, gameMode as GameMode);
+      
+      // Switch to 3D mode if requested
+      if (visualizationMode === 'advanced') {
+        initializeThreeJS();
+      }
+      
       animate();
     }
   });
+
+  function cleanupThreeJS() {
+    if (renderer) {
+      renderer.dispose();
+      renderer = null;
+    }
+    if (webglCanvas) {
+      webglCanvas.remove();
+      webglCanvas = null;
+    }
+    if (scene) {
+      scene.clear();
+    }
+    mannequin = null;
+    isThreeJSInitialized = false;
+  }
 
   onDestroy(() => {
     if (animationId) {
       cancelAnimationFrame(animationId);
     }
+    cleanupThreeJS();
     audioService.destroy();
   });
+
+  function create3DStickFigure() {
+    const stickFigure = new THREE.Group();
+    
+    // Define colors for different body parts
+    const colors = {
+      head: 0xffdbac,      // Skin tone
+      torso: 0x4a90e2,     // Blue shirt
+      arms: 0xffdbac,      // Skin tone
+      legs: 0x2c3e50,      // Dark pants
+      joints: 0xff6b6b     // Red joints
+    };
+    
+    // Create materials
+    const materials = {
+      head: new THREE.MeshLambertMaterial({ color: colors.head }),
+      torso: new THREE.MeshLambertMaterial({ color: colors.torso }),
+      arms: new THREE.MeshLambertMaterial({ color: colors.arms }),
+      legs: new THREE.MeshLambertMaterial({ color: colors.legs }),
+      joints: new THREE.MeshLambertMaterial({ color: colors.joints })
+    };
+    
+    // Head
+    const headGeometry = new THREE.SphereGeometry(0.1, 16, 16);
+    const head = new THREE.Mesh(headGeometry, materials.head);
+    head.position.set(0, 1.7, 0);
+    head.name = 'head';
+    stickFigure.add(head);
+    
+    // Torso (spine)
+    const torsoGeometry = new THREE.CylinderGeometry(0.05, 0.08, 0.8, 8);
+    const torso = new THREE.Mesh(torsoGeometry, materials.torso);
+    torso.position.set(0, 1, 0);
+    torso.name = 'torso';
+    stickFigure.add(torso);
+    
+    // Shoulders
+    const shoulderGeometry = new THREE.SphereGeometry(0.04, 8, 8);
+    const leftShoulder = new THREE.Mesh(shoulderGeometry, materials.joints);
+    leftShoulder.position.set(-0.2, 1.3, 0);
+    leftShoulder.name = 'leftShoulder';
+    stickFigure.add(leftShoulder);
+    
+    const rightShoulder = new THREE.Mesh(shoulderGeometry, materials.joints);
+    rightShoulder.position.set(0.2, 1.3, 0);
+    rightShoulder.name = 'rightShoulder';
+    stickFigure.add(rightShoulder);
+    
+    // Arms
+    const armGeometry = new THREE.CylinderGeometry(0.025, 0.025, 0.3, 6);
+    
+    // Left upper arm
+    const leftUpperArm = new THREE.Mesh(armGeometry, materials.arms);
+    leftUpperArm.position.set(-0.35, 1.1, 0);
+    leftUpperArm.name = 'leftUpperArm';
+    stickFigure.add(leftUpperArm);
+    
+    // Right upper arm
+    const rightUpperArm = new THREE.Mesh(armGeometry, materials.arms);
+    rightUpperArm.position.set(0.35, 1.1, 0);
+    rightUpperArm.name = 'rightUpperArm';
+    stickFigure.add(rightUpperArm);
+    
+    // Elbows
+    const leftElbow = new THREE.Mesh(shoulderGeometry, materials.joints);
+    leftElbow.position.set(-0.35, 0.85, 0);
+    leftElbow.name = 'leftElbow';
+    stickFigure.add(leftElbow);
+    
+    const rightElbow = new THREE.Mesh(shoulderGeometry, materials.joints);
+    rightElbow.position.set(0.35, 0.85, 0);
+    rightElbow.name = 'rightElbow';
+    stickFigure.add(rightElbow);
+    
+    // Forearms
+    const leftForearm = new THREE.Mesh(armGeometry, materials.arms);
+    leftForearm.position.set(-0.35, 0.6, 0);
+    leftForearm.name = 'leftForearm';
+    stickFigure.add(leftForearm);
+    
+    const rightForearm = new THREE.Mesh(armGeometry, materials.arms);
+    rightForearm.position.set(0.35, 0.6, 0);
+    rightForearm.name = 'rightForearm';
+    stickFigure.add(rightForearm);
+    
+    // Hands
+    const handGeometry = new THREE.SphereGeometry(0.03, 8, 8);
+    const leftHand = new THREE.Mesh(handGeometry, materials.arms);
+    leftHand.position.set(-0.35, 0.4, 0);
+    leftHand.name = 'leftHand';
+    stickFigure.add(leftHand);
+    
+    const rightHand = new THREE.Mesh(handGeometry, materials.arms);
+    rightHand.position.set(0.35, 0.4, 0);
+    rightHand.name = 'rightHand';
+    stickFigure.add(rightHand);
+    
+    // Hips
+    const hipGeometry = new THREE.SphereGeometry(0.04, 8, 8);
+    const leftHip = new THREE.Mesh(hipGeometry, materials.joints);
+    leftHip.position.set(-0.1, 0.6, 0);
+    leftHip.name = 'leftHip';
+    stickFigure.add(leftHip);
+    
+    const rightHip = new THREE.Mesh(hipGeometry, materials.joints);
+    rightHip.position.set(0.1, 0.6, 0);
+    rightHip.name = 'rightHip';
+    stickFigure.add(rightHip);
+    
+    // Legs
+    const legGeometry = new THREE.CylinderGeometry(0.03, 0.03, 0.4, 6);
+    
+    // Thighs
+    const leftThigh = new THREE.Mesh(legGeometry, materials.legs);
+    leftThigh.position.set(-0.1, 0.3, 0);
+    leftThigh.name = 'leftThigh';
+    stickFigure.add(leftThigh);
+    
+    const rightThigh = new THREE.Mesh(legGeometry, materials.legs);
+    rightThigh.position.set(0.1, 0.3, 0);
+    rightThigh.name = 'rightThigh';
+    stickFigure.add(rightThigh);
+    
+    // Knees
+    const leftKnee = new THREE.Mesh(hipGeometry, materials.joints);
+    leftKnee.position.set(-0.1, 0.1, 0);
+    leftKnee.name = 'leftKnee';
+    stickFigure.add(leftKnee);
+    
+    const rightKnee = new THREE.Mesh(hipGeometry, materials.joints);
+    rightKnee.position.set(0.1, 0.1, 0);
+    rightKnee.name = 'rightKnee';
+    stickFigure.add(rightKnee);
+    
+    // Shins
+    const leftShin = new THREE.Mesh(legGeometry, materials.legs);
+    leftShin.position.set(-0.1, -0.1, 0);
+    leftShin.name = 'leftShin';
+    stickFigure.add(leftShin);
+    
+    const rightShin = new THREE.Mesh(legGeometry, materials.legs);
+    rightShin.position.set(0.1, -0.1, 0);
+    rightShin.name = 'rightShin';
+    stickFigure.add(rightShin);
+    
+    // Feet
+    const footGeometry = new THREE.BoxGeometry(0.06, 0.03, 0.15);
+    const leftFoot = new THREE.Mesh(footGeometry, materials.legs);
+    leftFoot.position.set(-0.1, -0.32, 0.04);
+    leftFoot.name = 'leftFoot';
+    stickFigure.add(leftFoot);
+    
+    const rightFoot = new THREE.Mesh(footGeometry, materials.legs);
+    rightFoot.position.set(0.1, -0.32, 0.04);
+    rightFoot.name = 'rightFoot';
+    stickFigure.add(rightFoot);
+    
+    // Position the entire figure
+    stickFigure.position.set(0, 0, 0);
+    stickFigure.scale.setScalar(2); // Scale up for better visibility
+    
+    return stickFigure;
+  }
+
+  async function initializeThreeJS() {
+    if (isThreeJSInitialized) return;
+    
+    try {
+      console.log('Initializing Three.js with local mannequin models...');
+
+      // Create a separate WebGL canvas
+      if (!webglCanvas) {
+        webglCanvas = document.createElement('canvas');
+        webglCanvas.width = width;
+        webglCanvas.height = height;
+        webglCanvas.style.position = 'absolute';
+        webglCanvas.style.top = '0';
+        webglCanvas.style.left = '0';
+        webglCanvas.style.width = '100%';
+        webglCanvas.style.height = '100%';
+        webglCanvas.style.transform = 'scaleX(-1)'; // Mirror like main canvas
+        webglCanvas.className = 'webgl-canvas';
+        
+        // Insert into canvas container
+        const container = canvasElement.parentElement;
+        if (container) {
+          container.appendChild(webglCanvas);
+        }
+      }
+
+      // Create Three.js scene
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x222222); // Dark gray background
+
+      // Create camera
+      camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+      camera.position.set(0, 1, 3);
+      camera.lookAt(0, 1, 0);
+
+      // Create renderer using the dedicated WebGL canvas
+      try {
+        console.log('Creating WebGL renderer on dedicated canvas...');
+        renderer = new THREE.WebGLRenderer({ 
+          canvas: webglCanvas,
+          antialias: true,
+          preserveDrawingBuffer: false
+        });
+        console.log('WebGL renderer created successfully');
+      } catch (webglError) {
+        console.error('WebGL context creation failed:', webglError);
+        throw new Error('Cannot create WebGL context. Your browser may not support WebGL.');
+      }
+      
+      renderer.setSize(width, height);
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+      // Add our lighting
+      const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+      scene.add(ambientLight);
+
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+      directionalLight.position.set(5, 10, 5);
+      directionalLight.castShadow = true;
+      scene.add(directionalLight);
+
+      // Only create mannequin if it doesn't already exist
+      if (!mannequin) {
+        // Try to import and create mannequin model (without createStage)
+        try {
+          // Import the local mannequin Male class
+          const { Male } = await import('$lib/mannequin/bodies/Male.js');
+          
+          // Set up the global scene that mannequin.js expects
+          (globalThis as any).scene = scene;
+          
+          // Create the male mannequin
+          mannequin = new Male(1.75);
+          console.log('Local mannequin model loaded successfully');
+          
+              // Mannequin is automatically added to the global scene
+          
+        } catch (mannequinError) {
+          console.log('Local mannequin import failed, using stick figure:', mannequinError);
+          // Create stick figure fallback
+          mannequin = create3DStickFigure();
+          scene.add(mannequin);
+          console.log('Stick figure fallback created');
+        }
+      } else {
+        console.log('Mannequin already exists, reusing...');
+      }
+      
+      // 3D canvas is now ready
+      
+      isThreeJSInitialized = true;
+      
+    } catch (error) {
+      console.error('Error initializing Three.js:', error);
+      isThreeJSInitialized = false;
+    }
+  }
+
 
 
   function animate() {
     animationId = requestAnimationFrame(animate);
-    drawFrame();
+    
+    if (visualizationMode === 'basic') {
+      drawFrame();
+    } else if (isThreeJSInitialized && renderer) {
+      renderThreeJS();
+    }
+  }
+
+  function renderThreeJS() {
+    if (!renderer || !scene || !camera) return;
+
+    // Update mannequin pose with MediaPipe data
+    if (poseData && mannequin) {
+      updateMannequinPose(poseData);
+    }
+
+    // Render the scene
+    renderer.render(scene, camera);
+  }
+
+  function updateMannequinPose(data: any) {
+    if (!mannequin || !data.poseLandmarks) return;
+
+    const landmarks = data.poseLandmarks;
+
+    // MediaPipe pose landmark indices
+    const POSE_LANDMARKS = {
+      LEFT_SHOULDER: 11,
+      RIGHT_SHOULDER: 12,
+      LEFT_ELBOW: 13,
+      RIGHT_ELBOW: 14,
+      LEFT_WRIST: 15,
+      RIGHT_WRIST: 16,
+      LEFT_HIP: 23,
+      RIGHT_HIP: 24,
+      LEFT_KNEE: 25,
+      RIGHT_KNEE: 26,
+      LEFT_ANKLE: 27,
+      RIGHT_ANKLE: 28,
+      NOSE: 0
+    };
+
+    // Check if this is a real mannequin.js figure or our fallback stick figure
+    const isRealMannequin = mannequin.head && typeof mannequin.head.turn !== 'undefined';
+
+    if (isRealMannequin) {
+      // Use mannequin.js articulated body part rotations
+      updateMannequinJSPose(landmarks, POSE_LANDMARKS);
+    } else {
+      // Use our stick figure position updates
+      updateStickFigurePose(landmarks, POSE_LANDMARKS);
+    }
+  }
+
+  function updateMannequinJSPose(landmarks: any, POSE_LANDMARKS: any) {
+    // Helper functions to calculate angles
+    function calculateAngle3D(p1: any, p2: any, p3: any) {
+      const v1 = { x: p1.x - p2.x, y: p1.y - p2.y, z: p1.z - p2.z };
+      const v2 = { x: p3.x - p2.x, y: p3.y - p2.y, z: p3.z - p2.z };
+      
+      const dot = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+      const mag1 = Math.sqrt(v1.x * v1.x + v1.y * v1.y + v1.z * v1.z);
+      const mag2 = Math.sqrt(v2.x * v2.x + v2.y * v2.y + v2.z * v2.z);
+      
+      const angle = Math.acos(Math.max(-1, Math.min(1, dot / (mag1 * mag2))));
+      return (angle * 180) / Math.PI;
+    }
+
+    // Helper function to check if landmark is visible and within reasonable bounds
+    function isValidLandmark(landmark: any) {
+      return landmark && 
+             landmark.visibility > 0.5 && 
+             landmark.x >= -0.2 && landmark.x <= 1.2 &&  // Allow some off-screen but not too extreme
+             landmark.y >= -0.2 && landmark.y <= 1.2;
+    }
+
+    try {
+      // Update head rotation (only if nose and shoulders are visible)
+      if (isValidLandmark(landmarks[POSE_LANDMARKS.NOSE]) && 
+          isValidLandmark(landmarks[POSE_LANDMARKS.LEFT_SHOULDER]) && 
+          isValidLandmark(landmarks[POSE_LANDMARKS.RIGHT_SHOULDER])) {
+        
+        const nose = landmarks[POSE_LANDMARKS.NOSE];
+        const leftShoulder = landmarks[POSE_LANDMARKS.LEFT_SHOULDER];
+        const rightShoulder = landmarks[POSE_LANDMARKS.RIGHT_SHOULDER];
+        
+        const shoulderCenter = {
+          x: (leftShoulder.x + rightShoulder.x) / 2,
+          y: (leftShoulder.y + rightShoulder.y) / 2,
+          z: (leftShoulder.z + rightShoulder.z) / 2
+        };
+        
+        const headTurn = (nose.x - shoulderCenter.x) * 20; // Reduced sensitivity
+        mannequin.head.turn = Math.max(-30, Math.min(30, headTurn));
+        
+        const headNod = (shoulderCenter.y - nose.y) * 20; // Reduced sensitivity
+        mannequin.head.nod = Math.max(-20, Math.min(20, headNod));
+      }
+
+      // Update arm rotations (with validation)
+      if (isValidLandmark(landmarks[POSE_LANDMARKS.LEFT_SHOULDER]) && 
+          isValidLandmark(landmarks[POSE_LANDMARKS.LEFT_ELBOW]) && 
+          isValidLandmark(landmarks[POSE_LANDMARKS.LEFT_WRIST])) {
+        
+        const shoulder = landmarks[POSE_LANDMARKS.LEFT_SHOULDER];
+        const elbow = landmarks[POSE_LANDMARKS.LEFT_ELBOW];
+        const wrist = landmarks[POSE_LANDMARKS.LEFT_WRIST];
+        
+        const armRaise = (shoulder.y - elbow.y) * 120; // Slightly increased sensitivity for arms
+        mannequin.l_arm.raise = Math.max(-90, Math.min(180, armRaise));
+        
+        const armStraddle = (elbow.x - shoulder.x) * 100;
+        mannequin.l_arm.straddle = Math.max(-90, Math.min(90, armStraddle));
+        
+        const elbowBend = 180 - calculateAngle3D(shoulder, elbow, wrist);
+        mannequin.l_elbow.bend = Math.max(0, Math.min(160, elbowBend));
+      }
+
+      if (isValidLandmark(landmarks[POSE_LANDMARKS.RIGHT_SHOULDER]) && 
+          isValidLandmark(landmarks[POSE_LANDMARKS.RIGHT_ELBOW]) && 
+          isValidLandmark(landmarks[POSE_LANDMARKS.RIGHT_WRIST])) {
+        
+        const shoulder = landmarks[POSE_LANDMARKS.RIGHT_SHOULDER];
+        const elbow = landmarks[POSE_LANDMARKS.RIGHT_ELBOW];
+        const wrist = landmarks[POSE_LANDMARKS.RIGHT_WRIST];
+        
+        const armRaise = (shoulder.y - elbow.y) * 120;
+        mannequin.r_arm.raise = Math.max(-90, Math.min(180, armRaise));
+        
+        const armStraddle = (shoulder.x - elbow.x) * 100;
+        mannequin.r_arm.straddle = Math.max(-90, Math.min(90, armStraddle));
+        
+        const elbowBend = 180 - calculateAngle3D(shoulder, elbow, wrist);
+        mannequin.r_elbow.bend = Math.max(0, Math.min(160, elbowBend));
+      }
+
+      // Update leg rotations (with validation and reduced sensitivity)
+      if (isValidLandmark(landmarks[POSE_LANDMARKS.LEFT_HIP]) && 
+          isValidLandmark(landmarks[POSE_LANDMARKS.LEFT_KNEE]) && 
+          isValidLandmark(landmarks[POSE_LANDMARKS.LEFT_ANKLE])) {
+        
+        const hip = landmarks[POSE_LANDMARKS.LEFT_HIP];
+        const knee = landmarks[POSE_LANDMARKS.LEFT_KNEE];
+        const ankle = landmarks[POSE_LANDMARKS.LEFT_ANKLE];
+        
+        const legRaise = (hip.y - knee.y) * 30; // Much reduced sensitivity
+        mannequin.l_leg.raise = Math.max(-30, Math.min(60, legRaise)); // Reduced range
+        
+        const kneeBend = calculateAngle3D(hip, knee, ankle);
+        mannequin.l_knee.bend = Math.max(0, Math.min(160, 180 - kneeBend));
+      }
+
+      if (isValidLandmark(landmarks[POSE_LANDMARKS.RIGHT_HIP]) && 
+          isValidLandmark(landmarks[POSE_LANDMARKS.RIGHT_KNEE]) && 
+          isValidLandmark(landmarks[POSE_LANDMARKS.RIGHT_ANKLE])) {
+        
+        const hip = landmarks[POSE_LANDMARKS.RIGHT_HIP];
+        const knee = landmarks[POSE_LANDMARKS.RIGHT_KNEE];
+        const ankle = landmarks[POSE_LANDMARKS.RIGHT_ANKLE];
+        
+        const legRaise = (hip.y - knee.y) * 30; // Much reduced sensitivity
+        mannequin.r_leg.raise = Math.max(-30, Math.min(60, legRaise)); // Reduced range
+        
+        const kneeBend = calculateAngle3D(hip, knee, ankle);
+        mannequin.r_knee.bend = Math.max(0, Math.min(160, 180 - kneeBend));
+      }
+
+      // Update torso rotation (with validation)
+      if (isValidLandmark(landmarks[POSE_LANDMARKS.LEFT_SHOULDER]) && 
+          isValidLandmark(landmarks[POSE_LANDMARKS.RIGHT_SHOULDER]) && 
+          isValidLandmark(landmarks[POSE_LANDMARKS.LEFT_HIP]) && 
+          isValidLandmark(landmarks[POSE_LANDMARKS.RIGHT_HIP])) {
+        
+        const leftShoulder = landmarks[POSE_LANDMARKS.LEFT_SHOULDER];
+        const rightShoulder = landmarks[POSE_LANDMARKS.RIGHT_SHOULDER];
+        const leftHip = landmarks[POSE_LANDMARKS.LEFT_HIP];
+        const rightHip = landmarks[POSE_LANDMARKS.RIGHT_HIP];
+        
+        const shoulderCenter = { x: (leftShoulder.x + rightShoulder.x) / 2, y: (leftShoulder.y + rightShoulder.y) / 2 };
+        const hipCenter = { x: (leftHip.x + rightHip.x) / 2, y: (leftHip.y + rightHip.y) / 2 };
+        
+        const torsoBend = (shoulderCenter.y - hipCenter.y - 0.15) * 60; // Reduced sensitivity
+        mannequin.torso.bend = Math.max(-30, Math.min(30, torsoBend)); // Reduced range
+      }
+
+    } catch (error) {
+      console.warn('Error updating mannequin.js pose:', error);
+    }
+  }
+
+  function updateStickFigurePose(landmarks: any, POSE_LANDMARKS: any) {
+    // Helper function to map MediaPipe coordinates to 3D world coordinates
+    function mapToWorld(landmark: any) {
+      return {
+        x: (landmark.x - 0.5) * 4,
+        y: (0.5 - landmark.y) * 3,
+        z: -landmark.z * 2
+      };
+    }
+
+    try {
+      // Update head position (with better positioning)
+      if (landmarks[POSE_LANDMARKS.NOSE]) {
+        const head = mannequin.getObjectByName('head');
+        if (head) {
+          const nosePos = mapToWorld(landmarks[POSE_LANDMARKS.NOSE]);
+          head.position.set(nosePos.x, nosePos.y + 0.1, nosePos.z); // Reduced offset
+        }
+      }
+
+      // Update other body parts with proper scaling
+      const bodyParts = [
+        { landmark: POSE_LANDMARKS.LEFT_SHOULDER, name: 'leftShoulder', offset: { x: 0, y: 0, z: 0 } },
+        { landmark: POSE_LANDMARKS.RIGHT_SHOULDER, name: 'rightShoulder', offset: { x: 0, y: 0, z: 0 } },
+        { landmark: POSE_LANDMARKS.LEFT_ELBOW, name: 'leftElbow', offset: { x: 0, y: 0, z: 0 } },
+        { landmark: POSE_LANDMARKS.RIGHT_ELBOW, name: 'rightElbow', offset: { x: 0, y: 0, z: 0 } },
+        { landmark: POSE_LANDMARKS.LEFT_WRIST, name: 'leftHand', offset: { x: 0, y: 0, z: 0 } },
+        { landmark: POSE_LANDMARKS.RIGHT_WRIST, name: 'rightHand', offset: { x: 0, y: 0, z: 0 } },
+        { landmark: POSE_LANDMARKS.LEFT_HIP, name: 'leftHip', offset: { x: 0, y: 0, z: 0 } },
+        { landmark: POSE_LANDMARKS.RIGHT_HIP, name: 'rightHip', offset: { x: 0, y: 0, z: 0 } },
+        { landmark: POSE_LANDMARKS.LEFT_KNEE, name: 'leftKnee', offset: { x: 0, y: 0, z: 0 } },
+        { landmark: POSE_LANDMARKS.RIGHT_KNEE, name: 'rightKnee', offset: { x: 0, y: 0, z: 0 } },
+        { landmark: POSE_LANDMARKS.LEFT_ANKLE, name: 'leftFoot', offset: { x: 0, y: -0.1, z: 0 } },
+        { landmark: POSE_LANDMARKS.RIGHT_ANKLE, name: 'rightFoot', offset: { x: 0, y: -0.1, z: 0 } }
+      ];
+
+      bodyParts.forEach(part => {
+        if (landmarks[part.landmark]) {
+          const bodyPart = mannequin.getObjectByName(part.name);
+          if (bodyPart) {
+            const pos = mapToWorld(landmarks[part.landmark]);
+            bodyPart.position.set(
+              pos.x + part.offset.x, 
+              pos.y + part.offset.y, 
+              pos.z + part.offset.z
+            );
+          }
+        }
+      });
+
+    } catch (error) {
+      console.warn('Error updating stick figure pose:', error);
+    }
   }
 
   function drawFrame() {
@@ -1014,13 +1553,6 @@
     });
   }
 
-  // Handle window resize
-  function handleResize() {
-    if (canvasElement) {
-      canvasElement.width = width;
-      canvasElement.height = height;
-    }
-  }
 
   // Handle canvas click to initialize audio (browser autoplay policy)
   async function handleCanvasClick() {
@@ -1143,26 +1675,145 @@
   }
   
 
+  // Reactive statement to handle visualization mode changes
+  $: if (canvasElement && visualizationMode) {
+    switchVisualizationMode();
+  }
+
+  function switchVisualizationMode() {
+    if (visualizationMode === 'advanced') {
+      // Show 3D canvas, hide 2D canvas
+      if (canvasElement) {
+        canvasElement.style.display = 'none';
+      }
+      if (!isThreeJSInitialized) {
+        initializeThreeJS();
+      } else if (webglCanvas) {
+        webglCanvas.style.display = 'block';
+      }
+    } else if (visualizationMode === 'basic') {
+      // Show 2D canvas, hide 3D canvas
+      if (webglCanvas) {
+        webglCanvas.style.display = 'none';
+      }
+      if (canvasElement) {
+        canvasElement.style.display = 'block';
+      }
+      initialize2DCanvas();
+    }
+  }
+
+  function initialize2DCanvas() {
+    try {
+      // Ensure 2D canvas context
+      if (canvasElement && !ctx) {
+        ctx = canvasElement.getContext('2d');
+      }
+      
+      // Clear the 2D canvas
+      if (ctx) {
+        ctx.clearRect(0, 0, width, height);
+      }
+      
+      isThreeJSInitialized = false;
+    } catch (error) {
+      console.error('Error switching to 2D mode:', error);
+    }
+  }
+
+  // Handle window resize
+  function handleResize() {
+    if (canvasElement) {
+      canvasElement.width = width;
+      canvasElement.height = height;
+    }
+    
+    if (webglCanvas) {
+      webglCanvas.width = width;
+      webglCanvas.height = height;
+    }
+      
+    // Update Three.js renderer if initialized
+    if (renderer && camera) {
+      renderer.setSize(width, height);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+    }
+  }
+
   // Reactive statement to handle prop changes
   $: if (canvasElement) {
     handleResize();
   }
+
+  function toggleVisualizationMode() {
+    visualizationMode = visualizationMode === 'basic' ? 'advanced' : 'basic';
+  }
 </script>
 
-<canvas 
-  bind:this={canvasElement} 
-  {width} 
-  {height}
-  class="fullscreen-canvas"
-  on:click={handleCanvasClick}
-></canvas>
+<div class="canvas-container">
+  <canvas 
+    bind:this={canvasElement} 
+    {width} 
+    {height}
+    class="fullscreen-canvas"
+    on:click={handleCanvasClick}
+  ></canvas>
+  
+  <button 
+    class="mode-toggle-btn"
+    on:click={toggleVisualizationMode}
+    title="Switch between 2D and 3D visualization"
+  >
+    {visualizationMode === 'basic' ? '3D' : '2D'}
+  </button>
+</div>
 
 <style>
+  .canvas-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
   .fullscreen-canvas {
     display: block;
     width: 100%;
     height: 100%;
     background: #000;
     transform: scaleX(-1); /* Mirror the canvas horizontally to match webcam */
+  }
+  
+  :global(.webgl-canvas) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: #222;
+  }
+
+  .mode-toggle-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 12px 20px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: 2px solid #4CAF50;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+  }
+
+  .mode-toggle-btn:hover {
+    background: rgba(76, 175, 80, 0.2);
+    border-color: #66BB6A;
+    transform: scale(1.05);
+  }
+
+  .mode-toggle-btn:active {
+    transform: scale(0.95);
   }
 </style>

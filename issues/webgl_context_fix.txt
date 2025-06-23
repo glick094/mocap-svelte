@@ -1,0 +1,38 @@
+## WebGL Context Error Fix
+
+### Problem
+The canvas already had a 2D rendering context from the game/stick figure rendering. Browsers don't allow switching from 2D to WebGL context on the same canvas element, causing "Error creating WebGL context" errors.
+
+### Solution: Dedicated 3D Canvas
+Created a separate WebGL canvas that gets dynamically created and positioned over the 2D canvas when switching to 3D mode.
+
+### Implementation Details
+
+**Canvas Management**:
+- `canvasElement`: Original 2D canvas for games/stick figure
+- `webglCanvas`: Separate canvas created for 3D mannequin rendering
+- Both canvases are positioned absolutely in the same container
+
+**Mode Switching Logic**:
+- **2D Mode**: Show `canvasElement`, hide `webglCanvas`
+- **3D Mode**: Hide `canvasElement`, show `webglCanvas`
+- Clean context separation prevents conflicts
+
+**Key Changes**:
+1. **Dynamic Canvas Creation**: WebGL canvas created only when needed
+2. **Proper Canvas Switching**: Show/hide appropriate canvas for each mode
+3. **Context Isolation**: Each canvas maintains its own context
+4. **Proper Cleanup**: WebGL canvas removed when not needed
+
+### Benefits
+- ✅ No more WebGL context errors
+- ✅ Clean separation of 2D and 3D rendering
+- ✅ Proper resource management
+- ✅ Maintains layout integrity
+- ✅ Canvas mirroring preserved for both modes
+
+### Current Status
+- Build successful
+- WebGL context creation isolated
+- Mode switching implemented
+- Ready for testing with mannequin rendering

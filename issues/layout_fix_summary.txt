@@ -1,0 +1,1 @@
+Fix applied: WebGL overlay canvas now properly sized and positioned to match main canvas dimensions, with 2D canvas remaining visible underneath. The 3D mannequin should now appear overlaid on the game canvas area while preserving the layout.
