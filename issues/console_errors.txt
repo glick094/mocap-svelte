@@ -1,7 +1,7 @@
 [vite] connecting... client:789:9
 [vite] connected. client:912:15
 AudioContext initialized, state: suspended audioService.ts:11:15
-2D Canvas context initialized successfully: true ThreeJSCanvas.svelte:143:11
+2D Canvas context initialized successfully: true ThreeJSCanvas.svelte:158:11
 Component mounted WebcamPose.svelte:636:11
 Elements are ready, checking if we should start webcam... WebcamPose.svelte:642:13
 Starting webcam... (attempt 1/3) WebcamPose.svelte:551:12
@@ -19,9 +19,10 @@ Initializing Three.js... +page.svelte:1005:23
 THREE.WebGLRenderer: Error creating WebGL context. chunk-QUPN4MTR.js:39641:15
 Failed to create WebGL renderer with advanced options: Error: Error creating WebGL context.
     WebGLRenderer three.module.js:15101
-    initializeThreeJS ThreeJSCanvas.svelte:156
-    switchVisualizationMode ThreeJSCanvas.svelte:115
-    ThreeJSCanvas ThreeJSCanvas.svelte:72
+    initializeThreeJS ThreeJSCanvas.svelte:167
+    switchVisualizationMode ThreeJSCanvas.svelte:124
+    setTimeout handler*switchVisualizationMode ThreeJSCanvas.svelte:123
+    ThreeJSCanvas ThreeJSCanvas.svelte:75
     untrack runtime.js:883
     effect effects.js:290
     update_reaction runtime.js:279
@@ -68,13 +69,14 @@ Failed to create WebGL renderer with advanced options: Error: Error creating Web
     snippet2 snippet.js:69
     snippet_effect snippet.js:49
     update_reaction runtime.js:279
-ThreeJSCanvas.svelte:174:13
+ThreeJSCanvas.svelte:189:13
 THREE.WebGLRenderer: Error creating WebGL context. chunk-QUPN4MTR.js:39641:15
 Failed to create WebGL renderer even with minimal options: Error: Error creating WebGL context.
     WebGLRenderer three.module.js:15101
-    initializeThreeJS ThreeJSCanvas.svelte:174
-    switchVisualizationMode ThreeJSCanvas.svelte:115
-    ThreeJSCanvas ThreeJSCanvas.svelte:72
+    initializeThreeJS ThreeJSCanvas.svelte:185
+    switchVisualizationMode ThreeJSCanvas.svelte:124
+    setTimeout handler*switchVisualizationMode ThreeJSCanvas.svelte:123
+    ThreeJSCanvas ThreeJSCanvas.svelte:75
     untrack runtime.js:883
     effect effects.js:290
     update_reaction runtime.js:279
@@ -121,12 +123,13 @@ Failed to create WebGL renderer even with minimal options: Error: Error creating
     snippet2 snippet.js:69
     snippet_effect snippet.js:49
     update_reaction runtime.js:279
-ThreeJSCanvas.svelte:186:14
+ThreeJSCanvas.svelte:201:14
 Error initializing Three.js: Error: Error creating WebGL context.
     WebGLRenderer three.module.js:15101
-    initializeThreeJS ThreeJSCanvas.svelte:174
-    switchVisualizationMode ThreeJSCanvas.svelte:115
-    ThreeJSCanvas ThreeJSCanvas.svelte:72
+    initializeThreeJS ThreeJSCanvas.svelte:185
+    switchVisualizationMode ThreeJSCanvas.svelte:124
+    setTimeout handler*switchVisualizationMode ThreeJSCanvas.svelte:123
+    ThreeJSCanvas ThreeJSCanvas.svelte:75
     untrack runtime.js:883
     effect effects.js:290
     update_reaction runtime.js:279
@@ -173,7 +176,218 @@ Error initializing Three.js: Error: Error creating WebGL context.
     snippet2 snippet.js:69
     snippet_effect snippet.js:49
     update_reaction runtime.js:279
-ThreeJSCanvas.svelte:348:12
+ThreeJSCanvas.svelte:367:12
 Falling back to basic 2D visualization mode client.js:2976:15
 2D Canvas context initialized successfully: true +page.svelte:1005:23
 Advanced 3D mode is not supported on this device. Using basic 2D visualization instead. client.js:2976:15
+Switching to basic 2D mode... +page.svelte:1005:23
+2D Canvas context initialized successfully: true +page.svelte:1005:23
+[vite] hot updated: /src/components/ThreeJSCanvas.svelte client:883:32
+Initializing Three.js... +page.svelte:1005:23
+Three.js renderer created successfully +page.svelte:1005:23
+Starting material replacement... +page.svelte:1005:23
+Processing mesh: GEO-phil_arms, material: 
+Object { isMaterial: true, uuid: "a7c8c94d-f16d-4f95-a6a5-7cddc4278063", name: "phil.body", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for GEO-phil_arms with color: 888888 +page.svelte:1005:23
+Processing mesh: GEO-phil_body, material: 
+Object { isMaterial: true, uuid: "a7c8c94d-f16d-4f95-a6a5-7cddc4278063", name: "phil.body", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for GEO-phil_body with color: ffdbb3 +page.svelte:1005:23
+Processing mesh: Data_GEO-phil_eyeL, material: 
+Object { isMaterial: true, uuid: "a437b0da-bccc-4d90-aba4-ae866385dfa9", name: "phil.eyes", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for Data_GEO-phil_eyeL with color: 888888 +page.svelte:1005:23
+Processing mesh: Data_GEO-phil_eyeL_1, material: 
+Object { isMaterial: true, uuid: "b91e0fca-733a-4107-954f-7ce2becebd98", name: "phil.eyes_pupils", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for Data_GEO-phil_eyeL_1 with color: 888888 +page.svelte:1005:23
+Processing mesh: Data_GEO-phil_eyeR, material: 
+Object { isMaterial: true, uuid: "a437b0da-bccc-4d90-aba4-ae866385dfa9", name: "phil.eyes", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for Data_GEO-phil_eyeR with color: 888888 +page.svelte:1005:23
+Processing mesh: Data_GEO-phil_eyeR_1, material: 
+Object { isMaterial: true, uuid: "b91e0fca-733a-4107-954f-7ce2becebd98", name: "phil.eyes_pupils", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for Data_GEO-phil_eyeR_1 with color: 888888 +page.svelte:1005:23
+Processing mesh: GEO-phil_eyebrows, material: 
+Object { isMaterial: true, uuid: "a20b2056-328b-48e4-bbdc-59bef3b9fe44", name: "phil.eyebrows", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for GEO-phil_eyebrows with color: 888888 +page.svelte:1005:23
+Processing mesh: GEO-phil_eyedotL, material: 
+Object { isMaterial: true, uuid: "27d5b099-1806-4ec3-97e1-ef7ccda7daa1", name: "phil.eyes_dots", type: "MeshStandardMaterial", blending: 1, side: 2, vertexColors: false, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for GEO-phil_eyedotL with color: 888888 +page.svelte:1005:23
+Processing mesh: GEO-phil_eyedotR, material: 
+Object { isMaterial: true, uuid: "27d5b099-1806-4ec3-97e1-ef7ccda7daa1", name: "phil.eyes_dots", type: "MeshStandardMaterial", blending: 1, side: 2, vertexColors: false, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for GEO-phil_eyedotR with color: 888888 +page.svelte:1005:23
+Processing mesh: Data_GEO-phil_flippers, material: 
+Object { isMaterial: true, uuid: "25073870-d1f0-40f9-b925-770374d99097", name: "phil.flipper_sole", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for Data_GEO-phil_flippers with color: 888888 +page.svelte:1005:23
+Processing mesh: Data_GEO-phil_flippers_1, material: 
+Object { isMaterial: true, uuid: "15f1b633-8706-4df1-aec0-dd4ecfaa1a9a", name: "phil.flipper_loop", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for Data_GEO-phil_flippers_1 with color: 888888 +page.svelte:1005:23
+Processing mesh: Data_GEO-phil_flippers_2, material: 
+Object { isMaterial: true, uuid: "31ca968a-cc68-40ce-969a-f83d937cd9d4", name: "phil.flipper_red", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for Data_GEO-phil_flippers_2 with color: 888888 +page.svelte:1005:23
+Processing mesh: Data_GEO-phil_flippers_3, material: 
+Object { isMaterial: true, uuid: "43b03584-d4d9-4bb7-9d76-8f7bb439dece", name: "phil.flipper_orange", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for Data_GEO-phil_flippers_3 with color: 888888 +page.svelte:1005:23
+Processing mesh: Data_GEO-phil_flippers_4, material: 
+Object { isMaterial: true, uuid: "2ed046f7-f972-4a2f-a84d-17a0250e1cf3", name: "phil.flipper_yellow", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for Data_GEO-phil_flippers_4 with color: 888888 +page.svelte:1005:23
+Processing mesh: Data_GEO-phil_flippers_5, material: 
+Object { isMaterial: true, uuid: "f5ae3c31-55b1-4105-b3f2-948ce43b7ff5", name: "phil.flipper_green", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for Data_GEO-phil_flippers_5 with color: 888888 +page.svelte:1005:23
+Processing mesh: Data_GEO-phil_flippers_6, material: 
+Object { isMaterial: true, uuid: "c9a077e6-c253-40e5-8dc5-a26a13c13866", name: "phil.flipper_blue", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for Data_GEO-phil_flippers_6 with color: 888888 +page.svelte:1005:23
+Processing mesh: Data_GEO-phil_flippers_7, material: 
+Object { isMaterial: true, uuid: "42be1d4e-a50f-4b15-a59a-bf66704987a0", name: "phil.flipper_purple", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for Data_GEO-phil_flippers_7 with color: 888888 +page.svelte:1005:23
+Processing mesh: GEO-phil_hairgroom_base, material: 
+Object { isMaterial: true, uuid: "11f7642e-815f-460d-abc7-b9e846021d1e", name: "phil.hair_mesh", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for GEO-phil_hairgroom_base with color: 8d6e63 +page.svelte:1005:23
+Processing mesh: GEO-phil_hairmesh, material: 
+Object { isMaterial: true, uuid: "11f7642e-815f-460d-abc7-b9e846021d1e", name: "phil.hair_mesh", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for GEO-phil_hairmesh with color: 8d6e63 +page.svelte:1005:23
+Processing mesh: GEO-phil_hairscalp, material: 
+Object { isMaterial: true, uuid: "b1512ba7-1e30-4e93-bae8-d505905b6962", name: "phil.hair-particles", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for GEO-phil_hairscalp with color: 8d6e63 +page.svelte:1005:23
+Processing mesh: Data_GEO-phil_head, material: 
+Object { isMaterial: true, uuid: "f521669b-ef69-4e01-9790-c96bb8a1d762", name: "phil.head", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for Data_GEO-phil_head with color: ffdbb3 +page.svelte:1005:23
+Processing mesh: Data_GEO-phil_head_1, material: 
+Object { isMaterial: true, uuid: "97ef4dc8-a683-4ab4-9817-54b55845b940", name: "phil.inner_mouth", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for Data_GEO-phil_head_1 with color: ffdbb3 +page.svelte:1005:23
+Processing mesh: GEO-phil_head_rig_helper, material: 
+Object { isMaterial: true, uuid: "a7c8c94d-f16d-4f95-a6a5-7cddc4278063", name: "phil.body", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for GEO-phil_head_rig_helper with color: ffdbb3 +page.svelte:1005:23
+Processing mesh: GEO-phil_pants, material: 
+Object { isMaterial: true, uuid: "23d3a1fc-165d-469a-a28c-4e314d9e33f5", name: "phil.shorts", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for GEO-phil_pants with color: 2196f3 +page.svelte:1005:23
+Processing mesh: GEO-phil_shirt, material: 
+Object { isMaterial: true, uuid: "e1def908-d1d8-4d92-8444-18f7f6ff190f", name: "phil.shirt", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for GEO-phil_shirt with color: 4caf50 +page.svelte:1005:23
+Processing mesh: GEO-phil_shorts_fray, material: 
+Object { isMaterial: true, uuid: "bc868478-d4cf-46e5-b6c9-930e7304cff9", name: "phil.shorts_rim", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for GEO-phil_shorts_fray with color: 888888 +page.svelte:1005:23
+Processing mesh: GEO-phil_teeth_bot_deformer, material: 
+Object { isMaterial: true, uuid: "0173225a-d5b3-44ae-bda7-3dd454156213", name: "", type: "MeshStandardMaterial", blending: 1, side: 0, vertexColors: false, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for GEO-phil_teeth_bot_deformer with color: 888888 +page.svelte:1005:23
+Processing mesh: Data_GEO-phil_teeth_btm, material: 
+Object { isMaterial: true, uuid: "a214d8b2-b947-4376-8aab-8f7e6ee49227", name: "phil.teeth", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for Data_GEO-phil_teeth_btm with color: 888888 +page.svelte:1005:23
+Processing mesh: Data_GEO-phil_teeth_btm_1, material: 
+Object { isMaterial: true, uuid: "5634989d-12e1-48e9-ae3c-74114043aa80", name: "phil.gums", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for Data_GEO-phil_teeth_btm_1 with color: 888888 +page.svelte:1005:23
+Processing mesh: Data_GEO-phil_teeth_btm_square, material: 
+Object { isMaterial: true, uuid: "a214d8b2-b947-4376-8aab-8f7e6ee49227", name: "phil.teeth", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for Data_GEO-phil_teeth_btm_square with color: 888888 +page.svelte:1005:23
+Processing mesh: Data_GEO-phil_teeth_btm_square_1, material: 
+Object { isMaterial: true, uuid: "5634989d-12e1-48e9-ae3c-74114043aa80", name: "phil.gums", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for Data_GEO-phil_teeth_btm_square_1 with color: 888888 +page.svelte:1005:23
+Processing mesh: Data_GEO-phil_teeth_top, material: 
+Object { isMaterial: true, uuid: "a214d8b2-b947-4376-8aab-8f7e6ee49227", name: "phil.teeth", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for Data_GEO-phil_teeth_top with color: 888888 +page.svelte:1005:23
+Processing mesh: Data_GEO-phil_teeth_top_1, material: 
+Object { isMaterial: true, uuid: "5634989d-12e1-48e9-ae3c-74114043aa80", name: "phil.gums", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for Data_GEO-phil_teeth_top_1 with color: 888888 +page.svelte:1005:23
+Processing mesh: GEO-phil_teeth_top_deformer, material: 
+Object { isMaterial: true, uuid: "0173225a-d5b3-44ae-bda7-3dd454156213", name: "", type: "MeshStandardMaterial", blending: 1, side: 0, vertexColors: false, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for GEO-phil_teeth_top_deformer with color: 888888 +page.svelte:1005:23
+Processing mesh: Data_GEO-phil_teeth_top_square, material: 
+Object { isMaterial: true, uuid: "a214d8b2-b947-4376-8aab-8f7e6ee49227", name: "phil.teeth", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for Data_GEO-phil_teeth_top_square with color: 888888 +page.svelte:1005:23
+Processing mesh: Data_GEO-phil_teeth_top_square_1, material: 
+Object { isMaterial: true, uuid: "5634989d-12e1-48e9-ae3c-74114043aa80", name: "phil.gums", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for Data_GEO-phil_teeth_top_square_1 with color: 888888 +page.svelte:1005:23
+Processing mesh: GEO-phil_tongue, material: 
+Object { isMaterial: true, uuid: "76761b26-7686-4c61-bbde-900066fc6e63", name: "phil.tongue", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for GEO-phil_tongue with color: 888888 +page.svelte:1005:23
+Processing mesh: Data_GEO-phil_body_weight_paint_helper, material: 
+Object { isMaterial: true, uuid: "a7c8c94d-f16d-4f95-a6a5-7cddc4278063", name: "phil.body", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for Data_GEO-phil_body_weight_paint_helper with color: ffdbb3 +page.svelte:1005:23
+Processing mesh: Data_GEO-phil_body_weight_paint_helper_1, material: 
+Object { isMaterial: true, uuid: "23d3a1fc-165d-469a-a28c-4e314d9e33f5", name: "phil.shorts", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for Data_GEO-phil_body_weight_paint_helper_1 with color: ffdbb3 +page.svelte:1005:23
+Processing mesh: Data_GEO-phil_body_weight_paint_helper_2, material: 
+Object { isMaterial: true, uuid: "e1def908-d1d8-4d92-8444-18f7f6ff190f", name: "phil.shirt", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for Data_GEO-phil_body_weight_paint_helper_2 with color: ffdbb3 +page.svelte:1005:23
+Processing mesh: GEO-phil_hair_distressedscalp, material: 
+Object { isMaterial: true, uuid: "68631e8c-d3bf-468d-ac6b-e34b0a6261ca", name: "phil.hair-particles.distressed", type: "MeshPhysicalMaterial", blending: 1, side: 2, vertexColors: true, opacity: 1, transparent: false, alphaHash: false, … }
++page.svelte:1005:23
+Replaced material for GEO-phil_hair_distressedscalp with color: 8d6e63 +page.svelte:1005:23
+Material replacement completed +page.svelte:1005:23
+Character model loaded successfully with simplified materials +page.svelte:1005:23
+Available bones: 
+Array(1737) [ "Spine", "ThighL", "KneeL", "FootL", "ToesL", "HeelPivotL", "Track_Shoe_FrontL", "Pants_Correct", "Track_KneeL", "Thigh_FrontL", … ]
++page.svelte:1005:23
+Setting up IK solver... +page.svelte:1005:23
+Created left arm IK chain: 
+Object { leftShoulder: "ShoulderL", leftElbow: "UpperArmL", leftWrist: "WristL" }
++page.svelte:1005:23
+Created right arm IK chain: 
+Object { rightShoulder: "ShoulderR", rightElbow: "UpperArmR", rightWrist: "WristR" }
++page.svelte:1005:23
+Created left leg IK chain +page.svelte:1005:23
+Created right leg IK chain +page.svelte:1005:23
+Invalid bone indices for IK chain: 
+Object { effectorIndex: -1, linkIndices: (2) […] }
+client.js:2976:15
+Invalid bone indices for IK chain: 
+Object { effectorIndex: -1, linkIndices: (2) […] }
+client.js:2976:15
+Invalid bone indices for IK chain: 
+Object { effectorIndex: -1, linkIndices: (2) […] }
+client.js:2976:15
+Invalid bone indices for IK chain: 
+Object { effectorIndex: -1, linkIndices: (2) […] }
+client.js:2976:15
+No valid IK chains created client.js:2976:15
+Found key bone: Head +page.svelte:1005:23
+Found key bone: Spine +page.svelte:1005:23
+Found key bone: ThighL +page.svelte:1005:23
+Found key bone: ThighR +page.svelte:1005:23
+Found key bone: KneeL +page.svelte:1005:23
+Found key bone: KneeR +page.svelte:1005:23
+Found key bone: FootL +page.svelte:1005:23
+Found key bone: FootR +page.svelte:1005:23
+Found key bone: ShoulderL +page.svelte:1005:23
+Found key bone: ShoulderR +page.svelte:1005:23
+Arm-related bones found: 
+Array(124) [ "ShoulderL", "UpperArmL", "ForearmL", "WristL", "Track_WristL", "ShoulderR", "UpperArmR", "ForearmR", "WristR", "Track_WristR", … ]
++page.svelte:1005:23
+Performing final material cleanup... +page.svelte:1005:23

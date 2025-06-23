@@ -6,6 +6,7 @@
 	import { audioService } from '../services/audioService';
 	import * as THREE from 'three';
 	import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+	import { CCDIKSolver } from 'three/examples/jsm/animation/CCDIKSolver.js';
 
 	const dispatch = createEventDispatcher<{
 		targetHit: { type: string; score: number };
@@ -31,6 +32,8 @@
 	let poseGroup: THREE.Group;
 	let bones: { [key: string]: THREE.Bone } = {};
 	let gltfLoader: GLTFLoader;
+	let ikSolver: CCDIKSolver | null = null;
+	let ikTargets: { [key: string]: THREE.Object3D } = {};
 
 	// Component props
 	export let width: number = 800;
@@ -47,13 +50,18 @@
 
 	onMount(() => {
 		if (canvasElement) {
-			if (visualizationMode === 'basic') {
-				initializeCanvas();
-			} else {
-				initializeThreeJS();
-			}
+			// Always start with 2D context first to ensure canvas is ready
+			initializeCanvas();
 			gameService = new GameService(width, height, gameMode as GameMode);
-			animate();
+			
+			// If advanced mode is requested, switch after a delay
+			if (visualizationMode === 'advanced') {
+				setTimeout(() => {
+					switchVisualizationMode();
+				}, 200);
+			} else {
+				animate();
+			}
 		}
 	});
 
@@ -99,6 +107,8 @@
 			isThreeJSInitialized = false;
 			characterModel = null;
 			bones = {};
+			ikSolver = null;
+			ikTargets = {};
 
 			// Force clear the canvas context and initialize 2D
 			// This ensures we get a fresh 2D context
@@ -114,10 +124,10 @@
 			// Force clear the canvas to release all contexts
 			canvasElement.width = canvasElement.width; // This clears canvas and releases contexts
 
-			// Small delay to ensure context is fully released
+			// Longer delay to ensure context is fully released
 			setTimeout(() => {
 				initializeThreeJS();
-			}, 50);
+			}, 100);
 			return; // Exit early to prevent immediate animate() call
 		}
 
@@ -216,10 +226,11 @@
 			poseGroup = new THREE.Group();
 			scene.add(poseGroup);
 
-			// Load GLB model
+			// Load GLTF model
 			gltfLoader = new GLTFLoader();
 			try {
-				const gltf = await gltfLoader.loadAsync('/src/assets/phil.glb');
+				const gltf = await gltfLoader.loadAsync('/src/assets/phil.gltf');
+        
 				characterModel = gltf.scene;
 				characterModel.scale.set(6, 6, 6); // Scale up to be more lifesize
 				characterModel.position.set(0, -5, 0); // Lower position to fit in frame
@@ -279,6 +290,18 @@
 
 				scene.add(characterModel);
 
+				// Also collect bones from SkinnedMesh skeleton for IK
+				characterModel.traverse((child) => {
+					if (child instanceof THREE.SkinnedMesh && child.skeleton) {
+						console.log('Found SkinnedMesh with skeleton, adding skeleton bones to collection');
+						child.skeleton.bones.forEach((bone: THREE.Bone) => {
+							if (bone.name && !bones[bone.name]) {
+								bones[bone.name] = bone;
+							}
+						});
+					}
+				});
+
 				// Force one more cleanup pass after adding to scene
 				setTimeout(() => {
 					console.log('Performing final material cleanup...');
@@ -296,6 +319,9 @@
 
 				console.log('Character model loaded successfully with simplified materials');
 				console.log('Available bones:', Object.keys(bones));
+
+				// Setup IK solver for better bone movement
+				setupIKSolver();
 
 				// Debug: Log some key bone names we're looking for
 				const keyBones = [
@@ -508,11 +534,296 @@
 		}
 	}
 
+	function setupIKSolver() {
+		if (!characterModel || Object.keys(bones).length === 0) {
+			console.warn('Cannot setup IK solver: missing character model or bones');
+			return;
+		}
+
+		console.log('Setting up IK solver...');
+
+		// Helper function to find bone by possible names
+		function findBone(possibleNames: string[]): THREE.Bone | null {
+			for (const name of possibleNames) {
+				if (bones[name]) return bones[name];
+			}
+			return null;
+		}
+
+		// Create IK targets for key body parts
+		const targetGeometry = new THREE.SphereGeometry(0.05);
+		const targetMaterial = new THREE.MeshBasicMaterial({
+			color: 0xff0000,
+			transparent: true,
+			opacity: 0.3
+		});
+
+		// Create IK targets for hands
+		const leftHandTarget = new THREE.Mesh(targetGeometry, targetMaterial.clone());
+		const rightHandTarget = new THREE.Mesh(targetGeometry, targetMaterial.clone());
+
+		// Create IK targets for feet
+		const leftFootTarget = new THREE.Mesh(targetGeometry, targetMaterial.clone());
+		const rightFootTarget = new THREE.Mesh(targetGeometry, targetMaterial.clone());
+
+		// Add targets to scene (make them invisible for now)
+		leftHandTarget.visible = false;
+		rightHandTarget.visible = false;
+		leftFootTarget.visible = false;
+		rightFootTarget.visible = false;
+
+		scene.add(leftHandTarget);
+		scene.add(rightHandTarget);
+		scene.add(leftFootTarget);
+		scene.add(rightFootTarget);
+
+		// Store targets for later use
+		ikTargets = {
+			leftHand: leftHandTarget,
+			rightHand: rightHandTarget,
+			leftFoot: leftFootTarget,
+			rightFoot: rightFootTarget
+		};
+
+		// Setup IK chains and targets array
+		const ikChains = [];
+		const ikTargetArray = [leftHandTarget, rightHandTarget, leftFootTarget, rightFootTarget];
+		console.log('Created IK targets:', ikTargetArray.length);
+
+		// Left arm IK chain (using actual bone names from console output)
+		const leftShoulder = findBone(['ShoulderL', 'LeftShoulder', 'shoulder_L', 'LeftArm', 'ArmL']);
+		const leftElbow = findBone([
+			'UpperArmL',
+			'LeftElbow',
+			'ElbowL',
+			'elbow_L',
+			'LeftForeArm',
+			'ForeArmL'
+		]);
+		const leftWrist = findBone(['WristL', 'LeftWrist', 'wrist_L', 'LeftHand', 'HandL']);
+
+		if (leftShoulder && leftElbow && leftWrist) {
+			ikChains.push({
+				target: 0, // Index of leftHandTarget in ikTargetArray
+				effector: leftWrist,
+				links: [{ index: leftShoulder }, { index: leftElbow }]
+			});
+			console.log('Created left arm IK chain:', {
+				leftShoulder: leftShoulder.name,
+				leftElbow: leftElbow.name,
+				leftWrist: leftWrist.name
+			});
+		} else {
+			console.warn('Left arm bones not found:', { leftShoulder, leftElbow, leftWrist });
+		}
+
+		// Right arm IK chain (using actual bone names from console output)
+		const rightShoulder = findBone([
+			'ShoulderR',
+			'RightShoulder',
+			'shoulder_R',
+			'RightArm',
+			'ArmR'
+		]);
+		const rightElbow = findBone([
+			'UpperArmR',
+			'RightElbow',
+			'ElbowR',
+			'elbow_R',
+			'RightForeArm',
+			'ForeArmR'
+		]);
+		const rightWrist = findBone(['WristR', 'RightWrist', 'wrist_R', 'RightHand', 'HandR']);
+
+		if (rightShoulder && rightElbow && rightWrist) {
+			ikChains.push({
+				target: 1, // Index of rightHandTarget
+				effector: rightWrist,
+				links: [{ index: rightShoulder }, { index: rightElbow }]
+			});
+			console.log('Created right arm IK chain:', {
+				rightShoulder: rightShoulder.name,
+				rightElbow: rightElbow.name,
+				rightWrist: rightWrist.name
+			});
+		} else {
+			console.warn('Right arm bones not found:', { rightShoulder, rightElbow, rightWrist });
+		}
+
+		// Left leg IK chain
+		const leftThigh = findBone(['LeftUpLeg', 'ThighL', 'thigh_L', 'LeftThigh']);
+		const leftKnee = findBone(['LeftLeg', 'KneeL', 'knee_L', 'LeftKnee']);
+		const leftFoot = findBone(['LeftFoot', 'FootL', 'foot_L', 'LeftAnkle']);
+
+		if (leftThigh && leftKnee && leftFoot) {
+			ikChains.push({
+				target: 2, // Index of leftFootTarget
+				effector: leftFoot,
+				links: [{ index: leftThigh }, { index: leftKnee }]
+			});
+			console.log('Created left leg IK chain');
+		}
+
+		// Right leg IK chain
+		const rightThigh = findBone(['RightUpLeg', 'ThighR', 'thigh_R', 'RightThigh']);
+		const rightKnee = findBone(['RightLeg', 'KneeR', 'knee_R', 'RightKnee']);
+		const rightFoot = findBone(['RightFoot', 'FootR', 'foot_R', 'RightAnkle']);
+
+		if (rightThigh && rightKnee && rightFoot) {
+			ikChains.push({
+				target: 3, // Index of rightFootTarget
+				effector: rightFoot,
+				links: [{ index: rightThigh }, { index: rightKnee }]
+			});
+			console.log('Created right leg IK chain');
+		}
+
+		// Create IK solver if we have chains
+		if (ikChains.length > 0) {
+			try {
+				// Find the SkinnedMesh within the character model
+				let skinnedMesh: THREE.SkinnedMesh | null = null;
+				characterModel.traverse((child) => {
+					if (child instanceof THREE.SkinnedMesh) {
+						skinnedMesh = child as THREE.SkinnedMesh;
+					}
+				});
+
+				if (skinnedMesh) {
+					const skeleton = (skinnedMesh as THREE.SkinnedMesh).skeleton;
+					console.log('SkinnedMesh skeleton bones:', skeleton.bones.map((bone: THREE.Bone) => bone.name));
+					console.log('Total skeleton bones:', skeleton.bones.length);
+					
+					// Create IK configuration with proper structure for CCDIKSolver
+					const ikConfig: any[] = [];
+
+					// Helper function to find bone index by name in skeleton
+					function findBoneIndexByName(boneName: string): number {
+						return skeleton.bones.findIndex((bone: THREE.Bone) => bone.name === boneName);
+					}
+
+					// Only add chains that have valid bones
+					ikChains.forEach((chain) => {
+						if (chain.effector && chain.links.every((link) => link.index)) {
+							const effectorIndex = findBoneIndexByName(chain.effector.name);
+							const linkIndices = chain.links.map((link) => findBoneIndexByName(link.index.name));
+
+							console.log('Checking IK chain:', {
+								effectorName: chain.effector.name,
+								effectorIndex,
+								linkNames: chain.links.map(link => link.index.name),
+								linkIndices
+							});
+
+							// Only add if all bone indices are valid
+							if (effectorIndex >= 0 && linkIndices.every((idx) => idx >= 0)) {
+								ikConfig.push({
+									target: chain.target, // Index in target array
+									effector: effectorIndex,
+									links: linkIndices.map((index) => ({ index }))
+								});
+							} else {
+								console.warn('Invalid bone indices for IK chain:', { 
+									effectorName: chain.effector.name,
+									effectorIndex, 
+									linkNames: chain.links.map(link => link.index.name),
+									linkIndices 
+								});
+							}
+						}
+					});
+
+					if (ikConfig.length > 0) {
+						ikSolver = new CCDIKSolver(skinnedMesh, ikConfig);
+						console.log(`IK solver created with ${ikConfig.length} valid chains`);
+					} else {
+						console.warn('No valid IK chains created');
+						ikSolver = null;
+					}
+				} else {
+					console.warn('No SkinnedMesh found in character model for IK solver');
+					ikSolver = null;
+				}
+			} catch (error) {
+				console.error('Failed to create IK solver:', error);
+				ikSolver = null;
+			}
+		} else {
+			console.warn('No valid IK chains found');
+		}
+	}
+
 	function updateCharacterBones(data: any) {
 		if (!data.poseLandmarks || Object.keys(bones).length === 0) return;
 
 		const landmarks = data.poseLandmarks;
 
+		// If we have an IK solver, use it for better movement
+		if (ikSolver && ikTargets) {
+			updateWithIK(landmarks);
+		} else {
+			// Fallback to direct bone manipulation
+			updateWithDirectBoneControl(landmarks);
+		}
+	}
+
+	function updateWithIK(landmarks: any[]) {
+		// MediaPipe landmark indices
+		const POSE_LANDMARKS = {
+			LEFT_WRIST: 15,
+			RIGHT_WRIST: 16,
+			LEFT_ANKLE: 27,
+			RIGHT_ANKLE: 28
+		};
+
+		// Helper function to convert MediaPipe coordinates to 3D world space
+		function mediaPipeToWorld(landmark: any, scale = 1) {
+			return new THREE.Vector3(
+				(landmark.x - 0.5) * 6 * scale, // Scale for world size
+				(0.5 - landmark.y) * 4 * scale, // Flip Y and scale
+				-landmark.z * 3 * scale // Scale Z depth
+			);
+		}
+
+		try {
+			// Update IK target positions based on MediaPipe landmarks
+			const leftWrist = landmarks[POSE_LANDMARKS.LEFT_WRIST];
+			const rightWrist = landmarks[POSE_LANDMARKS.RIGHT_WRIST];
+			const leftAnkle = landmarks[POSE_LANDMARKS.LEFT_ANKLE];
+			const rightAnkle = landmarks[POSE_LANDMARKS.RIGHT_ANKLE];
+
+			// Update hand targets
+			if (leftWrist && leftWrist.visibility > 0.5 && ikTargets.leftHand) {
+				const leftHandPos = mediaPipeToWorld(leftWrist);
+				ikTargets.leftHand.position.copy(leftHandPos);
+			}
+
+			if (rightWrist && rightWrist.visibility > 0.5 && ikTargets.rightHand) {
+				const rightHandPos = mediaPipeToWorld(rightWrist);
+				ikTargets.rightHand.position.copy(rightHandPos);
+			}
+
+			// Update foot targets
+			if (leftAnkle && leftAnkle.visibility > 0.5 && ikTargets.leftFoot) {
+				const leftFootPos = mediaPipeToWorld(leftAnkle);
+				ikTargets.leftFoot.position.copy(leftFootPos);
+			}
+
+			if (rightAnkle && rightAnkle.visibility > 0.5 && ikTargets.rightFoot) {
+				const rightFootPos = mediaPipeToWorld(rightAnkle);
+				ikTargets.rightFoot.position.copy(rightFootPos);
+			}
+
+			// Update IK solver
+			if (ikSolver) {
+				ikSolver.update();
+			}
+		} catch (error) {
+			console.warn('Error updating IK:', error);
+		}
+	}
+
+	function updateWithDirectBoneControl(landmarks: any[]) {
 		// Helper function to find bone by possible names
 		function findBone(possibleNames: string[]): THREE.Bone | null {
 			for (const name of possibleNames) {

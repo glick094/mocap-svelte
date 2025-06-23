@@ -91,6 +91,88 @@ yellow boxes with bubbles that move
 
 -- this thing doesn't look like me! -- if we can get this more character
 
+
+=== Blender Export
+Optimal Blender Export Settings for Clean GLB:
+
+  Pre-Export Preparation in Blender:
+
+  1. Clean Up Materials:
+    1. Go to Shading workspace
+    2. Select all objects (A)
+    3. For each material:
+        - Delete all nodes except Output Material and Principled BSDF
+        - Connect only Base Color to Material Output
+        - Set simple solid colors (no textures/maps)
+        - Remove all UV maps except the first one
+
+  2. Simplify Geometry:
+    1. Select character
+    2. Object > Apply > All Transforms
+    3. Go to UV Editing workspace
+    4. For each object: Delete UV maps 2-5, keep only "UVMap"
+    5. In Material Properties: Remove unused materials (Clean Up button)
+
+  3. Armature Cleanup:
+    1. Select armature
+    2. Enter Pose Mode
+    3. Select All Bones (A)
+    4. Pose > Clear Transform > All
+    5. Return to Object Mode
+
+  GLB Export Settings:
+
+  File > Export > glTF 2.0 (.glb/.gltf)
+
+  Include Tab:
+  ☑ Selected Objects (or export all)
+  ☑ Visible Objects
+  ☑ Renderable Objects
+  ☑ Active Collection
+  ☐ Include > Custom Properties
+  ☐ Include > Cameras
+  ☐ Include > Punctual Lights
+
+  Transform Tab:
+  ☑ +Y Up
+  Scale: 1.0
+  ☐ Apply Modifiers
+
+  Geometry Tab:
+  ☑ UVs
+  ☑ Normals
+  ☐ Tangents (DISABLE - causes issues)
+  ☐ Vertex Colors (DISABLE - causes rendering issues)
+  ☑ Materials: Export
+  ☑ Images: Automatic
+
+  Animation Tab:
+  ☐ Use Current Frame
+  ☐ Animations (disable unless needed)
+  ☐ Shape Keys
+  ☐ Skinning
+  ☐ Bake Animation
+
+  Advanced Tab:
+  Format: GLB Binary
+  ☐ Remember Export Settings
+  ☐ Punctual Light Extensions
+  ☐ Materials > Unlit
+  ☐ Compression
+
+  Critical Settings to Fix Your Issues:
+
+  Most Important:
+  - ☐ Tangents: DISABLED (prevents UV shader errors)
+  - ☐ Vertex Colors: DISABLED (fixes dark/striped rendering)
+  - ☑ Materials: Export
+  - Only 1 UV map per object
+
+  For Better Performance:
+  - Simple materials only (Base Color → Material Output)
+  - No texture maps (use solid colors)
+  - No modifiers (apply before export)
+
 == Next steps: 
 
 * [x] continue updating target csv outputs. 
