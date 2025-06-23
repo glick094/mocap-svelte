@@ -105,6 +105,7 @@ Implementation: [ThreeJSCanvas.svelte](src/components/ThreeJSCanvas.svelte#L135-
 The platform captures two synchronized datasets:
 
 1. **Raw MediaPipe Data** ([recordingService.ts](src/services/recordingService.ts))
+
    - Unfiltered pose landmarks directly from MediaPipe
    - High temporal resolution for detailed analysis
    - Includes confidence scores and visibility flags
@@ -142,9 +143,9 @@ The platform supports automatic participant setup via QR code scanning:
 
 ```json
 {
-  "participantid": "P001",
-  "age": 25,
-  "height": 175
+	"participantid": "P001",
+	"age": 25,
+	"height": 175
 }
 ```
 

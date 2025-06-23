@@ -27,15 +27,15 @@ Our test suite includes **177 tests** across multiple categories:
 
 ### Test Statistics
 
-| Test File | Tests | Status | Coverage Area |
-|-----------|-------|--------|---------------|
-| `recordingService.test.ts` | 21 | ✅ 19/21 passing | CSV generation, video recording |
-| `smoothingService.test.ts` | 25 | ✅ 24/25 passing | Signal processing, filtering |
-| `mediaPipeService.test.ts` | 28 | ✅ Created | Pose detection, drawing |
-| `gameStore.test.ts` | 31 | ✅ 29/31 passing | Game state management |
-| `appStore.test.ts` | 22 | ✅ All passing | App state, settings |
-| `WebcamPose.svelte.test.ts` | 35 | ✅ Component testing | Camera, pose visualization |
-| `SettingsModal.svelte.test.ts` | 26 | ✅ Component testing | UI interactions, forms |
+| Test File                      | Tests | Status               | Coverage Area                   |
+| ------------------------------ | ----- | -------------------- | ------------------------------- |
+| `recordingService.test.ts`     | 21    | ✅ 19/21 passing     | CSV generation, video recording |
+| `smoothingService.test.ts`     | 25    | ✅ 24/25 passing     | Signal processing, filtering    |
+| `mediaPipeService.test.ts`     | 28    | ✅ Created           | Pose detection, drawing         |
+| `gameStore.test.ts`            | 31    | ✅ 29/31 passing     | Game state management           |
+| `appStore.test.ts`             | 22    | ✅ All passing       | App state, settings             |
+| `WebcamPose.svelte.test.ts`    | 35    | ✅ Component testing | Camera, pose visualization      |
+| `SettingsModal.svelte.test.ts` | 26    | ✅ Component testing | UI interactions, forms          |
 
 ## Test Architecture
 
@@ -95,19 +95,19 @@ Configuration in `vite.config.ts`:
 
 ```typescript
 test: {
-  projects: [
-    {
-      name: 'client',
-      environment: 'jsdom',
-      include: ['src/**/*.svelte.{test,spec}.{js,ts}']
-    },
-    {
-      name: 'server', 
-      environment: 'node',
-      include: ['src/**/*.{test,spec}.{js,ts}'],
-      exclude: ['src/**/*.svelte.{test,spec}.{js,ts}']
-    }
-  ]
+	projects: [
+		{
+			name: 'client',
+			environment: 'jsdom',
+			include: ['src/**/*.svelte.{test,spec}.{js,ts}']
+		},
+		{
+			name: 'server',
+			environment: 'node',
+			include: ['src/**/*.{test,spec}.{js,ts}'],
+			exclude: ['src/**/*.svelte.{test,spec}.{js,ts}']
+		}
+	];
 }
 ```
 
@@ -171,16 +171,16 @@ Tests the core data recording functionality:
 
 ```typescript
 it('should format pose data correctly with all landmarks', () => {
-  const mockPoseData = {
-    poseLandmarks: [{ x: 0.5, y: 0.6, z: 0.7, visibility: 0.9 }],
-    leftHandLandmarks: [{ x: 0.4, y: 0.5, z: 0.6 }]
-  };
-  
-  const csvRow = formatPoseDataForCSV(mockPoseData, 1234567890, 500.5);
-  const rowArray = csvRow.trim().split(',');
-  
-  expect(rowArray[0]).toBe('1234567890'); // timestamp
-  expect(rowArray[2]).toBe('1'); // pose landmarks count
+	const mockPoseData = {
+		poseLandmarks: [{ x: 0.5, y: 0.6, z: 0.7, visibility: 0.9 }],
+		leftHandLandmarks: [{ x: 0.4, y: 0.5, z: 0.6 }]
+	};
+
+	const csvRow = formatPoseDataForCSV(mockPoseData, 1234567890, 500.5);
+	const rowArray = csvRow.trim().split(',');
+
+	expect(rowArray[0]).toBe('1234567890'); // timestamp
+	expect(rowArray[2]).toBe('1'); // pose landmarks count
 });
 ```
 
@@ -199,17 +199,17 @@ Tests mathematical signal processing functions:
 
 ```typescript
 it('should smooth landmarks when sufficient history is available', () => {
-  const landmarks = createMockLandmarks(2, 0.9);
-  const history = [];
-  
-  // Build up history with 5 frames
-  for (let i = 0; i < 5; i++) {
-    smoothLandmarks(landmarks, history, 5, 2);
-  }
-  
-  const result = smoothLandmarks(landmarks, history, 5, 2);
-  expect(result[0].x).toBeGreaterThan(0.5);
-  expect(result[0].x).toBeLessThan(0.9);
+	const landmarks = createMockLandmarks(2, 0.9);
+	const history = [];
+
+	// Build up history with 5 frames
+	for (let i = 0; i < 5; i++) {
+		smoothLandmarks(landmarks, history, 5, 2);
+	}
+
+	const result = smoothLandmarks(landmarks, history, 5, 2);
+	expect(result[0].x).toBeGreaterThan(0.5);
+	expect(result[0].x).toBeLessThan(0.9);
 });
 ```
 
@@ -241,9 +241,9 @@ Tests game state management using Svelte stores:
 
 ```typescript
 it('should calculate correct progress percentage', () => {
-  gameScore.set(7);
-  scoreBreakdown.set({ hand: 5, head: 3, knee: 2 }); // 10 total
-  expect(get(gameProgress)).toBe(70); // 7/10 = 70%
+	gameScore.set(7);
+	scoreBreakdown.set({ hand: 5, head: 3, knee: 2 }); // 10 total
+	expect(get(gameProgress)).toBe(70); // 7/10 = 70%
 });
 ```
 
@@ -276,15 +276,15 @@ Tests the main camera and pose detection component:
 
 ```typescript
 it('should handle camera access errors gracefully', async () => {
-  mockGetUserMedia.mockRejectedValueOnce(new Error('Camera denied'));
-  render(WebcamPose);
-  
-  await waitFor(() => {
-    const errorElement = screen.queryByText(/error|retry/i);
-    if (errorElement) {
-      expect(errorElement).toBeInTheDocument();
-    }
-  });
+	mockGetUserMedia.mockRejectedValueOnce(new Error('Camera denied'));
+	render(WebcamPose);
+
+	await waitFor(() => {
+		const errorElement = screen.queryByText(/error|retry/i);
+		if (errorElement) {
+			expect(errorElement).toBeInTheDocument();
+		}
+	});
 });
 ```
 
@@ -304,15 +304,15 @@ Tests the configuration interface:
 
 ### Current Coverage Areas
 
-| Component | Coverage | Notes |
-|-----------|----------|-------|
-| Recording Service | 95% | Core data operations |
-| Smoothing Service | 98% | Mathematical functions |
-| MediaPipe Service | 85% | External API integration |
-| Game Store | 90% | State management |
-| App Store | 95% | Configuration handling |
-| WebcamPose | 75% | Hardware integration |
-| SettingsModal | 85% | UI interactions |
+| Component         | Coverage | Notes                    |
+| ----------------- | -------- | ------------------------ |
+| Recording Service | 95%      | Core data operations     |
+| Smoothing Service | 98%      | Mathematical functions   |
+| MediaPipe Service | 85%      | External API integration |
+| Game Store        | 90%      | State management         |
+| App Store         | 95%      | Configuration handling   |
+| WebcamPose        | 75%      | Hardware integration     |
+| SettingsModal     | 85%      | UI interactions          |
 
 ### Coverage Goals
 
@@ -331,20 +331,20 @@ We mock essential browser APIs for consistent testing:
 // Camera API
 const mockGetUserMedia = vi.fn();
 Object.defineProperty(navigator, 'mediaDevices', {
-  value: { getUserMedia: mockGetUserMedia }
+	value: { getUserMedia: mockGetUserMedia }
 });
 
 // Media Recording
 const mockMediaRecorder = {
-  start: vi.fn(),
-  stop: vi.fn(),
-  state: 'inactive'
+	start: vi.fn(),
+	stop: vi.fn(),
+	state: 'inactive'
 };
 globalThis.MediaRecorder = vi.fn(() => mockMediaRecorder);
 
 // DOM Operations
 Object.defineProperty(window, 'matchMedia', {
-  value: vi.fn(() => ({ matches: false }))
+	value: vi.fn(() => ({ matches: false }))
 });
 ```
 
@@ -354,11 +354,11 @@ MediaPipe integration is mocked to avoid complex WASM loading:
 
 ```typescript
 vi.mock('@mediapipe/holistic', () => ({
-  Holistic: vi.fn().mockImplementation(() => ({
-    setOptions: vi.fn().mockResolvedValue(undefined),
-    onResults: vi.fn(),
-    close: vi.fn()
-  }))
+	Holistic: vi.fn().mockImplementation(() => ({
+		setOptions: vi.fn().mockResolvedValue(undefined),
+		onResults: vi.fn(),
+		close: vi.fn()
+	}))
 }));
 ```
 
@@ -368,12 +368,12 @@ Consistent mock data generators for pose landmarks:
 
 ```typescript
 const createMockLandmarks = (count: number, baseValue: number = 0.5) => {
-  return Array.from({ length: count }, (_, i) => ({
-    x: baseValue + i * 0.01,
-    y: baseValue + i * 0.01, 
-    z: baseValue + i * 0.01,
-    visibility: 0.9
-  }));
+	return Array.from({ length: count }, (_, i) => ({
+		x: baseValue + i * 0.01,
+		y: baseValue + i * 0.01,
+		z: baseValue + i * 0.01,
+		visibility: 0.9
+	}));
 };
 ```
 
@@ -403,11 +403,7 @@ Automated testing on code changes:
 
 ```json
 {
-  "pre-commit": [
-    "npm run lint",
-    "npm run test:unit -- --run",
-    "npm run check"
-  ]
+	"pre-commit": ["npm run lint", "npm run test:unit -- --run", "npm run check"]
 }
 ```
 
@@ -416,7 +412,7 @@ Automated testing on code changes:
 ### Test File Naming
 
 - **Services**: `serviceName.test.ts`
-- **Stores**: `storeName.test.ts` 
+- **Stores**: `storeName.test.ts`
 - **Components**: `ComponentName.svelte.test.ts`
 
 ### Test Structure Template
@@ -425,27 +421,27 @@ Automated testing on code changes:
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 describe('ComponentName', () => {
-  beforeEach(() => {
-    // Setup mocks and test data
-  });
+	beforeEach(() => {
+		// Setup mocks and test data
+	});
 
-  afterEach(() => {
-    // Cleanup
-    vi.restoreAllMocks();
-  });
+	afterEach(() => {
+		// Cleanup
+		vi.restoreAllMocks();
+	});
 
-  describe('feature group', () => {
-    it('should describe expected behavior', () => {
-      // Arrange
-      const input = 'test data';
-      
-      // Act
-      const result = functionUnderTest(input);
-      
-      // Assert
-      expect(result).toBe('expected output');
-    });
-  });
+	describe('feature group', () => {
+		it('should describe expected behavior', () => {
+			// Arrange
+			const input = 'test data';
+
+			// Act
+			const result = functionUnderTest(input);
+
+			// Assert
+			expect(result).toBe('expected output');
+		});
+	});
 });
 ```
 
@@ -465,14 +461,14 @@ import { render, screen, fireEvent } from '@testing-library/svelte';
 import '@testing-library/jest-dom/vitest';
 
 it('should handle user interaction', async () => {
-  const { component } = render(MyComponent, { 
-    props: { initialValue: 'test' }
-  });
-  
-  const button = screen.getByRole('button', { name: /submit/i });
-  await fireEvent.click(button);
-  
-  expect(screen.getByText(/success/i)).toBeInTheDocument();
+	const { component } = render(MyComponent, {
+		props: { initialValue: 'test' }
+	});
+
+	const button = screen.getByRole('button', { name: /submit/i });
+	await fireEvent.click(button);
+
+	expect(screen.getByText(/success/i)).toBeInTheDocument();
 });
 ```
 

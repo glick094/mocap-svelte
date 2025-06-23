@@ -1,1469 +1,1496 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  
-  // Suppress MediaPipe console warnings on mount
-  const originalConsoleWarn = console.warn;
-  const originalConsoleLog = console.log;
-  import ThreeJSCanvas from '../components/ThreeJSCanvas.svelte';
-  import WebcamPose from '../components/WebcamPose.svelte';
-  import SettingsModal from '../components/SettingsModal.svelte';
-  
-  // Import services
-  import { 
-    generateTimestamp, 
-    generateParticipantId, 
-    formatPoseDataForCSV,
-    createCSVHeader,
-    startRecordingSession,
-    downloadFile,
-    startVideoRecording,
-    stopVideoRecording
-  } from '../services/recordingService.js';
-  
-  import { smoothLandmarks as smoothLandmarksService } from '../services/smoothingService.js';
-  import { GameFlowService, type GameFlowState } from '../services/gameFlowService.js';
-  import type { GameMode } from '../services/gameService.js';
+	import { onMount } from 'svelte';
 
-  // Type definitions
-  interface ScoreBreakdown {
-    hand: number;
-    head: number;
-    knee: number;
-  }
+	// Suppress MediaPipe console warnings on mount
+	const originalConsoleWarn = console.warn;
+	const originalConsoleLog = console.log;
+	import ThreeJSCanvas from '../components/ThreeJSCanvas.svelte';
+	import WebcamPose from '../components/WebcamPose.svelte';
+	import SettingsModal from '../components/SettingsModal.svelte';
 
-  interface ParticipantInfo {
-    participantId: string;
-    age: number | null;
-    height: number | null;
-  }
+	// Import services
+	import {
+		generateTimestamp,
+		generateParticipantId,
+		formatPoseDataForCSV,
+		createCSVHeader,
+		startRecordingSession,
+		downloadFile,
+		startVideoRecording,
+		stopVideoRecording
+	} from '../services/recordingService.js';
 
-  interface CanvasSettings {
-    width: number;
-    height: number;
-  }
+	import { smoothLandmarks as smoothLandmarksService } from '../services/smoothingService.js';
+	import { GameFlowService, type GameFlowState } from '../services/gameFlowService.js';
+	import type { GameMode } from '../services/gameService.js';
 
-  interface UserSettings {
-    username: string;
-    theme: string;
-    quality: string;
-    enableAudio: boolean;
-    fps: number;
-    enableSmoothing: boolean;
-    filterWindowSize: number;
-  }
+	// Type definitions
+	interface ScoreBreakdown {
+		hand: number;
+		head: number;
+		knee: number;
+	}
 
-  interface RecordingSession {
-    filename: string;
-    csvContent: string;
-    startTime: number;
-    performanceStartTime: number;
-    timestamp?: string;
-    participantId?: string;
-  }
+	interface ParticipantInfo {
+		participantId: string;
+		age: number | null;
+		height: number | null;
+	}
 
-  interface GameDataSession {
-    gameMode: GameMode;
-    filename: string;
-    csvContent: string;
-    startTime: number;
-    performanceStartTime: number;
-    participantId?: string;
-    timestamp?: string;
-  }
+	interface CanvasSettings {
+		width: number;
+		height: number;
+	}
 
-  // App state
-  let showSettings = false;
-  let isWebcamActive = true; // Start with webcam active
-  let isGameActive = false; // Game state
-  let gameScore = 0; // Current game score
-  let currentTargetType: string | null = null; // Current target type for display
-  let scoreBreakdown: ScoreBreakdown = { hand: 0, head: 0, knee: 0 }; // Score breakdown by body part
-  
-  // Game flow state
-  let gameFlowService: GameFlowService | null = null;
-  let gameFlowState: GameFlowState = {
-    currentGameIndex: -1,
-    currentGame: null,
-    phase: 'waiting',
-    isActive: false,
-    delayStartTime: null,
-    delayRemaining: 0
-  };
-  let isFlowMode = true; // Whether we're in automatic flow mode vs manual mode (default to flow)
-  let randomGameTimer: number | null = null; // Timer for 1-minute random game
-  let randomGameTimeRemaining = 0;
-  let visualizationMode: 'basic' | 'advanced' = 'basic'; // Toggle between 2D stick figure and 3D character
-  
-  // Game modes
-  const GAME_MODES = {
-    HIPS_SWAY: 'hips-sway',
-    HANDS_FIXED: 'hands-fixed', 
-    HEAD_FIXED: 'head-fixed',
-    RANDOM: 'random'
-  };
-  
-  let currentGameMode: GameMode = GAME_MODES.HIPS_SWAY as GameMode; // Start with hips sway mode
-  let gameModeProgress = { completed: 0, total: 8 }; // Progress tracking for current mode
-  let canvasSettings: CanvasSettings = {
-    width: window.innerWidth || 1920,
-    height: window.innerHeight - 80 || 1000 // Subtract header height
-  };
+	interface UserSettings {
+		username: string;
+		theme: string;
+		quality: string;
+		enableAudio: boolean;
+		fps: number;
+		enableSmoothing: boolean;
+		filterWindowSize: number;
+	}
 
-  // Settings data
-  let userSettings: UserSettings = {
-    username: '',
-    theme: 'dark',
-    quality: 'high',
-    enableAudio: true,
-    fps: 15,
-    enableSmoothing: true,
-    filterWindowSize: 5
-  };
+	interface RecordingSession {
+		filename: string;
+		csvContent: string;
+		startTime: number;
+		performanceStartTime: number;
+		timestamp?: string;
+		participantId?: string;
+	}
 
-  // Participant information
-  let participantInfo: ParticipantInfo = {
-    participantId: '',
-    age: null,
-    height: null
-  };
-  let qrScanEnabled = true;
+	interface GameDataSession {
+		gameMode: GameMode;
+		filename: string;
+		csvContent: string;
+		startTime: number;
+		performanceStartTime: number;
+		participantId?: string;
+		timestamp?: string;
+	}
 
-  // WebcamPose dimensions
-  let webcamWidth = 300;
-  let webcamHeight = 225;
-  
-  // Pose data for 3D visualization
-  let currentPoseData: any = null;
-  let poseHistory: any[] = [];
-  const maxPoseHistory = 60; // Keep last 60 frames for smoothing
-  
-  // Smoothing settings
-  let enableSmoothing = true;
-  let filterWindowSize = 5; // Window size for Savgol filter (must be odd)
-  let polynomialOrder = 2; // Polynomial order for Savgol filter
+	// App state
+	let showSettings = false;
+	let isWebcamActive = true; // Start with webcam active
+	let isGameActive = false; // Game state
+	let gameScore = 0; // Current game score
+	let currentTargetType: string | null = null; // Current target type for display
+	let scoreBreakdown: ScoreBreakdown = { hand: 0, head: 0, knee: 0 }; // Score breakdown by body part
 
-  // Recording state
-  let isRecording = false;
-  let recordingStartTime: number | null = null;
-  let poseDataBuffer: any[] = [];
-  let participantId = '';
-  let recordingSession: RecordingSession | null = null;
+	// Game flow state
+	let gameFlowService: GameFlowService | null = null;
+	let gameFlowState: GameFlowState = {
+		currentGameIndex: -1,
+		currentGame: null,
+		phase: 'waiting',
+		isActive: false,
+		delayStartTime: null,
+		delayRemaining: 0
+	};
+	let isFlowMode = true; // Whether we're in automatic flow mode vs manual mode (default to flow)
+	let randomGameTimer: number | null = null; // Timer for 1-minute random game
+	let randomGameTimeRemaining = 0;
+	let visualizationMode: 'basic' | 'advanced' = 'basic'; // Toggle between 2D stick figure and 3D character
 
-  // Video recording state
-  let mediaRecorder: MediaRecorder | null = null;
-  let videoChunks: Blob[] = [];
-  let videoStream: MediaStream | null = null;
+	// Game modes
+	const GAME_MODES = {
+		HIPS_SWAY: 'hips-sway',
+		HANDS_FIXED: 'hands-fixed',
+		HEAD_FIXED: 'head-fixed',
+		RANDOM: 'random'
+	};
 
-  // Game data recording state
-  let gameDataBuffer: any[] = [];
-  let gameDataSession: GameDataSession | null = null;
-  let allGameDataSessions: GameDataSession[] = []; // Track all game-specific recording sessions
+	let currentGameMode: GameMode = GAME_MODES.HIPS_SWAY as GameMode; // Start with hips sway mode
+	let gameModeProgress = { completed: 0, total: 8 }; // Progress tracking for current mode
+	let canvasSettings: CanvasSettings = {
+		width: window.innerWidth || 1920,
+		height: window.innerHeight - 80 || 1000 // Subtract header height
+	};
 
-  function openSettings() {
-    showSettings = true;
-  }
+	// Settings data
+	let userSettings: UserSettings = {
+		username: '',
+		theme: 'dark',
+		quality: 'high',
+		enableAudio: true,
+		fps: 15,
+		enableSmoothing: true,
+		filterWindowSize: 5
+	};
 
-  function closeSettings() {
-    showSettings = false;
-  }
+	// Participant information
+	let participantInfo: ParticipantInfo = {
+		participantId: '',
+		age: null,
+		height: null
+	};
+	let qrScanEnabled = true;
 
-  function toggleVisualizationMode() {
-    const newMode = visualizationMode === 'basic' ? 'advanced' : 'basic';
-    visualizationMode = newMode;
-    
-    // Give a moment for the component to process the change
-    setTimeout(() => {
-      // Check if mode was forced back to basic due to WebGL issues
-      if (newMode === 'advanced' && visualizationMode === 'basic') {
-        console.log('Advanced mode not available, staying in basic mode');
-      }
-    }, 100);
-  }
+	// WebcamPose dimensions
+	let webcamWidth = 300;
+	let webcamHeight = 225;
 
-  function saveSettings(event: CustomEvent) {
-    const { userSettings: newUserSettings, canvasSettings: newCanvasSettings } = event.detail;
-    userSettings = { ...userSettings, ...newUserSettings };
-    if (newCanvasSettings) {
-      canvasSettings = { ...canvasSettings, ...newCanvasSettings };
-    }
-    
-    // Update smoothing settings
-    enableSmoothing = userSettings.enableSmoothing;
-    filterWindowSize = userSettings.filterWindowSize;
-    
-    closeSettings();
-    // Save to localStorage
-    localStorage.setItem('userSettings', JSON.stringify(userSettings));
-    localStorage.setItem('canvasSettings', JSON.stringify(canvasSettings));
-    console.log('Settings saved:', { userSettings, canvasSettings });
-  }
+	// Pose data for 3D visualization
+	let currentPoseData: any = null;
+	let poseHistory: any[] = [];
+	const maxPoseHistory = 60; // Keep last 60 frames for smoothing
 
-  function toggleWebcam() {
-    // Stop recording if active when turning off webcam
-    if (isRecording && !isWebcamActive) {
-      stopRecording();
-    }
-    
-    // Clear video stream reference when webcam is turned off
-    if (!isWebcamActive) {
-      videoStream = null;
-    }
-    
-    isWebcamActive = !isWebcamActive;
-  }
+	// Smoothing settings
+	let enableSmoothing = true;
+	let filterWindowSize = 5; // Window size for Savgol filter (must be odd)
+	let polynomialOrder = 2; // Polynomial order for Savgol filter
 
-  function handleCanvasUpdate(event: CustomEvent) {
-    // Handle updates from the 3D canvas
-    // Logging removed for performance
-  }
+	// Recording state
+	let isRecording = false;
+	let recordingStartTime: number | null = null;
+	let poseDataBuffer: any[] = [];
+	let participantId = '';
+	let recordingSession: RecordingSession | null = null;
 
-  function handleGameDataUpdate(event: CustomEvent) {
-    // Receive game data from ThreeJSCanvas component (smoothed pose data)
-    const gameData = event.detail;
-    
-    // Record game data if recording is active
-    if (gameDataSession) {
-      const unixTimestamp = gameData.timestamp || Date.now(); // Use original MediaPipe timestamp
-      const preciseFrameTime = performance.now() - gameDataSession.performanceStartTime; // High-precision relative time
-      const csvRow = formatPoseDataForCSV(gameData, unixTimestamp, preciseFrameTime); // Same format as MediaPipe data
-      gameDataSession.csvContent += csvRow;
-      gameDataBuffer.push({
-        timestamp: unixTimestamp,
-        frameTime: preciseFrameTime,
-        data: gameData // Store smoothed game data
-      });
-    }
-  }
+	// Video recording state
+	let mediaRecorder: MediaRecorder | null = null;
+	let videoChunks: Blob[] = [];
+	let videoStream: MediaStream | null = null;
 
-  // Game event handlers
-  function handleGameStarted(event: CustomEvent) {
-    console.log('Game started!', event.detail);
-    gameScore = event.detail.score;
-    scoreBreakdown = event.detail.scoreBreakdown;
-  }
+	// Game data recording state
+	let gameDataBuffer: any[] = [];
+	let gameDataSession: GameDataSession | null = null;
+	let allGameDataSessions: GameDataSession[] = []; // Track all game-specific recording sessions
 
-  function handleScoreUpdate(event: CustomEvent) {
-    // Logging removed for performance
-    gameScore = event.detail.score;
-    currentTargetType = event.detail.targetType;
-    scoreBreakdown = event.detail.scoreBreakdown;
-    
-    // Update game mode progress
-    if (event.detail.modeProgress) {
-      gameModeProgress = event.detail.modeProgress;
-    }
-    
-  }
+	function openSettings() {
+		showSettings = true;
+	}
 
-  function handleGameEnded(event: CustomEvent) {
-    console.log('Game ended!', event.detail);
-    gameScore = event.detail.finalScore;
-    currentTargetType = null;
-    // Keep scoreBreakdown for final display
-    
-    // If in flow mode, notify the flow service
-    if (isFlowMode && gameFlowService) {
-      gameFlowService.onGameCompleted();
-      gameFlowState = gameFlowService.getState();
-    }
-  }
+	function closeSettings() {
+		showSettings = false;
+	}
 
-  function handleTargetChanged(event: CustomEvent) {
-    currentTargetType = event.detail.targetType;
-  }
+	function toggleVisualizationMode() {
+		const newMode = visualizationMode === 'basic' ? 'advanced' : 'basic';
+		visualizationMode = newMode;
 
-  function handleTargetDataUpdate(event: CustomEvent) {
-    // This will be called every frame with current target data
-    // We'll add this data to our recording streams
-    const targetData = event.detail;
-    
-    // Store in a global variable that can be accessed by recording functions
-    (window as any).currentTargetData = targetData;
-  }
+		// Give a moment for the component to process the change
+		setTimeout(() => {
+			// Check if mode was forced back to basic due to WebGL issues
+			if (newMode === 'advanced' && visualizationMode === 'basic') {
+				console.log('Advanced mode not available, staying in basic mode');
+			}
+		}, 100);
+	}
 
-  function handleQRCodeDetected(event: CustomEvent) {
-    // Handle QR code data from the webcam
-    const qrData = event.detail;
-    try {
-      const parsed = JSON.parse(qrData);
-      if (parsed.participantid) {
-        participantInfo.participantId = parsed.participantid;
-      }
-      if (parsed.age) {
-        participantInfo.age = parsed.age;
-      }
-      if (parsed.height) {
-        participantInfo.height = parsed.height;
-      }
-      console.log('QR Code detected and participant info updated:', participantInfo);
-    } catch (error) {
-      console.warn('Invalid QR code format:', qrData);
-    }
-  }
+	function saveSettings(event: CustomEvent) {
+		const { userSettings: newUserSettings, canvasSettings: newCanvasSettings } = event.detail;
+		userSettings = { ...userSettings, ...newUserSettings };
+		if (newCanvasSettings) {
+			canvasSettings = { ...canvasSettings, ...newCanvasSettings };
+		}
 
-  function handleParticipantIdChange(event: CustomEvent) {
-    participantInfo.participantId = event.detail;
-  }
+		// Update smoothing settings
+		enableSmoothing = userSettings.enableSmoothing;
+		filterWindowSize = userSettings.filterWindowSize;
 
-  function toggleGame() {
-    if (!isWebcamActive) {
-      alert('Please start the camera first to play the game!');
-      return;
-    }
-    
-    if (isFlowMode) {
-      // In flow mode, toggle the entire flow
-      toggleGameFlow();
-    } else {
-      // In manual mode, toggle individual game
-      isGameActive = !isGameActive;
-      if (!isGameActive) {
-        currentTargetType = null; // Clear target type when stopping game
-      } else {
-        // Reset progress when starting a new game
-        resetGameModeProgress();
-      }
-      console.log('Game toggled:', isGameActive ? 'Started' : 'Stopped');
-    }
-  }
-  
-  function toggleGameFlow() {
-    if (gameFlowState.isActive) {
-      stopGameFlow();
-    } else {
-      startGameFlow();
-    }
-  }
-  
-  function startGameFlow() {
-    if (!isWebcamActive) {
-      alert('Please start the camera first to play games!');
-      return;
-    }
-    
-    console.log('Starting game flow');
-    
-    // Initialize game flow service if not already done
-    if (!gameFlowService) {
-      initializeGameFlow();
-    }
-    
-    // Start overall pose data recording
-    if (!isRecording) {
-      startPoseDataRecording();
-    }
-    
-    // Start the flow
-    gameFlowService!.startFlow();
-    gameFlowState = gameFlowService!.getState();
-  }
-  
-  function stopGameFlow() {
-    console.log('Stopping game flow');
-    
-    if (gameFlowService) {
-      gameFlowService.stopFlow();
-      gameFlowState = gameFlowService.getState();
-    }
-    
-    // Stop random game timer
-    if (randomGameTimer) {
-      clearInterval(randomGameTimer);
-      randomGameTimer = null;
-      randomGameTimeRemaining = 0;
-    }
-    
-    // Stop current game
-    isGameActive = false;
-    currentTargetType = null;
-    
-    // Stop all recording
-    if (isRecording) {
-      stopRecording();
-    }
-  }
-  
-  function initializeGameFlow() {
-    gameFlowService = new GameFlowService({
-      games: [GAME_MODES.HIPS_SWAY, GAME_MODES.HANDS_FIXED, GAME_MODES.HEAD_FIXED, GAME_MODES.RANDOM] as GameMode[],
-      delayBetweenGames: 10000, // 10 seconds
-      autoStartRecording: true
-    });
-    
-    gameFlowService.setCallbacks({
-      onGameStart: (gameMode, gameIndex) => {
-        console.log(`Flow: Starting game ${gameIndex + 1}: ${gameMode}`);
-        currentGameMode = gameMode;
-        isGameActive = true;
-        resetGameModeProgress();
-        
-        // Start game-specific recording
-        startGameDataRecording(gameMode);
-        
-        // Start 1-minute timer for random mode
-        if (gameMode === GAME_MODES.RANDOM) {
-          startRandomGameTimer();
-        }
-      },
-      
-      onGameEnd: (gameMode, gameIndex) => {
-        console.log(`Flow: Ending game ${gameIndex + 1}: ${gameMode}`);
-        isGameActive = false;
-        currentTargetType = null;
-        
-        // Stop random game timer if active
-        if (randomGameTimer) {
-          if (randomGameTimer !== null) clearInterval(randomGameTimer);
-          randomGameTimer = null;
-          randomGameTimeRemaining = 0;
-        }
-        
-        // Stop game-specific recording
-        stopGameDataRecording();
-      },
-      
-      onDelayStart: (nextGame, delayTime) => {
-        console.log(`Flow: Starting ${delayTime / 1000}s delay before ${nextGame}`);
-        isGameActive = false;
-        currentTargetType = null;
-      },
-      
-      onDelayUpdate: (remaining) => {
-        gameFlowState = gameFlowService!.getState();
-      },
-      
-      onFlowComplete: () => {
-        console.log('Flow: All games completed!');
-        isGameActive = false;
-        currentTargetType = null;
-        
-        // Stop random game timer if still active
-        if (randomGameTimer) {
-          if (randomGameTimer !== null) clearInterval(randomGameTimer);
-          randomGameTimer = null;
-          randomGameTimeRemaining = 0;
-        }
-        
-        // Stop overall recording
-        if (isRecording) {
-          stopRecording();
-        }
-        
-        // Download all game data files
-        downloadAllGameData();
-      }
-    });
-  }
-  
-  function changeGameMode(newMode: GameMode) {
-    if (isFlowMode) {
-      // In flow mode, don't allow manual game mode changes
-      return;
-    }
-    
-    if (isGameActive) {
-      // Stop current game when changing modes
-      isGameActive = false;
-      currentTargetType = null;
-    }
-    currentGameMode = newMode;
-    resetGameModeProgress();
-    console.log('Game mode changed to:', newMode);
-  }
-  
-  function resetGameModeProgress() {
-    switch (currentGameMode) {
-      case GAME_MODES.HIPS_SWAY:
-        gameModeProgress = { completed: 0, total: 8 }; // 4 times each side
-        break;
-      case GAME_MODES.HANDS_FIXED:
-        gameModeProgress = { completed: 0, total: 34 }; // 2 trials × (1 centering + 16 figure-8 points)
-        break;
-      case GAME_MODES.HEAD_FIXED:
-        gameModeProgress = { completed: 0, total: 13 }; // 1 centering + 12 circle points
-        break;
-      case GAME_MODES.RANDOM:
-        gameModeProgress = { completed: 0, total: Infinity }; // Endless mode
-        break;
-    }
-  }
-  
-  function handleStreamReady(event: CustomEvent) {
-    // Store video stream for recording
-    videoStream = event.detail.stream;
-    console.log('Video stream ready for recording');
-  }
+		closeSettings();
+		// Save to localStorage
+		localStorage.setItem('userSettings', JSON.stringify(userSettings));
+		localStorage.setItem('canvasSettings', JSON.stringify(canvasSettings));
+		console.log('Settings saved:', { userSettings, canvasSettings });
+	}
 
-  function handlePoseUpdate(event: CustomEvent) {
-    // Receive pose data from WebcamPose component
-    const rawPoseData = event.detail;
-    
-    // Add to history for smoothing
-    if (rawPoseData) {
-      poseHistory.push(rawPoseData);
-      if (poseHistory.length > maxPoseHistory) {
-        poseHistory.shift();
-      }
+	function toggleWebcam() {
+		// Stop recording if active when turning off webcam
+		if (isRecording && !isWebcamActive) {
+			stopRecording();
+		}
 
-      // Apply smoothing to pose landmarks for visualization
-      let processedPoseData = { ...rawPoseData };
-      if (enableSmoothing && rawPoseData.poseLandmarks) {
-        processedPoseData.poseLandmarks = smoothLandmarks(rawPoseData.poseLandmarks);
-      }
-      
-      // Update current pose data for visualization
-      currentPoseData = processedPoseData;
+		// Clear video stream reference when webcam is turned off
+		if (!isWebcamActive) {
+			videoStream = null;
+		}
 
-      // Record RAW data if recording is active (not smoothed)
-      if (isRecording && recordingSession) {
-        const unixTimestamp = Date.now(); // Unix timestamp in milliseconds
-        const preciseFrameTime = performance.now() - recordingSession.performanceStartTime; // High-precision relative time
-        const csvRow = formatPoseDataForCSV(rawPoseData, unixTimestamp, preciseFrameTime); // Use raw data for recording
-        recordingSession.csvContent += csvRow;
-        poseDataBuffer.push({
-          timestamp: unixTimestamp,
-          frameTime: preciseFrameTime,
-          data: rawPoseData // Store raw data
-        });
-      }
-    }
-  }
+		isWebcamActive = !isWebcamActive;
+	}
 
-  function updateCanvasSize() {
-    const sidePanelWidth = window.innerWidth > 768 ? 350 : 0; // Hide side panel on mobile
-    canvasSettings.width = window.innerWidth - sidePanelWidth;
-    canvasSettings.height = window.innerHeight - 80; // Subtract header height
-  }
+	function handleCanvasUpdate(event: CustomEvent) {
+		// Handle updates from the 3D canvas
+		// Logging removed for performance
+	}
 
-  // Savitzky-Golay filter implementation
-  function savgolFilter(data: number[], windowSize: number, polynomialOrder: number): number[] {
-    if (data.length < windowSize) return data;
-    
-    const halfWindow = Math.floor(windowSize / 2);
-    const result = [...data];
-    
-    // Precompute Savgol coefficients
-    const coefficients = computeSavgolCoefficients(windowSize, polynomialOrder);
-    
-    for (let i = halfWindow; i < data.length - halfWindow; i++) {
-      let sum = 0;
-      for (let j = 0; j < windowSize; j++) {
-        sum += coefficients[j] * data[i - halfWindow + j];
-      }
-      result[i] = sum;
-    }
-    
-    return result;
-  }
+	function handleGameDataUpdate(event: CustomEvent) {
+		// Receive game data from ThreeJSCanvas component (smoothed pose data)
+		const gameData = event.detail;
 
-  function computeSavgolCoefficients(windowSize: number, polynomialOrder: number): number[] {
-    const halfWindow = Math.floor(windowSize / 2);
-    const A: number[][] = [];
-    const b = new Array(windowSize).fill(0);
-    b[halfWindow] = 1; // Central point
-    
-    // Build Vandermonde matrix
-    for (let i = 0; i < windowSize; i++) {
-      const x = i - halfWindow;
-      const row = [];
-      for (let j = 0; j <= polynomialOrder; j++) {
-        row.push(Math.pow(x, j));
-      }
-      A.push(row);
-    }
-    
-    // Solve normal equations: (A^T * A) * c = A^T * b
-    const AtA = matrixMultiply(transpose(A), A);
-    const Atb = matrixVectorMultiply(transpose(A), b);
-    const coeffs = solveLinearSystem(AtA, Atb);
-    
-    // Get coefficients for central point estimation
-    const result = new Array(windowSize);
-    for (let i = 0; i < windowSize; i++) {
-      const x = i - halfWindow;
-      result[i] = 0;
-      for (let j = 0; j <= polynomialOrder; j++) {
-        result[i] += coeffs[j] * Math.pow(x, j);
-      }
-    }
-    
-    return result;
-  }
+		// Record game data if recording is active
+		if (gameDataSession) {
+			const unixTimestamp = gameData.timestamp || Date.now(); // Use original MediaPipe timestamp
+			const preciseFrameTime = performance.now() - gameDataSession.performanceStartTime; // High-precision relative time
+			const csvRow = formatPoseDataForCSV(gameData, unixTimestamp, preciseFrameTime); // Same format as MediaPipe data
+			gameDataSession.csvContent += csvRow;
+			gameDataBuffer.push({
+				timestamp: unixTimestamp,
+				frameTime: preciseFrameTime,
+				data: gameData // Store smoothed game data
+			});
+		}
+	}
 
-  // Helper functions for matrix operations
-  function transpose(matrix: number[][]): number[][] {
-    return matrix[0].map((_, i) => matrix.map(row => row[i]));
-  }
+	// Game event handlers
+	function handleGameStarted(event: CustomEvent) {
+		console.log('Game started!', event.detail);
+		gameScore = event.detail.score;
+		scoreBreakdown = event.detail.scoreBreakdown;
+	}
 
-  function matrixMultiply(a: number[][], b: number[][]): number[][] {
-    const result: number[][] = [];
-    for (let i = 0; i < a.length; i++) {
-      result[i] = [];
-      for (let j = 0; j < b[0].length; j++) {
-        result[i][j] = 0;
-        for (let k = 0; k < b.length; k++) {
-          result[i][j] += a[i][k] * b[k][j];
-        }
-      }
-    }
-    return result;
-  }
+	function handleScoreUpdate(event: CustomEvent) {
+		// Logging removed for performance
+		gameScore = event.detail.score;
+		currentTargetType = event.detail.targetType;
+		scoreBreakdown = event.detail.scoreBreakdown;
 
-  function matrixVectorMultiply(matrix: number[][], vector: number[]): number[] {
-    return matrix.map(row => 
-      row.reduce((sum, val, i) => sum + val * vector[i], 0)
-    );
-  }
+		// Update game mode progress
+		if (event.detail.modeProgress) {
+			gameModeProgress = event.detail.modeProgress;
+		}
+	}
 
-  function solveLinearSystem(A: number[][], b: number[]): number[] {
-    // Simple Gaussian elimination for small matrices
-    const n = A.length;
-    const augmented = A.map((row, i) => [...row, b[i]]);
-    
-    // Forward elimination
-    for (let i = 0; i < n; i++) {
-      // Find pivot
-      let maxRow = i;
-      for (let k = i + 1; k < n; k++) {
-        if (Math.abs(augmented[k][i]) > Math.abs(augmented[maxRow][i])) {
-          maxRow = k;
-        }
-      }
-      [augmented[i], augmented[maxRow]] = [augmented[maxRow], augmented[i]];
-      
-      // Make all rows below this one 0 in current column
-      for (let k = i + 1; k < n; k++) {
-        const factor = augmented[k][i] / augmented[i][i];
-        for (let j = i; j < n + 1; j++) {
-          augmented[k][j] -= factor * augmented[i][j];
-        }
-      }
-    }
-    
-    // Back substitution
-    const solution = new Array(n);
-    for (let i = n - 1; i >= 0; i--) {
-      solution[i] = augmented[i][n];
-      for (let j = i + 1; j < n; j++) {
-        solution[i] -= augmented[i][j] * solution[j];
-      }
-      solution[i] /= augmented[i][i];
-    }
-    
-    return solution;
-  }
+	function handleGameEnded(event: CustomEvent) {
+		console.log('Game ended!', event.detail);
+		gameScore = event.detail.finalScore;
+		currentTargetType = null;
+		// Keep scoreBreakdown for final display
 
-  function smoothLandmarks(landmarks: any[]): any[] {
-    if (!enableSmoothing || poseHistory.length < filterWindowSize) {
-      return landmarks;
-    }
-    
-    const smoothedLandmarks = [];
-    
-    for (let i = 0; i < landmarks.length; i++) {
-      // Extract time series for this landmark
-      const xValues = poseHistory.slice(-filterWindowSize).map(frame => 
-        frame.poseLandmarks && frame.poseLandmarks[i] ? frame.poseLandmarks[i].x : 0
-      );
-      const yValues = poseHistory.slice(-filterWindowSize).map(frame => 
-        frame.poseLandmarks && frame.poseLandmarks[i] ? frame.poseLandmarks[i].y : 0
-      );
-      const zValues = poseHistory.slice(-filterWindowSize).map(frame => 
-        frame.poseLandmarks && frame.poseLandmarks[i] ? frame.poseLandmarks[i].z : 0
-      );
-      
-      // Apply Savgol filter
-      const smoothedX = savgolFilter(xValues, filterWindowSize, polynomialOrder);
-      const smoothedY = savgolFilter(yValues, filterWindowSize, polynomialOrder);
-      const smoothedZ = savgolFilter(zValues, filterWindowSize, polynomialOrder);
-      
-      // Use the most recent smoothed value
-      const centerIndex = Math.floor(filterWindowSize / 2);
-      smoothedLandmarks[i] = {
-        x: smoothedX[smoothedX.length - 1 - centerIndex] || landmarks[i].x,
-        y: smoothedY[smoothedY.length - 1 - centerIndex] || landmarks[i].y,
-        z: smoothedZ[smoothedZ.length - 1 - centerIndex] || landmarks[i].z,
-        visibility: landmarks[i].visibility
-      };
-    }
-    
-    return smoothedLandmarks;
-  }
+		// If in flow mode, notify the flow service
+		if (isFlowMode && gameFlowService) {
+			gameFlowService.onGameCompleted();
+			gameFlowState = gameFlowService.getState();
+		}
+	}
 
-  // Recording functions
-  function startLocalVideoRecording(participant: string, timestamp: string): boolean {
-    if (!videoStream) {
-      console.warn('Video stream not available for recording');
-      return false;
-    }
+	function handleTargetChanged(event: CustomEvent) {
+		currentTargetType = event.detail.targetType;
+	}
 
-    try {
-      // Reset video chunks
-      videoChunks = [];
-      
-      // Create MediaRecorder with video stream
-      let options: MediaRecorderOptions = {
-        mimeType: 'video/webm;codecs=vp9', // Try VP9 first
-        videoBitsPerSecond: 2500000 // 2.5 Mbps for good quality
-      };
-      
-      // Fallback to VP8 if VP9 not supported
-      if (!MediaRecorder.isTypeSupported(options.mimeType!)) {
-        options.mimeType = 'video/webm;codecs=vp8';
-      }
-      
-      // Final fallback to default
-      if (!MediaRecorder.isTypeSupported(options.mimeType!)) {
-        options = {};
-      }
+	function handleTargetDataUpdate(event: CustomEvent) {
+		// This will be called every frame with current target data
+		// We'll add this data to our recording streams
+		const targetData = event.detail;
 
-      mediaRecorder = new MediaRecorder(videoStream, options);
-      
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          videoChunks.push(event.data);
-        }
-      };
-      
-      mediaRecorder.onstop = () => {
-        // Create video file when recording stops
-        const videoBlob = new Blob(videoChunks, { type: 'video/webm' });
-        const videoUrl = URL.createObjectURL(videoBlob);
-        const a = document.createElement('a');
-        a.href = videoUrl;
-        a.download = `webcam_recording_${participant}_${timestamp}.webm`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(videoUrl);
-        
-        console.log('Video recording saved:', a.download);
-      };
-      
-      mediaRecorder.start(100); // Collect data every 100ms
-      console.log('Video recording started');
-      return true;
-      
-    } catch (error) {
-      console.error('Failed to start video recording:', error);
-      return false;
-    }
-  }
+		// Store in a global variable that can be accessed by recording functions
+		(window as any).currentTargetData = targetData;
+	}
 
-  function stopLocalVideoRecording() {
-    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-      mediaRecorder.stop();
-      mediaRecorder = null;
-      console.log('Video recording stopped');
-    }
-  }
+	function handleQRCodeDetected(event: CustomEvent) {
+		// Handle QR code data from the webcam
+		const qrData = event.detail;
+		try {
+			const parsed = JSON.parse(qrData);
+			if (parsed.participantid) {
+				participantInfo.participantId = parsed.participantid;
+			}
+			if (parsed.age) {
+				participantInfo.age = parsed.age;
+			}
+			if (parsed.height) {
+				participantInfo.height = parsed.height;
+			}
+			console.log('QR Code detected and participant info updated:', participantInfo);
+		} catch (error) {
+			console.warn('Invalid QR code format:', qrData);
+		}
+	}
 
-  function startRecording() {
-    startPoseDataRecording();
-    if (!isFlowMode) {
-      // In manual mode, also start game data recording
-      startGameDataRecording(currentGameMode);
-    }
-  }
-  
-  function startPoseDataRecording() {
-    if (isRecording) return;
+	function handleParticipantIdChange(event: CustomEvent) {
+		participantInfo.participantId = event.detail;
+	}
 
-    const participant = generateParticipantId(userSettings);
-    const timestamp = generateTimestamp();
-    
-    recordingSession = {
-      participantId: participant,
-      timestamp: timestamp,
-      filename: `pose_data_${participant}_${timestamp}.csv`,
-      csvContent: createCSVHeader(),
-      startTime: Date.now(), // Unix timestamp for absolute timing
-      performanceStartTime: performance.now() // High-precision start time for relative timing
-    };
+	function toggleGame() {
+		if (!isWebcamActive) {
+			alert('Please start the camera first to play the game!');
+			return;
+		}
 
-    isRecording = true;
-    recordingStartTime = Date.now(); // Unix timestamp for absolute timing
-    poseDataBuffer = [];
+		if (isFlowMode) {
+			// In flow mode, toggle the entire flow
+			toggleGameFlow();
+		} else {
+			// In manual mode, toggle individual game
+			isGameActive = !isGameActive;
+			if (!isGameActive) {
+				currentTargetType = null; // Clear target type when stopping game
+			} else {
+				// Reset progress when starting a new game
+				resetGameModeProgress();
+			}
+			console.log('Game toggled:', isGameActive ? 'Started' : 'Stopped');
+		}
+	}
 
-    // Start video recording
-    const videoStarted = startLocalVideoRecording(participant, timestamp);
+	function toggleGameFlow() {
+		if (gameFlowState.isActive) {
+			stopGameFlow();
+		} else {
+			startGameFlow();
+		}
+	}
 
-    console.log('Started recording pose data:', recordingSession!.filename);
-    console.log('Video recording started:', videoStarted);
-    console.log('Recording start time (Unix):', recordingStartTime);
-    console.log('Performance start time:', recordingSession!.performanceStartTime);
-  }
-  
-  function startGameDataRecording(gameMode: GameMode): void {
-    if (!recordingSession) {
-      console.error('Cannot start game data recording without pose data session');
-      return;
-    }
-    
-    const gameName = gameMode.replace('-', '_');
-    const timestamp = recordingSession.timestamp;
-    
-    gameDataSession = {
-      participantId: recordingSession.participantId,
-      timestamp: timestamp,
-      gameMode: gameMode,
-      filename: `game_data_${gameName}_${recordingSession.participantId}_${timestamp}.csv`,
-      csvContent: createCSVHeader(), // Same format as MediaPipe data
-      startTime: recordingSession.startTime, // Same start time for synchronization
-      performanceStartTime: recordingSession.performanceStartTime // Same start time for synchronization
-    };
-    
-    gameDataBuffer = [];
-    if (gameDataSession) {
-      allGameDataSessions.push(gameDataSession);
-      console.log('Started recording game data:', gameDataSession.filename);
-    }
-  }
-  
-  function stopGameDataRecording() {
-    if (!gameDataSession) return;
-    
-    console.log('Stopped recording game data:', gameDataSession.filename);
-    gameDataSession = null;
-    gameDataBuffer = [];
-  }
-  
-  function startRandomGameTimer() {
-    randomGameTimeRemaining = 60; // 60 seconds
-    console.log('Starting 1-minute timer for random game');
-    
-    randomGameTimer = setInterval(() => {
-      randomGameTimeRemaining--;
-      
-      if (randomGameTimeRemaining <= 0) {
-        console.log('Random game time expired');
-        if (randomGameTimer !== null) clearInterval(randomGameTimer);
-        randomGameTimer = null;
-        randomGameTimeRemaining = 0;
-        
-        // Notify game flow service
-        if (gameFlowService) {
-          gameFlowService.onRandomGameTimeout();
-          gameFlowState = gameFlowService.getState();
-        }
-      }
-    }, 1000); // Update every second
-  }
+	function startGameFlow() {
+		if (!isWebcamActive) {
+			alert('Please start the camera first to play games!');
+			return;
+		}
 
-  function stopRecording() {
-    if (!isRecording || !recordingSession) return;
+		console.log('Starting game flow');
 
-    isRecording = false;
-    
-    // Stop video recording
-    stopLocalVideoRecording();
-    
-    // Stop current game data recording
-    stopGameDataRecording();
-    
-    // Download pose data file
-    const blob = new Blob([recordingSession.csvContent], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = recordingSession.filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+		// Initialize game flow service if not already done
+		if (!gameFlowService) {
+			initializeGameFlow();
+		}
 
-    console.log('Stopped recording. Pose data file downloaded:', recordingSession.filename);
-    console.log('Total MediaPipe data points recorded:', poseDataBuffer.length);
-    
-    if (!isFlowMode) {
-      // In manual mode, download game data immediately
-      downloadAllGameData();
-    }
-    
-    // Reset recording state
-    recordingSession = null;
-    recordingStartTime = null;
-    poseDataBuffer = [];
-  }
-  
-  function downloadAllGameData() {
-    console.log(`Downloading ${allGameDataSessions.length} game data files`);
-    
-    allGameDataSessions.forEach(session => {
-      if (session.csvContent && session.csvContent.length > 0) {
-        const gameBlob = new Blob([session.csvContent], { type: 'text/csv' });
-        const gameUrl = URL.createObjectURL(gameBlob);
-        const gameA = document.createElement('a');
-        gameA.href = gameUrl;
-        gameA.download = session.filename;
-        document.body.appendChild(gameA);
-        gameA.click();
-        document.body.removeChild(gameA);
-        URL.revokeObjectURL(gameUrl);
-        
-        console.log('Downloaded game data file:', session.filename);
-      }
-    });
-    
-    // Reset game data sessions
-    allGameDataSessions = [];
-  }
+		// Start overall pose data recording
+		if (!isRecording) {
+			startPoseDataRecording();
+		}
 
-  function toggleRecording() {
-    if (isRecording) {
-      stopRecording();
-    } else {
-      startRecording();
-    }
-  }
+		// Start the flow
+		gameFlowService!.startFlow();
+		gameFlowState = gameFlowService!.getState();
+	}
 
-  onMount(() => {
-    // Filter MediaPipe WebGL warnings
-    console.warn = function(message, ...args) {
-      // Suppress MediaPipe WebGL warnings
-      if (typeof message === 'string' && 
-          (message.includes('WebGL') || 
-           message.includes('OpenGL') || 
-           message.includes('gl_context') ||
-           message.includes('drawArraysInstanced'))) {
-        return;
-      }
-      originalConsoleWarn.call(this, message, ...args);
-    };
-    
-    console.log = function(message, ...args) {
-      // Suppress MediaPipe verbose logging
-      if (typeof message === 'string' && 
-          (message.includes('I0000') || 
-           message.includes('GL version') ||
-           message.includes('gl_context'))) {
-        return;
-      }
-      originalConsoleLog.call(this, message, ...args);
-    };
-    
-    // Load saved settings on app start
-    const savedUserSettings = localStorage.getItem('userSettings');
-    if (savedUserSettings) {
-      try {
-        userSettings = JSON.parse(savedUserSettings);
-        // Initialize smoothing settings
-        enableSmoothing = userSettings.enableSmoothing ?? true;
-        filterWindowSize = userSettings.filterWindowSize ?? 5;
-      } catch (e) {
-        console.error('Error loading saved user settings:', e);
-      }
-    }
+	function stopGameFlow() {
+		console.log('Stopping game flow');
 
-    const savedCanvasSettings = localStorage.getItem('canvasSettings');
-    if (savedCanvasSettings) {
-      try {
-        const saved = JSON.parse(savedCanvasSettings);
-        canvasSettings = { ...canvasSettings, ...saved };
-      } catch (e) {
-        console.error('Error loading saved canvas settings:', e);
-      }
-    }
-    
-    // Update canvas size on mount and window resize
-    updateCanvasSize();
-    window.addEventListener('resize', updateCanvasSize);
-    
-    // Start game flow update interval
-    const flowUpdateInterval = setInterval(() => {
-      if (gameFlowService) {
-        gameFlowService.update();
-        gameFlowState = gameFlowService.getState();
-      }
-    }, 100); // Update every 100ms
-    
-    return () => {
-      // Restore original console functions
-      console.warn = originalConsoleWarn;
-      console.log = originalConsoleLog;
-      window.removeEventListener('resize', updateCanvasSize);
-      clearInterval(flowUpdateInterval);
-    };
-  });
+		if (gameFlowService) {
+			gameFlowService.stopFlow();
+			gameFlowState = gameFlowService.getState();
+		}
+
+		// Stop random game timer
+		if (randomGameTimer) {
+			clearInterval(randomGameTimer);
+			randomGameTimer = null;
+			randomGameTimeRemaining = 0;
+		}
+
+		// Stop current game
+		isGameActive = false;
+		currentTargetType = null;
+
+		// Stop all recording
+		if (isRecording) {
+			stopRecording();
+		}
+	}
+
+	function initializeGameFlow() {
+		gameFlowService = new GameFlowService({
+			games: [
+				GAME_MODES.HIPS_SWAY,
+				GAME_MODES.HANDS_FIXED,
+				GAME_MODES.HEAD_FIXED,
+				GAME_MODES.RANDOM
+			] as GameMode[],
+			delayBetweenGames: 10000, // 10 seconds
+			autoStartRecording: true
+		});
+
+		gameFlowService.setCallbacks({
+			onGameStart: (gameMode, gameIndex) => {
+				console.log(`Flow: Starting game ${gameIndex + 1}: ${gameMode}`);
+				currentGameMode = gameMode;
+				isGameActive = true;
+				resetGameModeProgress();
+
+				// Start game-specific recording
+				startGameDataRecording(gameMode);
+
+				// Start 1-minute timer for random mode
+				if (gameMode === GAME_MODES.RANDOM) {
+					startRandomGameTimer();
+				}
+			},
+
+			onGameEnd: (gameMode, gameIndex) => {
+				console.log(`Flow: Ending game ${gameIndex + 1}: ${gameMode}`);
+				isGameActive = false;
+				currentTargetType = null;
+
+				// Stop random game timer if active
+				if (randomGameTimer) {
+					if (randomGameTimer !== null) clearInterval(randomGameTimer);
+					randomGameTimer = null;
+					randomGameTimeRemaining = 0;
+				}
+
+				// Stop game-specific recording
+				stopGameDataRecording();
+			},
+
+			onDelayStart: (nextGame, delayTime) => {
+				console.log(`Flow: Starting ${delayTime / 1000}s delay before ${nextGame}`);
+				isGameActive = false;
+				currentTargetType = null;
+			},
+
+			onDelayUpdate: (remaining) => {
+				gameFlowState = gameFlowService!.getState();
+			},
+
+			onFlowComplete: () => {
+				console.log('Flow: All games completed!');
+				isGameActive = false;
+				currentTargetType = null;
+
+				// Stop random game timer if still active
+				if (randomGameTimer) {
+					if (randomGameTimer !== null) clearInterval(randomGameTimer);
+					randomGameTimer = null;
+					randomGameTimeRemaining = 0;
+				}
+
+				// Stop overall recording
+				if (isRecording) {
+					stopRecording();
+				}
+
+				// Download all game data files
+				downloadAllGameData();
+			}
+		});
+	}
+
+	function changeGameMode(newMode: GameMode) {
+		if (isFlowMode) {
+			// In flow mode, don't allow manual game mode changes
+			return;
+		}
+
+		if (isGameActive) {
+			// Stop current game when changing modes
+			isGameActive = false;
+			currentTargetType = null;
+		}
+		currentGameMode = newMode;
+		resetGameModeProgress();
+		console.log('Game mode changed to:', newMode);
+	}
+
+	function resetGameModeProgress() {
+		switch (currentGameMode) {
+			case GAME_MODES.HIPS_SWAY:
+				gameModeProgress = { completed: 0, total: 8 }; // 4 times each side
+				break;
+			case GAME_MODES.HANDS_FIXED:
+				gameModeProgress = { completed: 0, total: 34 }; // 2 trials × (1 centering + 16 figure-8 points)
+				break;
+			case GAME_MODES.HEAD_FIXED:
+				gameModeProgress = { completed: 0, total: 13 }; // 1 centering + 12 circle points
+				break;
+			case GAME_MODES.RANDOM:
+				gameModeProgress = { completed: 0, total: Infinity }; // Endless mode
+				break;
+		}
+	}
+
+	function handleStreamReady(event: CustomEvent) {
+		// Store video stream for recording
+		videoStream = event.detail.stream;
+		console.log('Video stream ready for recording');
+	}
+
+	function handlePoseUpdate(event: CustomEvent) {
+		// Receive pose data from WebcamPose component
+		const rawPoseData = event.detail;
+
+		// Add to history for smoothing
+		if (rawPoseData) {
+			poseHistory.push(rawPoseData);
+			if (poseHistory.length > maxPoseHistory) {
+				poseHistory.shift();
+			}
+
+			// Apply smoothing to pose landmarks for visualization
+			let processedPoseData = { ...rawPoseData };
+			if (enableSmoothing && rawPoseData.poseLandmarks) {
+				processedPoseData.poseLandmarks = smoothLandmarks(rawPoseData.poseLandmarks);
+			}
+
+			// Update current pose data for visualization
+			currentPoseData = processedPoseData;
+
+			// Record RAW data if recording is active (not smoothed)
+			if (isRecording && recordingSession) {
+				const unixTimestamp = Date.now(); // Unix timestamp in milliseconds
+				const preciseFrameTime = performance.now() - recordingSession.performanceStartTime; // High-precision relative time
+				const csvRow = formatPoseDataForCSV(rawPoseData, unixTimestamp, preciseFrameTime); // Use raw data for recording
+				recordingSession.csvContent += csvRow;
+				poseDataBuffer.push({
+					timestamp: unixTimestamp,
+					frameTime: preciseFrameTime,
+					data: rawPoseData // Store raw data
+				});
+			}
+		}
+	}
+
+	function updateCanvasSize() {
+		const sidePanelWidth = window.innerWidth > 768 ? 350 : 0; // Hide side panel on mobile
+		canvasSettings.width = window.innerWidth - sidePanelWidth;
+		canvasSettings.height = window.innerHeight - 80; // Subtract header height
+	}
+
+	// Savitzky-Golay filter implementation
+	function savgolFilter(data: number[], windowSize: number, polynomialOrder: number): number[] {
+		if (data.length < windowSize) return data;
+
+		const halfWindow = Math.floor(windowSize / 2);
+		const result = [...data];
+
+		// Precompute Savgol coefficients
+		const coefficients = computeSavgolCoefficients(windowSize, polynomialOrder);
+
+		for (let i = halfWindow; i < data.length - halfWindow; i++) {
+			let sum = 0;
+			for (let j = 0; j < windowSize; j++) {
+				sum += coefficients[j] * data[i - halfWindow + j];
+			}
+			result[i] = sum;
+		}
+
+		return result;
+	}
+
+	function computeSavgolCoefficients(windowSize: number, polynomialOrder: number): number[] {
+		const halfWindow = Math.floor(windowSize / 2);
+		const A: number[][] = [];
+		const b = new Array(windowSize).fill(0);
+		b[halfWindow] = 1; // Central point
+
+		// Build Vandermonde matrix
+		for (let i = 0; i < windowSize; i++) {
+			const x = i - halfWindow;
+			const row = [];
+			for (let j = 0; j <= polynomialOrder; j++) {
+				row.push(Math.pow(x, j));
+			}
+			A.push(row);
+		}
+
+		// Solve normal equations: (A^T * A) * c = A^T * b
+		const AtA = matrixMultiply(transpose(A), A);
+		const Atb = matrixVectorMultiply(transpose(A), b);
+		const coeffs = solveLinearSystem(AtA, Atb);
+
+		// Get coefficients for central point estimation
+		const result = new Array(windowSize);
+		for (let i = 0; i < windowSize; i++) {
+			const x = i - halfWindow;
+			result[i] = 0;
+			for (let j = 0; j <= polynomialOrder; j++) {
+				result[i] += coeffs[j] * Math.pow(x, j);
+			}
+		}
+
+		return result;
+	}
+
+	// Helper functions for matrix operations
+	function transpose(matrix: number[][]): number[][] {
+		return matrix[0].map((_, i) => matrix.map((row) => row[i]));
+	}
+
+	function matrixMultiply(a: number[][], b: number[][]): number[][] {
+		const result: number[][] = [];
+		for (let i = 0; i < a.length; i++) {
+			result[i] = [];
+			for (let j = 0; j < b[0].length; j++) {
+				result[i][j] = 0;
+				for (let k = 0; k < b.length; k++) {
+					result[i][j] += a[i][k] * b[k][j];
+				}
+			}
+		}
+		return result;
+	}
+
+	function matrixVectorMultiply(matrix: number[][], vector: number[]): number[] {
+		return matrix.map((row) => row.reduce((sum, val, i) => sum + val * vector[i], 0));
+	}
+
+	function solveLinearSystem(A: number[][], b: number[]): number[] {
+		// Simple Gaussian elimination for small matrices
+		const n = A.length;
+		const augmented = A.map((row, i) => [...row, b[i]]);
+
+		// Forward elimination
+		for (let i = 0; i < n; i++) {
+			// Find pivot
+			let maxRow = i;
+			for (let k = i + 1; k < n; k++) {
+				if (Math.abs(augmented[k][i]) > Math.abs(augmented[maxRow][i])) {
+					maxRow = k;
+				}
+			}
+			[augmented[i], augmented[maxRow]] = [augmented[maxRow], augmented[i]];
+
+			// Make all rows below this one 0 in current column
+			for (let k = i + 1; k < n; k++) {
+				const factor = augmented[k][i] / augmented[i][i];
+				for (let j = i; j < n + 1; j++) {
+					augmented[k][j] -= factor * augmented[i][j];
+				}
+			}
+		}
+
+		// Back substitution
+		const solution = new Array(n);
+		for (let i = n - 1; i >= 0; i--) {
+			solution[i] = augmented[i][n];
+			for (let j = i + 1; j < n; j++) {
+				solution[i] -= augmented[i][j] * solution[j];
+			}
+			solution[i] /= augmented[i][i];
+		}
+
+		return solution;
+	}
+
+	function smoothLandmarks(landmarks: any[]): any[] {
+		if (!enableSmoothing || poseHistory.length < filterWindowSize) {
+			return landmarks;
+		}
+
+		const smoothedLandmarks = [];
+
+		for (let i = 0; i < landmarks.length; i++) {
+			// Extract time series for this landmark
+			const xValues = poseHistory
+				.slice(-filterWindowSize)
+				.map((frame) =>
+					frame.poseLandmarks && frame.poseLandmarks[i] ? frame.poseLandmarks[i].x : 0
+				);
+			const yValues = poseHistory
+				.slice(-filterWindowSize)
+				.map((frame) =>
+					frame.poseLandmarks && frame.poseLandmarks[i] ? frame.poseLandmarks[i].y : 0
+				);
+			const zValues = poseHistory
+				.slice(-filterWindowSize)
+				.map((frame) =>
+					frame.poseLandmarks && frame.poseLandmarks[i] ? frame.poseLandmarks[i].z : 0
+				);
+
+			// Apply Savgol filter
+			const smoothedX = savgolFilter(xValues, filterWindowSize, polynomialOrder);
+			const smoothedY = savgolFilter(yValues, filterWindowSize, polynomialOrder);
+			const smoothedZ = savgolFilter(zValues, filterWindowSize, polynomialOrder);
+
+			// Use the most recent smoothed value
+			const centerIndex = Math.floor(filterWindowSize / 2);
+			smoothedLandmarks[i] = {
+				x: smoothedX[smoothedX.length - 1 - centerIndex] || landmarks[i].x,
+				y: smoothedY[smoothedY.length - 1 - centerIndex] || landmarks[i].y,
+				z: smoothedZ[smoothedZ.length - 1 - centerIndex] || landmarks[i].z,
+				visibility: landmarks[i].visibility
+			};
+		}
+
+		return smoothedLandmarks;
+	}
+
+	// Recording functions
+	function startLocalVideoRecording(participant: string, timestamp: string): boolean {
+		if (!videoStream) {
+			console.warn('Video stream not available for recording');
+			return false;
+		}
+
+		try {
+			// Reset video chunks
+			videoChunks = [];
+
+			// Create MediaRecorder with video stream
+			let options: MediaRecorderOptions = {
+				mimeType: 'video/webm;codecs=vp9', // Try VP9 first
+				videoBitsPerSecond: 2500000 // 2.5 Mbps for good quality
+			};
+
+			// Fallback to VP8 if VP9 not supported
+			if (!MediaRecorder.isTypeSupported(options.mimeType!)) {
+				options.mimeType = 'video/webm;codecs=vp8';
+			}
+
+			// Final fallback to default
+			if (!MediaRecorder.isTypeSupported(options.mimeType!)) {
+				options = {};
+			}
+
+			mediaRecorder = new MediaRecorder(videoStream, options);
+
+			mediaRecorder.ondataavailable = (event) => {
+				if (event.data.size > 0) {
+					videoChunks.push(event.data);
+				}
+			};
+
+			mediaRecorder.onstop = () => {
+				// Create video file when recording stops
+				const videoBlob = new Blob(videoChunks, { type: 'video/webm' });
+				const videoUrl = URL.createObjectURL(videoBlob);
+				const a = document.createElement('a');
+				a.href = videoUrl;
+				a.download = `webcam_recording_${participant}_${timestamp}.webm`;
+				document.body.appendChild(a);
+				a.click();
+				document.body.removeChild(a);
+				URL.revokeObjectURL(videoUrl);
+
+				console.log('Video recording saved:', a.download);
+			};
+
+			mediaRecorder.start(100); // Collect data every 100ms
+			console.log('Video recording started');
+			return true;
+		} catch (error) {
+			console.error('Failed to start video recording:', error);
+			return false;
+		}
+	}
+
+	function stopLocalVideoRecording() {
+		if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+			mediaRecorder.stop();
+			mediaRecorder = null;
+			console.log('Video recording stopped');
+		}
+	}
+
+	function startRecording() {
+		startPoseDataRecording();
+		if (!isFlowMode) {
+			// In manual mode, also start game data recording
+			startGameDataRecording(currentGameMode);
+		}
+	}
+
+	function startPoseDataRecording() {
+		if (isRecording) return;
+
+		const participant = generateParticipantId(userSettings);
+		const timestamp = generateTimestamp();
+
+		recordingSession = {
+			participantId: participant,
+			timestamp: timestamp,
+			filename: `pose_data_${participant}_${timestamp}.csv`,
+			csvContent: createCSVHeader(),
+			startTime: Date.now(), // Unix timestamp for absolute timing
+			performanceStartTime: performance.now() // High-precision start time for relative timing
+		};
+
+		isRecording = true;
+		recordingStartTime = Date.now(); // Unix timestamp for absolute timing
+		poseDataBuffer = [];
+
+		// Start video recording
+		const videoStarted = startLocalVideoRecording(participant, timestamp);
+
+		console.log('Started recording pose data:', recordingSession!.filename);
+		console.log('Video recording started:', videoStarted);
+		console.log('Recording start time (Unix):', recordingStartTime);
+		console.log('Performance start time:', recordingSession!.performanceStartTime);
+	}
+
+	function startGameDataRecording(gameMode: GameMode): void {
+		if (!recordingSession) {
+			console.error('Cannot start game data recording without pose data session');
+			return;
+		}
+
+		const gameName = gameMode.replace('-', '_');
+		const timestamp = recordingSession.timestamp;
+
+		gameDataSession = {
+			participantId: recordingSession.participantId,
+			timestamp: timestamp,
+			gameMode: gameMode,
+			filename: `game_data_${gameName}_${recordingSession.participantId}_${timestamp}.csv`,
+			csvContent: createCSVHeader(), // Same format as MediaPipe data
+			startTime: recordingSession.startTime, // Same start time for synchronization
+			performanceStartTime: recordingSession.performanceStartTime // Same start time for synchronization
+		};
+
+		gameDataBuffer = [];
+		if (gameDataSession) {
+			allGameDataSessions.push(gameDataSession);
+			console.log('Started recording game data:', gameDataSession.filename);
+		}
+	}
+
+	function stopGameDataRecording() {
+		if (!gameDataSession) return;
+
+		console.log('Stopped recording game data:', gameDataSession.filename);
+		gameDataSession = null;
+		gameDataBuffer = [];
+	}
+
+	function startRandomGameTimer() {
+		randomGameTimeRemaining = 60; // 60 seconds
+		console.log('Starting 1-minute timer for random game');
+
+		randomGameTimer = setInterval(() => {
+			randomGameTimeRemaining--;
+
+			if (randomGameTimeRemaining <= 0) {
+				console.log('Random game time expired');
+				if (randomGameTimer !== null) clearInterval(randomGameTimer);
+				randomGameTimer = null;
+				randomGameTimeRemaining = 0;
+
+				// Notify game flow service
+				if (gameFlowService) {
+					gameFlowService.onRandomGameTimeout();
+					gameFlowState = gameFlowService.getState();
+				}
+			}
+		}, 1000); // Update every second
+	}
+
+	function stopRecording() {
+		if (!isRecording || !recordingSession) return;
+
+		isRecording = false;
+
+		// Stop video recording
+		stopLocalVideoRecording();
+
+		// Stop current game data recording
+		stopGameDataRecording();
+
+		// Download pose data file
+		const blob = new Blob([recordingSession.csvContent], { type: 'text/csv' });
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = recordingSession.filename;
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
+		URL.revokeObjectURL(url);
+
+		console.log('Stopped recording. Pose data file downloaded:', recordingSession.filename);
+		console.log('Total MediaPipe data points recorded:', poseDataBuffer.length);
+
+		if (!isFlowMode) {
+			// In manual mode, download game data immediately
+			downloadAllGameData();
+		}
+
+		// Reset recording state
+		recordingSession = null;
+		recordingStartTime = null;
+		poseDataBuffer = [];
+	}
+
+	function downloadAllGameData() {
+		console.log(`Downloading ${allGameDataSessions.length} game data files`);
+
+		allGameDataSessions.forEach((session) => {
+			if (session.csvContent && session.csvContent.length > 0) {
+				const gameBlob = new Blob([session.csvContent], { type: 'text/csv' });
+				const gameUrl = URL.createObjectURL(gameBlob);
+				const gameA = document.createElement('a');
+				gameA.href = gameUrl;
+				gameA.download = session.filename;
+				document.body.appendChild(gameA);
+				gameA.click();
+				document.body.removeChild(gameA);
+				URL.revokeObjectURL(gameUrl);
+
+				console.log('Downloaded game data file:', session.filename);
+			}
+		});
+
+		// Reset game data sessions
+		allGameDataSessions = [];
+	}
+
+	function toggleRecording() {
+		if (isRecording) {
+			stopRecording();
+		} else {
+			startRecording();
+		}
+	}
+
+	onMount(() => {
+		// Filter MediaPipe WebGL warnings
+		console.warn = function (message, ...args) {
+			// Suppress MediaPipe WebGL warnings
+			if (
+				typeof message === 'string' &&
+				(message.includes('WebGL') ||
+					message.includes('OpenGL') ||
+					message.includes('gl_context') ||
+					message.includes('drawArraysInstanced'))
+			) {
+				return;
+			}
+			originalConsoleWarn.call(this, message, ...args);
+		};
+
+		console.log = function (message, ...args) {
+			// Suppress MediaPipe verbose logging
+			if (
+				typeof message === 'string' &&
+				(message.includes('I0000') ||
+					message.includes('GL version') ||
+					message.includes('gl_context'))
+			) {
+				return;
+			}
+			originalConsoleLog.call(this, message, ...args);
+		};
+
+		// Load saved settings on app start
+		const savedUserSettings = localStorage.getItem('userSettings');
+		if (savedUserSettings) {
+			try {
+				userSettings = JSON.parse(savedUserSettings);
+				// Initialize smoothing settings
+				enableSmoothing = userSettings.enableSmoothing ?? true;
+				filterWindowSize = userSettings.filterWindowSize ?? 5;
+			} catch (e) {
+				console.error('Error loading saved user settings:', e);
+			}
+		}
+
+		const savedCanvasSettings = localStorage.getItem('canvasSettings');
+		if (savedCanvasSettings) {
+			try {
+				const saved = JSON.parse(savedCanvasSettings);
+				canvasSettings = { ...canvasSettings, ...saved };
+			} catch (e) {
+				console.error('Error loading saved canvas settings:', e);
+			}
+		}
+
+		// Update canvas size on mount and window resize
+		updateCanvasSize();
+		window.addEventListener('resize', updateCanvasSize);
+
+		// Start game flow update interval
+		const flowUpdateInterval = setInterval(() => {
+			if (gameFlowService) {
+				gameFlowService.update();
+				gameFlowState = gameFlowService.getState();
+			}
+		}, 100); // Update every 100ms
+
+		return () => {
+			// Restore original console functions
+			console.warn = originalConsoleWarn;
+			console.log = originalConsoleLog;
+			window.removeEventListener('resize', updateCanvasSize);
+			clearInterval(flowUpdateInterval);
+		};
+	});
 </script>
 
 <svelte:head>
-  <title>Play2Move</title>
-  <meta name="description" content="Interactive 3D motion capture with webcam and MediaPipe pose tracking" />
+	<title>Play2Move</title>
+	<meta
+		name="description"
+		content="Interactive 3D motion capture with webcam and MediaPipe pose tracking"
+	/>
 </svelte:head>
 
 <div class="app-container">
-  <!-- Header -->
-  <header class="app-header">
-    <h1>Play2Move</h1>
-    <div class="header-buttons">
-      <button class="header-btn" class:active={isWebcamActive} on:click={toggleWebcam}>
-        {isWebcamActive ? '📹 Stop Camera' : '📷 Start Camera'}
-      </button>
-      <!-- Mode Toggle Switch -->
-      <div class="toggle-switch" class:disabled={isGameActive || gameFlowState.isActive}>
-        <button 
-          class="toggle-option"
-          class:active={isFlowMode}
-          on:click={() => isFlowMode = true}
-          disabled={isGameActive || gameFlowState.isActive}
-        >
-          Default
-        </button>
-        <button 
-          class="toggle-option"
-          class:active={!isFlowMode}
-          on:click={() => isFlowMode = false}
-          disabled={isGameActive || gameFlowState.isActive}
-        >
-          Manual
-        </button>
-      </div>
-      
-      <!-- Recording Button (only in manual mode) -->
-      {#if !isFlowMode}
-        <button 
-          class="header-btn record-btn" 
-          class:recording={isRecording}
-          on:click={toggleRecording}
-          disabled={!isWebcamActive}
-        >
-          {isRecording ? '⏹️ Stop Recording' : '🔴 Record Data'}
-        </button>
-      {/if}
-      
-      <!-- Game Mode Selector (only in manual mode) -->
-      {#if !isFlowMode}
-        <select 
-          class="header-select"
-          bind:value={currentGameMode}
-          on:change={(e) => changeGameMode((e.target as HTMLSelectElement).value as GameMode)}
-          disabled={isGameActive}
-        >
-          <option value={GAME_MODES.HIPS_SWAY}>Hips</option>
-          <option value={GAME_MODES.HANDS_FIXED}>Hands</option>
-          <option value={GAME_MODES.HEAD_FIXED}>Head</option>
-          <option value={GAME_MODES.RANDOM}>Random</option>
-        </select>
-      {/if}
-      
-      <!-- Game Control Button -->
-      <button 
-        class="header-btn game-btn" 
-        class:active={isGameActive || gameFlowState.isActive}
-        on:click={toggleGame}
-        disabled={!isWebcamActive}
-      >
-        {#if isFlowMode}
-          {gameFlowState.isActive ? '⏹️ Stop games' : '🎮 Play games'}
-        {:else}
-          {isGameActive ? '⏹️ Stop Game' : '🎮 Start Game'}
-        {/if}
-        {#if (isGameActive || gameFlowState.isActive) && gameScore > 0}
-          <span class="score-badge">{gameScore}</span>
-        {/if}
-      </button>
-      
-      <!-- Flow Status Display -->
-      {#if isFlowMode && gameFlowState.isActive}
-        <div class="flow-status">
-          {#if gameFlowState.phase === 'playing'}
-            <span class="flow-game">Playing: {gameFlowService && gameFlowState.currentGame ? gameFlowService.getGameDisplayName(gameFlowState.currentGame) : ''}</span>
-            {#if gameFlowState.currentGame === GAME_MODES.RANDOM && randomGameTimeRemaining > 0}
-              <span class="random-timer">Time: {randomGameTimeRemaining}s</span>
-            {/if}
-          {:else if gameFlowState.phase === 'delay'}
-            <span class="flow-delay">Next in: {gameFlowService?.formatDelayTime(gameFlowState.delayRemaining) || ''}</span>
-          {:else if gameFlowState.phase === 'completed'}
-            <span class="flow-complete">✅ All Games Complete!</span>
-          {/if}
-        </div>
-      {/if}
-      <button class="header-btn visualization-toggle-btn" on:click={toggleVisualizationMode}>
-        {visualizationMode === 'basic' ? '🎭 Advanced' : '📐 Basic'}
-      </button>
-      <button class="header-btn settings-btn" on:click={openSettings}>
-        ⚙️ Settings
-      </button>
-    </div>
-  </header>
+	<!-- Header -->
+	<header class="app-header">
+		<h1>Play2Move</h1>
+		<div class="header-buttons">
+			<button class="header-btn" class:active={isWebcamActive} on:click={toggleWebcam}>
+				{isWebcamActive ? '📹 Stop Camera' : '📷 Start Camera'}
+			</button>
+			<!-- Mode Toggle Switch -->
+			<div class="toggle-switch" class:disabled={isGameActive || gameFlowState.isActive}>
+				<button
+					class="toggle-option"
+					class:active={isFlowMode}
+					on:click={() => (isFlowMode = true)}
+					disabled={isGameActive || gameFlowState.isActive}
+				>
+					Default
+				</button>
+				<button
+					class="toggle-option"
+					class:active={!isFlowMode}
+					on:click={() => (isFlowMode = false)}
+					disabled={isGameActive || gameFlowState.isActive}
+				>
+					Manual
+				</button>
+			</div>
 
-  <!-- Main Content Area -->
-  <main class="main-content">
-    <!-- Fullscreen Canvas -->
-    <section class="canvas-section">
-      <ThreeJSCanvas 
-        width={canvasSettings.width}
-        height={canvasSettings.height}
-        poseData={currentPoseData}
-        gameActive={isGameActive}
-        gameMode={currentGameMode}
-        gameModeProgress={gameModeProgress}
-        gameFlowState={gameFlowState}
-        visualizationMode={visualizationMode}
-        on:update={handleCanvasUpdate}
-        on:gameDataUpdate={handleGameDataUpdate}
-        on:gameStarted={handleGameStarted}
-        on:scoreUpdate={handleScoreUpdate}
-        on:gameEnded={handleGameEnded}
-        on:targetChanged={handleTargetChanged}
-        on:targetDataUpdate={handleTargetDataUpdate}
-      />
-    </section>
+			<!-- Recording Button (only in manual mode) -->
+			{#if !isFlowMode}
+				<button
+					class="header-btn record-btn"
+					class:recording={isRecording}
+					on:click={toggleRecording}
+					disabled={!isWebcamActive}
+				>
+					{isRecording ? '⏹️ Stop Recording' : '🔴 Record Data'}
+				</button>
+			{/if}
 
-    <!-- Side Panel -->
-    <aside class="side-panel">
-      <!-- Webcam Feed -->
-      <section class="webcam-section">
-        {#if isWebcamActive}
-          <WebcamPose 
-            width={webcamWidth}
-            height={webcamHeight}
-            gameActive={isGameActive}
-            gameScore={gameScore}
-            currentTargetType={currentTargetType}
-            scoreBreakdown={scoreBreakdown}
-            participantInfo={participantInfo as { participantId: string; age: null; height: null }}
-            gameMode={currentGameMode}
-            gameModeProgress={gameModeProgress}
-            on:poseUpdate={handlePoseUpdate}
-            on:streamReady={handleStreamReady}
-            on:qrCodeDetected={handleQRCodeDetected}
-            on:participantIdChange={handleParticipantIdChange}
-          />
-        {:else}
-          <div class="webcam-inactive">
-            <div class="camera-icon">📷</div>
-            <p>Camera Inactive</p>
-            <small>Use the camera button in the header to start</small>
-          </div>
-        {/if}
-      </section>
-    </aside>
-  </main>
+			<!-- Game Mode Selector (only in manual mode) -->
+			{#if !isFlowMode}
+				<select
+					class="header-select"
+					bind:value={currentGameMode}
+					on:change={(e) => changeGameMode((e.target as HTMLSelectElement).value as GameMode)}
+					disabled={isGameActive}
+				>
+					<option value={GAME_MODES.HIPS_SWAY}>Hips</option>
+					<option value={GAME_MODES.HANDS_FIXED}>Hands</option>
+					<option value={GAME_MODES.HEAD_FIXED}>Head</option>
+					<option value={GAME_MODES.RANDOM}>Random</option>
+				</select>
+			{/if}
 
-  <!-- Settings Modal/Popup -->
-  {#if showSettings}
-    <SettingsModal 
-      {userSettings}
-      {canvasSettings}
-      on:close={closeSettings}
-      on:save={saveSettings}
-    />
-  {/if}
+			<!-- Game Control Button -->
+			<button
+				class="header-btn game-btn"
+				class:active={isGameActive || gameFlowState.isActive}
+				on:click={toggleGame}
+				disabled={!isWebcamActive}
+			>
+				{#if isFlowMode}
+					{gameFlowState.isActive ? '⏹️ Stop games' : '🎮 Play games'}
+				{:else}
+					{isGameActive ? '⏹️ Stop Game' : '🎮 Start Game'}
+				{/if}
+				{#if (isGameActive || gameFlowState.isActive) && gameScore > 0}
+					<span class="score-badge">{gameScore}</span>
+				{/if}
+			</button>
+
+			<!-- Flow Status Display -->
+			{#if isFlowMode && gameFlowState.isActive}
+				<div class="flow-status">
+					{#if gameFlowState.phase === 'playing'}
+						<span class="flow-game"
+							>Playing: {gameFlowService && gameFlowState.currentGame
+								? gameFlowService.getGameDisplayName(gameFlowState.currentGame)
+								: ''}</span
+						>
+						{#if gameFlowState.currentGame === GAME_MODES.RANDOM && randomGameTimeRemaining > 0}
+							<span class="random-timer">Time: {randomGameTimeRemaining}s</span>
+						{/if}
+					{:else if gameFlowState.phase === 'delay'}
+						<span class="flow-delay"
+							>Next in: {gameFlowService?.formatDelayTime(gameFlowState.delayRemaining) || ''}</span
+						>
+					{:else if gameFlowState.phase === 'completed'}
+						<span class="flow-complete">✅ All Games Complete!</span>
+					{/if}
+				</div>
+			{/if}
+			<button class="header-btn visualization-toggle-btn" on:click={toggleVisualizationMode}>
+				{visualizationMode === 'basic' ? '🎭 Advanced' : '📐 Basic'}
+			</button>
+			<button class="header-btn settings-btn" on:click={openSettings}> ⚙️ Settings </button>
+		</div>
+	</header>
+
+	<!-- Main Content Area -->
+	<main class="main-content">
+		<!-- Fullscreen Canvas -->
+		<section class="canvas-section">
+			<ThreeJSCanvas
+				width={canvasSettings.width}
+				height={canvasSettings.height}
+				poseData={currentPoseData}
+				gameActive={isGameActive}
+				gameMode={currentGameMode}
+				{gameModeProgress}
+				{gameFlowState}
+				{visualizationMode}
+				on:update={handleCanvasUpdate}
+				on:gameDataUpdate={handleGameDataUpdate}
+				on:gameStarted={handleGameStarted}
+				on:scoreUpdate={handleScoreUpdate}
+				on:gameEnded={handleGameEnded}
+				on:targetChanged={handleTargetChanged}
+				on:targetDataUpdate={handleTargetDataUpdate}
+			/>
+		</section>
+
+		<!-- Side Panel -->
+		<aside class="side-panel">
+			<!-- Webcam Feed -->
+			<section class="webcam-section">
+				{#if isWebcamActive}
+					<WebcamPose
+						width={webcamWidth}
+						height={webcamHeight}
+						gameActive={isGameActive}
+						{gameScore}
+						{currentTargetType}
+						{scoreBreakdown}
+						participantInfo={participantInfo as { participantId: string; age: null; height: null }}
+						gameMode={currentGameMode}
+						{gameModeProgress}
+						on:poseUpdate={handlePoseUpdate}
+						on:streamReady={handleStreamReady}
+						on:qrCodeDetected={handleQRCodeDetected}
+						on:participantIdChange={handleParticipantIdChange}
+					/>
+				{:else}
+					<div class="webcam-inactive">
+						<div class="camera-icon">📷</div>
+						<p>Camera Inactive</p>
+						<small>Use the camera button in the header to start</small>
+					</div>
+				{/if}
+			</section>
+		</aside>
+	</main>
+
+	<!-- Settings Modal/Popup -->
+	{#if showSettings}
+		<SettingsModal
+			{userSettings}
+			{canvasSettings}
+			on:close={closeSettings}
+			on:save={saveSettings}
+		/>
+	{/if}
 </div>
 
 <style>
-  .app-container {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-    color: white;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
+	.app-container {
+		min-height: 100vh;
+		background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+		color: white;
+		font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	}
 
-  .app-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 2rem;
-    background: rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    height: 80px;
-    box-sizing: border-box;
-  }
+	.app-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 1rem 2rem;
+		background: rgba(0, 0, 0, 0.3);
+		backdrop-filter: blur(10px);
+		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		z-index: 1000;
+		height: 80px;
+		box-sizing: border-box;
+	}
 
-  .app-header h1 {
-    margin: 0;
-    font-size: 1.5rem;
-    font-weight: 600;
-    background: linear-gradient(45deg, #00ff88, #00ccff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
+	.app-header h1 {
+		margin: 0;
+		font-size: 1.5rem;
+		font-weight: 600;
+		background: linear-gradient(45deg, #00ff88, #00ccff);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+	}
 
-  .header-buttons {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-  }
+	.header-buttons {
+		display: flex;
+		gap: 1rem;
+		align-items: center;
+	}
 
-  .header-btn {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 0.9rem;
-  }
+	.header-btn {
+		background: rgba(255, 255, 255, 0.1);
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		color: white;
+		padding: 0.5rem 1rem;
+		border-radius: 6px;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		font-size: 0.9rem;
+	}
 
-  .header-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-1px);
-  }
+	.header-btn:hover {
+		background: rgba(255, 255, 255, 0.2);
+		transform: translateY(-1px);
+	}
 
-  .header-select {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 0.9rem;
-    min-width: 150px;
-  }
+	.header-select {
+		background: rgba(255, 255, 255, 0.1);
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		color: white;
+		padding: 0.5rem 1rem;
+		border-radius: 6px;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		font-size: 0.9rem;
+		min-width: 150px;
+	}
 
-  .header-select:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-1px);
-  }
+	.header-select:hover:not(:disabled) {
+		background: rgba(255, 255, 255, 0.2);
+		transform: translateY(-1px);
+	}
 
-  .header-select:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+	.header-select:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
 
-  .header-select option {
-    background: #1a1a1a;
-    color: white;
-  }
+	.header-select option {
+		background: #1a1a1a;
+		color: white;
+	}
 
-  .header-btn.active {
-    background: rgba(0, 255, 136, 0.2);
-    border-color: rgba(0, 255, 136, 0.5);
-    color: #00ff88;
-  }
+	.header-btn.active {
+		background: rgba(0, 255, 136, 0.2);
+		border-color: rgba(0, 255, 136, 0.5);
+		color: #00ff88;
+	}
 
-  .game-btn {
-    background: rgba(255, 136, 0, 0.2);
-    border-color: rgba(255, 136, 0, 0.5);
-    color: #ff8800;
-  }
+	.game-btn {
+		background: rgba(255, 136, 0, 0.2);
+		border-color: rgba(255, 136, 0, 0.5);
+		color: #ff8800;
+	}
 
-  .game-btn:hover {
-    background: rgba(255, 136, 0, 0.3);
-  }
+	.game-btn:hover {
+		background: rgba(255, 136, 0, 0.3);
+	}
 
-  .game-btn.active {
-    background: rgba(255, 136, 0, 0.4);
-    box-shadow: 0 0 10px rgba(255, 136, 0, 0.5);
-    animation: pulse-orange 1s infinite;
-  }
+	.game-btn.active {
+		background: rgba(255, 136, 0, 0.4);
+		box-shadow: 0 0 10px rgba(255, 136, 0, 0.5);
+		animation: pulse-orange 1s infinite;
+	}
 
-  .game-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-  }
+	.game-btn:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+		transform: none;
+	}
 
-  /* Toggle Switch Styles */
-  .toggle-switch {
-    display: flex;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 6px;
-    overflow: hidden;
-    transition: all 0.2s ease;
-  }
+	/* Toggle Switch Styles */
+	.toggle-switch {
+		display: flex;
+		background: rgba(255, 255, 255, 0.1);
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		border-radius: 6px;
+		overflow: hidden;
+		transition: all 0.2s ease;
+	}
 
-  .toggle-switch.disabled {
-    opacity: 0.5;
-    pointer-events: none;
-  }
+	.toggle-switch.disabled {
+		opacity: 0.5;
+		pointer-events: none;
+	}
 
-  .toggle-option {
-    background: transparent;
-    border: none;
-    color: rgba(255, 255, 255, 0.7);
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 0.9rem;
-    border-radius: 0;
-    position: relative;
-  }
+	.toggle-option {
+		background: transparent;
+		border: none;
+		color: rgba(255, 255, 255, 0.7);
+		padding: 0.5rem 1rem;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		font-size: 0.9rem;
+		border-radius: 0;
+		position: relative;
+	}
 
-  .toggle-option:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.1);
-  }
+	.toggle-option:hover:not(:disabled) {
+		background: rgba(255, 255, 255, 0.1);
+	}
 
-  .toggle-option.active {
-    background: rgba(0, 255, 136, 0.2);
-    color: #00ff88;
-    font-weight: 600;
-  }
+	.toggle-option.active {
+		background: rgba(0, 255, 136, 0.2);
+		color: #00ff88;
+		font-weight: 600;
+	}
 
-  .toggle-option:disabled {
-    cursor: not-allowed;
-  }
+	.toggle-option:disabled {
+		cursor: not-allowed;
+	}
 
-  .toggle-option:first-child {
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
-  }
+	.toggle-option:first-child {
+		border-right: 1px solid rgba(255, 255, 255, 0.1);
+	}
 
-  .score-badge {
-    background: rgba(255, 255, 255, 0.9);
-    color: #ff8800;
-    border-radius: 10px;
-    padding: 2px 6px;
-    font-size: 0.7rem;
-    font-weight: bold;
-    margin-left: 0.5rem;
-  }
-  
-  
-  .flow-status {
-    display: flex;
-    align-items: center;
-    padding: 0.5rem;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 6px;
-    font-size: 0.9rem;
-    font-weight: 500;
-  }
-  
-  .flow-game {
-    color: #00ff88;
-  }
-  
-  .flow-delay {
-    color: #ff8800;
-  }
-  
-  .flow-complete {
-    color: #00ff88;
-  }
-  
-  .random-timer {
-    color: #ff4444;
-    margin-left: 1rem;
-    font-weight: bold;
-  }
+	.score-badge {
+		background: rgba(255, 255, 255, 0.9);
+		color: #ff8800;
+		border-radius: 10px;
+		padding: 2px 6px;
+		font-size: 0.7rem;
+		font-weight: bold;
+		margin-left: 0.5rem;
+	}
 
-  @keyframes pulse-orange {
-    0%, 100% { box-shadow: 0 0 5px rgba(255, 136, 0, 0.3); }
-    50% { box-shadow: 0 0 15px rgba(255, 136, 0, 0.7); }
-  }
+	.flow-status {
+		display: flex;
+		align-items: center;
+		padding: 0.5rem;
+		background: rgba(0, 0, 0, 0.3);
+		border-radius: 6px;
+		font-size: 0.9rem;
+		font-weight: 500;
+	}
 
-  .record-btn {
-    background: rgba(255, 68, 68, 0.2);
-    border-color: rgba(255, 68, 68, 0.5);
-    color: #ff4444;
-  }
+	.flow-game {
+		color: #00ff88;
+	}
 
-  .record-btn:hover {
-    background: rgba(255, 68, 68, 0.3);
-  }
+	.flow-delay {
+		color: #ff8800;
+	}
 
-  .record-btn.recording {
-    background: rgba(255, 68, 68, 0.4);
-    box-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
-    animation: pulse-red 1s infinite;
-  }
+	.flow-complete {
+		color: #00ff88;
+	}
 
-  .record-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-  }
+	.random-timer {
+		color: #ff4444;
+		margin-left: 1rem;
+		font-weight: bold;
+	}
 
-  @keyframes pulse-red {
-    0%, 100% { box-shadow: 0 0 5px rgba(255, 68, 68, 0.3); }
-    50% { box-shadow: 0 0 15px rgba(255, 68, 68, 0.7); }
-  }
+	@keyframes pulse-orange {
+		0%,
+		100% {
+			box-shadow: 0 0 5px rgba(255, 136, 0, 0.3);
+		}
+		50% {
+			box-shadow: 0 0 15px rgba(255, 136, 0, 0.7);
+		}
+	}
 
-  .main-content {
-    display: grid;
-    grid-template-columns: 1fr 350px;
-    gap: 0;
-    padding-top: 80px; /* Account for fixed header */
-    min-height: calc(100vh - 80px);
-    overflow: hidden;
-  }
+	.record-btn {
+		background: rgba(255, 68, 68, 0.2);
+		border-color: rgba(255, 68, 68, 0.5);
+		color: #ff4444;
+	}
 
-  .canvas-section {
-    position: relative;
-    background: #000;
-  }
+	.record-btn:hover {
+		background: rgba(255, 68, 68, 0.3);
+	}
 
-  .side-panel {
-    background: rgba(0, 0, 0, 0.3);
-    border-left: 1px solid rgba(255, 255, 255, 0.1);
-    display: flex;
-    flex-direction: column;
-  }
+	.record-btn.recording {
+		background: rgba(255, 68, 68, 0.4);
+		box-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+		animation: pulse-red 1s infinite;
+	}
 
-  .webcam-section {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem;
-  }
+	.record-btn:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+		transform: none;
+	}
 
-  .webcam-inactive {
-    text-align: center;
-    color: #888;
-    padding: 2rem;
-  }
+	@keyframes pulse-red {
+		0%,
+		100% {
+			box-shadow: 0 0 5px rgba(255, 68, 68, 0.3);
+		}
+		50% {
+			box-shadow: 0 0 15px rgba(255, 68, 68, 0.7);
+		}
+	}
 
-  .camera-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-  }
+	.main-content {
+		display: grid;
+		grid-template-columns: 1fr 350px;
+		gap: 0;
+		padding-top: 80px; /* Account for fixed header */
+		min-height: calc(100vh - 80px);
+		overflow: hidden;
+	}
 
-  .webcam-inactive p {
-    margin: 0.5rem 0;
-    font-weight: 500;
-    font-size: 1.1rem;
-  }
+	.canvas-section {
+		position: relative;
+		background: #000;
+	}
 
-  .webcam-inactive small {
-    font-size: 0.9rem;
-    opacity: 0.7;
-  }
+	.side-panel {
+		background: rgba(0, 0, 0, 0.3);
+		border-left: 1px solid rgba(255, 255, 255, 0.1);
+		display: flex;
+		flex-direction: column;
+	}
 
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .app-header {
-      padding: 0.5rem 1rem;
-    }
+	.webcam-section {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0.5rem;
+	}
 
-    .app-header h1 {
-      font-size: 1.2rem;
-    }
+	.webcam-inactive {
+		text-align: center;
+		color: #888;
+		padding: 2rem;
+	}
 
-    .header-buttons {
-      gap: 0.5rem;
-    }
+	.camera-icon {
+		font-size: 3rem;
+		margin-bottom: 1rem;
+	}
 
-    .header-btn {
-      padding: 0.4rem 0.8rem;
-      font-size: 0.8rem;
-    }
+	.webcam-inactive p {
+		margin: 0.5rem 0;
+		font-weight: 500;
+		font-size: 1.1rem;
+	}
 
-    .main-content {
-      grid-template-columns: 1fr;
-      grid-template-rows: 1fr auto;
-    }
+	.webcam-inactive small {
+		font-size: 0.9rem;
+		opacity: 0.7;
+	}
 
-    .side-panel {
-      border-left: none;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      max-height: 300px;
-    }
+	/* Responsive Design */
+	@media (max-width: 768px) {
+		.app-header {
+			padding: 0.5rem 1rem;
+		}
 
-    .webcam-section {
-      padding: 0.5rem;
-    }
-  }
+		.app-header h1 {
+			font-size: 1.2rem;
+		}
+
+		.header-buttons {
+			gap: 0.5rem;
+		}
+
+		.header-btn {
+			padding: 0.4rem 0.8rem;
+			font-size: 0.8rem;
+		}
+
+		.main-content {
+			grid-template-columns: 1fr;
+			grid-template-rows: 1fr auto;
+		}
+
+		.side-panel {
+			border-left: none;
+			border-top: 1px solid rgba(255, 255, 255, 0.1);
+			max-height: 300px;
+		}
+
+		.webcam-section {
+			padding: 0.5rem;
+		}
+	}
 </style>

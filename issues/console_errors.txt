@@ -1,149 +1,179 @@
-Loading failed for the <script> with source “https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5.1675471629/holistic_solution_simd_wasm_bin.js”. localhost:5173:1:1
-Loading failed for the <script> with source “https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5.1675471629/holistic_solution_packed_assets_loader.js”. localhost:5173:1:1
-Error sending frame to MediaPipe: TypeError: n is not a function
-    node_modules @mediapipe_holistic.js:2075
-    ua holistic.js:14
-    node_modules NextJS
-    node_modules @mediapipe_holistic.js:236
-    wa holistic.js:15
-    D holistic.js:16
-    node_modules @mediapipe_holistic.js:2074
-    promise callback*node_modules/ @mediapipe_holistic.js:2072
-    ua holistic.js:14
-    node_modules NextJS
-    b holistic.js:15
-    promise callback*f holistic.js:15
-    node_modules @mediapipe_holistic.js:236
-    wa holistic.js:15
-    D holistic.js:16
-    Sd holistic.js:76
-    node_modules @mediapipe_holistic.js:2221
-    ua holistic.js:14
-    node_modules NextJS
-    node_modules @mediapipe_holistic.js:236
-    wa holistic.js:15
-    D holistic.js:16
-    node_modules @mediapipe_holistic.js:2220
-    node_modules @mediapipe_holistic.js:2252
-    ua holistic.js:14
-    node_modules NextJS
-    b holistic.js:15
-    promise callback*f holistic.js:15
-    node_modules @mediapipe_holistic.js:236
-    wa holistic.js:15
-    D holistic.js:16
-    node_modules @mediapipe_holistic.js:2245
-    node_modules @mediapipe_holistic.js:2557
-    ua holistic.js:14
-    node_modules NextJS
-    node_modules @mediapipe_holistic.js:236
-    wa holistic.js:15
-    D holistic.js:16
-    node_modules @mediapipe_holistic.js:2556
-    onFrame WebcamPose.svelte:272
-    Q camera_utils.js:22
-WebcamPose.svelte:462:17
-Error sending frame to MediaPipe: TypeError: NetworkError when attempting to fetch resource. WebcamPose.svelte:462:17
-Network error detected, temporarily pausing MediaPipe processing client.js:2976:15
-Error sending frame to MediaPipe: TypeError: NetworkError when attempting to fetch resource. WebcamPose.svelte:462:17
-Network error detected, temporarily pausing MediaPipe processing client.js:2976:15
-Error sending frame to MediaPipe: TypeError: NetworkError when attempting to fetch resource. WebcamPose.svelte:462:17
-Network error detected, temporarily pausing MediaPipe processing client.js:2976:15
-Error sending frame to MediaPipe: TypeError: NetworkError when attempting to fetch resource. WebcamPose.svelte:462:17
-Network error detected, temporarily pausing MediaPipe processing client.js:2976:15
-Error sending frame to MediaPipe: TypeError: NetworkError when attempting to fetch resource. WebcamPose.svelte:462:17
-Network error detected, temporarily pausing MediaPipe processing client.js:2976:15
 [vite] connecting... client:789:9
 [vite] connected. client:912:15
 AudioContext initialized, state: suspended audioService.ts:11:15
-Component mounted WebcamPose.svelte:639:11
-Elements are ready, checking if we should start webcam... WebcamPose.svelte:645:13
-Starting webcam... (attempt 1/3) WebcamPose.svelte:554:12
-Camera stream obtained +page.svelte:1009:23
-Video playing +page.svelte:1009:23
-Video stream ready for recording +page.svelte:1009:23
-Webcam working! +page.svelte:1009:23
-Trying MediaPipe initialization with CDN: https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5.1675471629 +page.svelte:1009:23
-MediaPipe modules loaded +page.svelte:1009:23
-Holistic configured and onResults callback set +page.svelte:1009:23
-MediaPipe pose tracking active with CDN: https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5.1675471629 +page.svelte:1009:23
+2D Canvas context initialized successfully: true ThreeJSCanvas.svelte:143:11
+Component mounted WebcamPose.svelte:636:11
+Elements are ready, checking if we should start webcam... WebcamPose.svelte:642:13
+Starting webcam... (attempt 1/3) WebcamPose.svelte:551:12
+Camera stream obtained +page.svelte:1005:23
+Video playing +page.svelte:1005:23
+Video stream ready for recording +page.svelte:1005:23
+Webcam working! +page.svelte:1005:23
+Trying MediaPipe initialization with CDN: https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5.1675471629 +page.svelte:1005:23
+MediaPipe modules loaded +page.svelte:1005:23
+Holistic configured and onResults callback set +page.svelte:1005:23
+MediaPipe pose tracking active with CDN: https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5.1675471629 +page.svelte:1005:23
 WebGL warning: drawArraysInstanced: Tex image TEXTURE_2D level 0 is incurring lazy initialization. 8
-Replaced material for mesh: GEO-phil_arms +page.svelte:1009:23
-Replaced material for mesh: GEO-phil_body +page.svelte:1009:23
-Replaced material for mesh: Data_GEO-phil_eyeL +page.svelte:1009:23
-Replaced material for mesh: Data_GEO-phil_eyeL_1 +page.svelte:1009:23
-Replaced material for mesh: Data_GEO-phil_eyeR +page.svelte:1009:23
-Replaced material for mesh: Data_GEO-phil_eyeR_1 +page.svelte:1009:23
-Replaced material for mesh: GEO-phil_eyebrows +page.svelte:1009:23
-Replaced material for mesh: GEO-phil_eyedotL +page.svelte:1009:23
-Replaced material for mesh: GEO-phil_eyedotR +page.svelte:1009:23
-Replaced material for mesh: Data_GEO-phil_flippers +page.svelte:1009:23
-Replaced material for mesh: Data_GEO-phil_flippers_1 +page.svelte:1009:23
-Replaced material for mesh: Data_GEO-phil_flippers_2 +page.svelte:1009:23
-Replaced material for mesh: Data_GEO-phil_flippers_3 +page.svelte:1009:23
-Replaced material for mesh: Data_GEO-phil_flippers_4 +page.svelte:1009:23
-Replaced material for mesh: Data_GEO-phil_flippers_5 +page.svelte:1009:23
-Replaced material for mesh: Data_GEO-phil_flippers_6 +page.svelte:1009:23
-Replaced material for mesh: Data_GEO-phil_flippers_7 +page.svelte:1009:23
-Replaced material for mesh: GEO-phil_hairgroom_base +page.svelte:1009:23
-Replaced material for mesh: GEO-phil_hairmesh +page.svelte:1009:23
-Replaced material for mesh: GEO-phil_hairscalp +page.svelte:1009:23
-Replaced material for mesh: Data_GEO-phil_head +page.svelte:1009:23
-Replaced material for mesh: Data_GEO-phil_head_1 +page.svelte:1009:23
-Replaced material for mesh: GEO-phil_head_rig_helper +page.svelte:1009:23
-Replaced material for mesh: GEO-phil_pants +page.svelte:1009:23
-Replaced material for mesh: GEO-phil_shirt +page.svelte:1009:23
-Replaced material for mesh: GEO-phil_shorts_fray +page.svelte:1009:23
-Replaced material for mesh: GEO-phil_teeth_bot_deformer +page.svelte:1009:23
-Replaced material for mesh: Mesh +page.svelte:1009:23
-Replaced material for mesh: Mesh_1 +page.svelte:1009:23
-Replaced material for mesh: Mesh_2 +page.svelte:1009:23
-Replaced material for mesh: Mesh_3 +page.svelte:1009:23
-Replaced material for mesh: Mesh_4 +page.svelte:1009:23
-Replaced material for mesh: Mesh_5 +page.svelte:1009:23
-Replaced material for mesh: GEO-phil_teeth_top_deformer +page.svelte:1009:23
-Replaced material for mesh: Mesh_6 +page.svelte:1009:23
-Replaced material for mesh: Mesh_7 +page.svelte:1009:23
-Replaced material for mesh: GEO-phil_tongue +page.svelte:1009:23
-Replaced material for mesh: Data_GEO-phil_body_weight_paint_helper +page.svelte:1009:23
-Replaced material for mesh: Data_GEO-phil_body_weight_paint_helper_1 +page.svelte:1009:23
-Replaced material for mesh: Data_GEO-phil_body_weight_paint_helper_2 +page.svelte:1009:23
-Replaced material for mesh: GEO-phil_hair_distressedscalp +page.svelte:1009:23
-Character model loaded successfully with simplified materials +page.svelte:1009:23
-Available bones: 
-Array(1737) [ "Spine", "ThighL", "KneeL", "FootL", "ToesL", "HeelPivotL", "Track_Shoe_FrontL", "Pants_Correct", "Track_KneeL", "Thigh_FrontL", … ]
-+page.svelte:1009:23
-THREE.WebGLProgram: Shader Error 0 - VALIDATE_STATUS false
-
-Material Name: 
-Material Type: MeshLambertMaterial
-
-Program Info Log: Must have a compiled vertex shader attached:
-SHADER_INFO_LOG:
-ERROR: 0:395: 'uv5' : undeclared identifier
-ERROR: 0:395: 'constructor' : not enough data provided for construction
-VERTEX
-
-ERROR: 0:395: 'uv5' : undeclared identifier
-ERROR: 0:395: 'constructor' : not enough data provided for construction
-
-  390: void main() {
-  391: #if defined( USE_UV ) || defined( USE_ANISOTROPY )
-  392: 	vUv = vec3( uv, 1 ).xy;
-  393: #endif
-  394: #ifdef USE_MAP
-> 395: 	vMapUv = ( mapTransform * vec3( MAP_UV, 1 ) ).xy;
-  396: #endif
-  397: #ifdef USE_ALPHAMAP
-  398: 	vAlphaMapUv = ( alphaMapTransform * vec3( ALPHAMAP_UV, 1 ) ).xy;
-  399: #endif
-  400: #ifdef USE_LIGHTMAP
-  401: 	vLightMapUv = ( lightMapTransform * vec3( LIGHTMAP_UV, 1 ) ).xy;
-chunk-QUPN4MTR.js:34958:19
-WebGL warning: linkProgram: Must have a compiled vertex shader attached:
-SHADER_INFO_LOG:
-ERROR: 0:395: 'uv5' : undeclared identifier
-ERROR: 0:395: 'constructor' : not enough data provided for construction
-
-WebGL warning: useProgram: Program must be linked successfully. 31
-After reporting 32, no further warnings will be reported for this WebGL context.
+Switching to advanced 3D mode... +page.svelte:1005:23
+Initializing Three.js... +page.svelte:1005:23
+THREE.WebGLRenderer: Error creating WebGL context. chunk-QUPN4MTR.js:39641:15
+Failed to create WebGL renderer with advanced options: Error: Error creating WebGL context.
+    WebGLRenderer three.module.js:15101
+    initializeThreeJS ThreeJSCanvas.svelte:156
+    switchVisualizationMode ThreeJSCanvas.svelte:115
+    ThreeJSCanvas ThreeJSCanvas.svelte:72
+    untrack runtime.js:883
+    effect effects.js:290
+    update_reaction runtime.js:279
+    update_effect runtime.js:446
+    process_effects runtime.js:644
+    flush_queued_root_effects runtime.js:540
+    schedule_effect runtime.js:597
+    mark_reactions sources.js:287
+    mark_reactions sources.js:285
+    mark_reactions sources.js:285
+    internal_set sources.js:183
+    set sources.js:144
+    toggleVisualizationMode +page.svelte:191
+    target_handler events.js:61
+    without_reactive_context shared.js:44
+    target_handler events.js:60
+    create_event events.js:79
+    event events.js:113
+    _page +page.svelte:1488
+    effect2 hmr.js:47
+    update_reaction runtime.js:279
+    update_effect runtime.js:446
+    create_effect effects.js:118
+    branch effects.js:367
+    wrapper hmr.js:38
+    update_reaction runtime.js:279
+    update_effect runtime.js:446
+    create_effect effects.js:118
+    block effects.js:359
+    wrapper hmr.js:28
+    children root.svelte:91
+    effect2 svelte-component.js:36
+    update_reaction runtime.js:279
+    update_effect runtime.js:446
+    create_effect effects.js:118
+    branch effects.js:367
+    component svelte-component.js:36
+    update_reaction runtime.js:279
+    update_effect runtime.js:446
+    create_effect effects.js:118
+    block effects.js:359
+    component svelte-component.js:27
+    children root.svelte:89
+    snippet2 snippet.js:69
+    snippet_effect snippet.js:49
+    update_reaction runtime.js:279
+ThreeJSCanvas.svelte:174:13
+THREE.WebGLRenderer: Error creating WebGL context. chunk-QUPN4MTR.js:39641:15
+Failed to create WebGL renderer even with minimal options: Error: Error creating WebGL context.
+    WebGLRenderer three.module.js:15101
+    initializeThreeJS ThreeJSCanvas.svelte:174
+    switchVisualizationMode ThreeJSCanvas.svelte:115
+    ThreeJSCanvas ThreeJSCanvas.svelte:72
+    untrack runtime.js:883
+    effect effects.js:290
+    update_reaction runtime.js:279
+    update_effect runtime.js:446
+    process_effects runtime.js:644
+    flush_queued_root_effects runtime.js:540
+    schedule_effect runtime.js:597
+    mark_reactions sources.js:287
+    mark_reactions sources.js:285
+    mark_reactions sources.js:285
+    internal_set sources.js:183
+    set sources.js:144
+    toggleVisualizationMode +page.svelte:191
+    target_handler events.js:61
+    without_reactive_context shared.js:44
+    target_handler events.js:60
+    create_event events.js:79
+    event events.js:113
+    _page +page.svelte:1488
+    effect2 hmr.js:47
+    update_reaction runtime.js:279
+    update_effect runtime.js:446
+    create_effect effects.js:118
+    branch effects.js:367
+    wrapper hmr.js:38
+    update_reaction runtime.js:279
+    update_effect runtime.js:446
+    create_effect effects.js:118
+    block effects.js:359
+    wrapper hmr.js:28
+    children root.svelte:91
+    effect2 svelte-component.js:36
+    update_reaction runtime.js:279
+    update_effect runtime.js:446
+    create_effect effects.js:118
+    branch effects.js:367
+    component svelte-component.js:36
+    update_reaction runtime.js:279
+    update_effect runtime.js:446
+    create_effect effects.js:118
+    block effects.js:359
+    component svelte-component.js:27
+    children root.svelte:89
+    snippet2 snippet.js:69
+    snippet_effect snippet.js:49
+    update_reaction runtime.js:279
+ThreeJSCanvas.svelte:186:14
+Error initializing Three.js: Error: Error creating WebGL context.
+    WebGLRenderer three.module.js:15101
+    initializeThreeJS ThreeJSCanvas.svelte:174
+    switchVisualizationMode ThreeJSCanvas.svelte:115
+    ThreeJSCanvas ThreeJSCanvas.svelte:72
+    untrack runtime.js:883
+    effect effects.js:290
+    update_reaction runtime.js:279
+    update_effect runtime.js:446
+    process_effects runtime.js:644
+    flush_queued_root_effects runtime.js:540
+    schedule_effect runtime.js:597
+    mark_reactions sources.js:287
+    mark_reactions sources.js:285
+    mark_reactions sources.js:285
+    internal_set sources.js:183
+    set sources.js:144
+    toggleVisualizationMode +page.svelte:191
+    target_handler events.js:61
+    without_reactive_context shared.js:44
+    target_handler events.js:60
+    create_event events.js:79
+    event events.js:113
+    _page +page.svelte:1488
+    effect2 hmr.js:47
+    update_reaction runtime.js:279
+    update_effect runtime.js:446
+    create_effect effects.js:118
+    branch effects.js:367
+    wrapper hmr.js:38
+    update_reaction runtime.js:279
+    update_effect runtime.js:446
+    create_effect effects.js:118
+    block effects.js:359
+    wrapper hmr.js:28
+    children root.svelte:91
+    effect2 svelte-component.js:36
+    update_reaction runtime.js:279
+    update_effect runtime.js:446
+    create_effect effects.js:118
+    branch effects.js:367
+    component svelte-component.js:36
+    update_reaction runtime.js:279
+    update_effect runtime.js:446
+    create_effect effects.js:118
+    block effects.js:359
+    component svelte-component.js:27
+    children root.svelte:89
+    snippet2 snippet.js:69
+    snippet_effect snippet.js:49
+    update_reaction runtime.js:279
+ThreeJSCanvas.svelte:348:12
+Falling back to basic 2D visualization mode client.js:2976:15
+2D Canvas context initialized successfully: true +page.svelte:1005:23
+Advanced 3D mode is not supported on this device. Using basic 2D visualization instead. client.js:2976:15

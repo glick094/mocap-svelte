@@ -17,7 +17,7 @@ npm run preview
 # Run unit tests
 npm run test:unit
 
-# Run end-to-end tests  
+# Run end-to-end tests
 npm run test:e2e
 
 # Run all tests
@@ -46,6 +46,7 @@ This is a SvelteKit-based motion capture application that combines real-time pos
 ### MediaPipe Integration
 
 MediaPipe components are dynamically imported to avoid SSR issues:
+
 ```javascript
 // Always use dynamic imports for MediaPipe
 const { Holistic, Camera } = await import('@mediapipe/holistic');
