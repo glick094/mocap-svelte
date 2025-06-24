@@ -28,7 +28,9 @@
   let camera: THREE.PerspectiveCamera;
   let renderer: THREE.WebGLRenderer | null = null;
   let mannequin: any = null;
+  let mannequinFABRIK: any = null;
   let isThreeJSInitialized = false;
+  let useFABRIK = false;
 
   // Component props
   export let width: number = 800;
@@ -308,8 +310,9 @@
       if (!mannequin) {
         // Try to import and create mannequin model (without createStage)
         try {
-          // Import the local mannequin Male class
+          // Import the local mannequin Male class and FABRIK
           const { Male } = await import('$lib/mannequin/bodies/Male.js');
+          const { MannequinFABRIK } = await import('$lib/fabrik/MannequinFABRIK.js');
           
           // Set up the global scene that mannequin.js expects
           (globalThis as any).scene = scene;
@@ -317,6 +320,15 @@
           // Create the male mannequin
           mannequin = new Male(1.75);
           console.log('Local mannequin model loaded successfully');
+          
+          // Initialize FABRIK system
+          try {
+            mannequinFABRIK = new MannequinFABRIK(mannequin);
+            console.log('FABRIK system initialized successfully');
+          } catch (fabrikError) {
+            console.warn('FABRIK initialization failed:', fabrikError);
+            mannequinFABRIK = null;
+          }
           
               // Mannequin is automatically added to the global scene
           
@@ -391,8 +403,14 @@
     const isRealMannequin = mannequin.head && typeof mannequin.head.turn !== 'undefined';
 
     if (isRealMannequin) {
-      // Use mannequin.js articulated body part rotations
-      updateMannequinJSPose(landmarks, POSE_LANDMARKS);
+      // Choose between FABRIK IK and traditional pose mapping
+      if (useFABRIK && mannequinFABRIK) {
+        // Use FABRIK inverse kinematics
+        mannequinFABRIK.solveFromPoseData(data);
+      } else {
+        // Use traditional mannequin.js articulated body part rotations
+        updateMannequinJSPose(landmarks, POSE_LANDMARKS);
+      }
     } else {
       // Use our stick figure position updates
       updateStickFigurePose(landmarks, POSE_LANDMARKS);
@@ -437,7 +455,7 @@
           z: (leftShoulder.z + rightShoulder.z) / 2
         };
         
-        const headTurn = (nose.x - shoulderCenter.x) * 20; // Reduced sensitivity
+        const headTurn = (nose.x - shoulderCenter.x) * 80; // Reduced sensitivity
         mannequin.head.turn = Math.max(-30, Math.min(30, headTurn));
         
         const headNod = (shoulderCenter.y - nose.y) * 20; // Reduced sensitivity
@@ -454,13 +472,16 @@
         const wrist = landmarks[POSE_LANDMARKS.LEFT_WRIST];
         
         const armRaise = (shoulder.y - elbow.y) * 120; // Slightly increased sensitivity for arms
-        mannequin.l_arm.raise = Math.max(-90, Math.min(180, armRaise));
+        // mannequin.l_arm.raise = Math.max(-90, Math.min(180, armRaise));
+        mannequin.r_arm.raise = Math.max(-90, Math.min(180, armRaise));
         
         const armStraddle = (elbow.x - shoulder.x) * 100;
-        mannequin.l_arm.straddle = Math.max(-90, Math.min(90, armStraddle));
+        // mannequin.l_arm.straddle = Math.max(-90, Math.min(90, armStraddle));
+        mannequin.r_arm.straddle = Math.max(-90, Math.min(90, armStraddle));
         
         const elbowBend = 180 - calculateAngle3D(shoulder, elbow, wrist);
-        mannequin.l_elbow.bend = Math.max(0, Math.min(160, elbowBend));
+        // mannequin.l_elbow.bend = Math.max(0, Math.min(160, elbowBend));
+        mannequin.r_elbow.bend = Math.max(0, Math.min(160, elbowBend));
       }
 
       if (isValidLandmark(landmarks[POSE_LANDMARKS.RIGHT_SHOULDER]) && 
@@ -472,13 +493,16 @@
         const wrist = landmarks[POSE_LANDMARKS.RIGHT_WRIST];
         
         const armRaise = (shoulder.y - elbow.y) * 120;
-        mannequin.r_arm.raise = Math.max(-90, Math.min(180, armRaise));
+        // mannequin.r_arm.raise = Math.max(-90, Math.min(180, armRaise));
+        mannequin.l_arm.raise = Math.max(-90, Math.min(180, armRaise));
         
         const armStraddle = (shoulder.x - elbow.x) * 100;
-        mannequin.r_arm.straddle = Math.max(-90, Math.min(90, armStraddle));
+        // mannequin.r_arm.straddle = Math.max(-90, Math.min(90, armStraddle));
+        mannequin.l_arm.straddle = Math.max(-90, Math.min(90, armStraddle));
         
         const elbowBend = 180 - calculateAngle3D(shoulder, elbow, wrist);
-        mannequin.r_elbow.bend = Math.max(0, Math.min(160, elbowBend));
+        // mannequin.r_elbow.bend = Math.max(0, Math.min(160, elbowBend));
+        mannequin.l_elbow.bend = Math.max(0, Math.min(160, elbowBend));
       }
 
       // Update leg rotations (with validation and reduced sensitivity)
@@ -490,7 +514,7 @@
         const knee = landmarks[POSE_LANDMARKS.LEFT_KNEE];
         const ankle = landmarks[POSE_LANDMARKS.LEFT_ANKLE];
         
-        const legRaise = (hip.y - knee.y) * 30; // Much reduced sensitivity
+        const legRaise = (hip.y - knee.y) * 30; // sensitivity
         mannequin.l_leg.raise = Math.max(-30, Math.min(60, legRaise)); // Reduced range
         
         const kneeBend = calculateAngle3D(hip, knee, ankle);
@@ -505,7 +529,7 @@
         const knee = landmarks[POSE_LANDMARKS.RIGHT_KNEE];
         const ankle = landmarks[POSE_LANDMARKS.RIGHT_ANKLE];
         
-        const legRaise = (hip.y - knee.y) * 30; // Much reduced sensitivity
+        const legRaise = (hip.y - knee.y) * 30; // sensitivity
         mannequin.r_leg.raise = Math.max(-30, Math.min(60, legRaise)); // Reduced range
         
         const kneeBend = calculateAngle3D(hip, knee, ankle);
@@ -1749,6 +1773,11 @@
   function toggleVisualizationMode() {
     visualizationMode = visualizationMode === 'basic' ? 'advanced' : 'basic';
   }
+
+  function toggleFABRIK() {
+    useFABRIK = !useFABRIK;
+    console.log('FABRIK IK:', useFABRIK ? 'enabled' : 'disabled');
+  }
 </script>
 
 <div class="canvas-container">
@@ -1767,6 +1796,16 @@
   >
     {visualizationMode === 'basic' ? '3D' : '2D'}
   </button>
+  
+  {#if visualizationMode === 'advanced' && mannequinFABRIK}
+    <button 
+      class="fabrik-toggle-btn"
+      on:click={toggleFABRIK}
+      title="Toggle FABRIK inverse kinematics"
+    >
+      {useFABRIK ? 'IK ON' : 'IK OFF'}
+    </button>
+  {/if}
 </div>
 
 <style>
@@ -1814,6 +1853,32 @@
   }
 
   .mode-toggle-btn:active {
+    transform: scale(0.95);
+  }
+
+  .fabrik-toggle-btn {
+    position: absolute;
+    top: 80px;
+    right: 20px;
+    padding: 12px 20px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: 2px solid #FF9800;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+  }
+
+  .fabrik-toggle-btn:hover {
+    background: rgba(255, 152, 0, 0.2);
+    border-color: #FFB74D;
+    transform: scale(1.05);
+  }
+
+  .fabrik-toggle-btn:active {
     transform: scale(0.95);
   }
 </style>
