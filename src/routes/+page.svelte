@@ -1053,7 +1053,7 @@
     <h1>Play2Move</h1>
     <div class="header-buttons">
       <button class="header-btn" class:active={isWebcamActive} on:click={toggleWebcam}>
-        {isWebcamActive ? '📹 Stop Camera' : '📷 Start Camera'}
+        {isWebcamActive ? '📵 Stop Camera' : '📷 Start Camera'}
       </button>
       <!-- Mode Toggle Switch -->
       <div class="toggle-switch" class:disabled={isGameActive || gameFlowState.isActive}>
@@ -1110,9 +1110,9 @@
         disabled={!isWebcamActive}
       >
         {#if isFlowMode}
-          {gameFlowState.isActive ? '⏹️ Stop games' : '🎮 Play games'}
+          {gameFlowState.isActive ? '⏹️ Stop games' : '▶️ Play games'}
         {:else}
-          {isGameActive ? '⏹️ Stop Game' : '🎮 Start Game'}
+          {isGameActive ? '⏹️ Stop Game' : '▶️ Start Game'}
         {/if}
         {#if (isGameActive || gameFlowState.isActive) && gameScore > 0}
           <span class="score-badge">{gameScore}</span>

@@ -14,7 +14,7 @@ export const userSettings = writable({
   theme: 'dark',
   quality: 'high',
   enableAudio: true,
-  fps: 15,
+  fps: 30,
   enableSmoothing: true,
   filterWindowSize: 5
 });
@@ -27,7 +27,8 @@ export const webcamSettings = writable({
 
 export const canvasSettings = writable({
   width: typeof window !== 'undefined' ? window.innerWidth : 1920,
-  height: typeof window !== 'undefined' ? window.innerHeight - 80 : 1000
+  // height: typeof window !== 'undefined' ? window.innerHeight - 80 : 1000
+  height: typeof window !== 'undefined' ? window.innerHeight - 80 : 1080
 });
 
 // Participant Information
