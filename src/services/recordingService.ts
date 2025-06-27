@@ -233,25 +233,35 @@ export function downloadFile(content, filename, mimeType = 'text/csv') {
 }
 
 /**
- * Start video recording
+ * Start video recording with enhanced metadata
  */
-export async function startVideoRecording(videoStream, participantId, timestamp) {
+export async function startVideoRecording(videoStream: MediaStream, participantId: string, timestamp: string, startUnixTime: number | null = null) {
   if (!videoStream) {
     throw new Error('Video stream not available for recording');
   }
 
-  const videoFilename = `${participantId}_${timestamp}_video.webm`;
-  let videoChunks = [];
+  const actualStartTime = startUnixTime || Date.now();
+  const videoFilename = `webcam_${participantId}_${timestamp}_start${actualStartTime}.webm`;
+  let videoChunks: Blob[] = [];
 
   // Try different MIME types for better compatibility
-  let options = { mimeType: 'video/webm;codecs=vp9' };
-  if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-    options = { mimeType: 'video/webm;codecs=vp8' };
+  let options: MediaRecorderOptions = { 
+    mimeType: 'video/webm;codecs=vp9',
+    videoBitsPerSecond: 2500000 // 2.5 Mbps for good quality
+  };
+  if (!MediaRecorder.isTypeSupported(options.mimeType!)) {
+    options = { 
+      mimeType: 'video/webm;codecs=vp8',
+      videoBitsPerSecond: 2500000 
+    };
   }
-  if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-    options = { mimeType: 'video/webm' };
+  if (!MediaRecorder.isTypeSupported(options.mimeType!)) {
+    options = { 
+      mimeType: 'video/webm',
+      videoBitsPerSecond: 2500000 
+    };
   }
-  if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+  if (!MediaRecorder.isTypeSupported(options.mimeType!)) {
     options = {};
   }
 
@@ -265,23 +275,38 @@ export async function startVideoRecording(videoStream, participantId, timestamp)
 
   mediaRecorder.onstop = () => {
     const videoBlob = new Blob(videoChunks, { type: 'video/webm' });
+    
+    // Log metadata for debugging
+    console.log('Video recording metadata:', {
+      participant: participantId,
+      startUnixTime: actualStartTime,
+      filename: videoFilename,
+      fileSize: videoBlob.size,
+      duration: `${Date.now() - actualStartTime}ms`
+    });
+    
     downloadFile(videoBlob, videoFilename, 'video/webm');
     videoChunks = [];
   };
 
-  mediaRecorder.start();
-  console.log('Video recording started:', videoFilename);
+  mediaRecorder.start(100); // Collect data every 100ms
+  console.log('Video recording started:', videoFilename, {
+    startTime: actualStartTime,
+    mimeType: options.mimeType,
+    videoBitsPerSecond: options.videoBitsPerSecond
+  });
   
   return {
     mediaRecorder,
-    filename: videoFilename
+    filename: videoFilename,
+    startTime: actualStartTime
   };
 }
 
 /**
  * Stop video recording
  */
-export function stopVideoRecording(mediaRecorder) {
+export function stopVideoRecording(mediaRecorder: MediaRecorder) {
   if (mediaRecorder && mediaRecorder.state !== 'inactive') {
     mediaRecorder.stop();
     console.log('Video recording stopped');

@@ -5,6 +5,7 @@
 
 import { get } from 'svelte/store';
 import { gameSettings } from '../stores/gameStore.js';
+import { gameColors } from '../stores/themeStore.js';
 
 // Game mode constants
 export const GAME_MODES = {
@@ -27,7 +28,7 @@ export const TARGET_TYPES = {
 
 export type TargetType = typeof TARGET_TYPES[keyof typeof TARGET_TYPES];
 
-// Target colors
+// Target colors - Default fallback colors (will be overridden by theme colors in most cases)
 export const TARGET_COLORS = {
   [TARGET_TYPES.HAND]: '#ff0000', // Red for hands
   [TARGET_TYPES.HEAD]: '#00ff88', // Green for head
@@ -35,6 +36,18 @@ export const TARGET_COLORS = {
   [TARGET_TYPES.HIP_LEFT]: '#ffff00', // Yellow for left hip region
   [TARGET_TYPES.HIP_RIGHT]: '#ffff00' // Yellow for right hip region
 } as const;
+
+// Function to get current theme colors
+function getThemeColors() {
+  const colors = get(gameColors);
+  return {
+    [TARGET_TYPES.HAND]: colors.hand,
+    [TARGET_TYPES.HEAD]: colors.head,
+    [TARGET_TYPES.KNEE]: colors.knee,
+    [TARGET_TYPES.HIP_LEFT]: colors.hipLeft,
+    [TARGET_TYPES.HIP_RIGHT]: colors.hipRight
+  };
+}
 
 // Type definitions
 export interface Target {
@@ -361,7 +374,7 @@ export class GameService {
         type: TARGET_TYPES.HAND,
         x: x,
         y: y,
-        color: TARGET_COLORS[TARGET_TYPES.HAND]
+        color: getThemeColors()[TARGET_TYPES.HAND]
       });
     }
     return targets;
@@ -437,7 +450,7 @@ export class GameService {
         type: TARGET_TYPES.HEAD,
         x: x,
         y: y,
-        color: TARGET_COLORS[TARGET_TYPES.HEAD]
+        color: getThemeColors()[TARGET_TYPES.HEAD]
       });
     }
     return targets;
@@ -505,12 +518,15 @@ export class GameService {
     const targetId = `random_${targetType}_${this.formatTrialNumber(this.randomTargetCounter)}`;
     this.randomTargetCounter++;
 
+    // Use theme colors for better consistency
+    const themeColors = getThemeColors();
+
     return {
       id: targetId,
       type: targetType,
       x: x,
       y: y,
-      color: TARGET_COLORS[targetType]
+      color: themeColors[targetType]
     };
   }
 
@@ -1652,7 +1668,7 @@ export class GameService {
       type: targetSide === 'left' ? TARGET_TYPES.HIP_LEFT : TARGET_TYPES.HIP_RIGHT,
       x: targetRegion.x + targetRegion.width / 2,
       y: targetRegion.y + targetRegion.height / 2,
-      color: targetSide === 'left' ? TARGET_COLORS[TARGET_TYPES.HIP_LEFT] : TARGET_COLORS[TARGET_TYPES.HIP_RIGHT]
+      color: targetSide === 'left' ? getThemeColors()[TARGET_TYPES.HIP_LEFT] : getThemeColors()[TARGET_TYPES.HIP_RIGHT]
     };
     
     this.state.currentTargetData = {

@@ -476,8 +476,13 @@
   
   function handleStreamReady(event: CustomEvent) {
     // Store video stream for recording
-    videoStream = event.detail.stream;
-    console.log('Video stream ready for recording');
+    videoStream = event.detail;
+    console.log('Video stream ready for recording:', {
+      streamId: videoStream?.id,
+      active: videoStream?.active,
+      videoTracks: videoStream?.getVideoTracks().length,
+      audioTracks: videoStream?.getAudioTracks().length
+    });
   }
 
   function handlePoseUpdate(event: CustomEvent) {
@@ -679,11 +684,27 @@
   // Recording functions
   function startLocalVideoRecording(participant: string, timestamp: string): boolean {
     if (!videoStream) {
-      console.warn('Video stream not available for recording');
+      console.warn('Video stream not available for recording. Stream state:', {
+        hasStream: !!videoStream,
+        isActive: videoStream?.active,
+        trackCount: videoStream?.getTracks().length
+      });
+      return false;
+    }
+
+    // Check if stream is still active
+    if (!videoStream.active) {
+      console.warn('Video stream is not active');
       return false;
     }
 
     try {
+      // Stop any existing recording first
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        console.log('Stopping existing MediaRecorder before starting new one');
+        mediaRecorder.stop();
+      }
+
       // Reset video chunks
       videoChunks = [];
       
@@ -703,37 +724,77 @@
         options = {};
       }
 
+      console.log('Creating MediaRecorder with options:', options);
       mediaRecorder = new MediaRecorder(videoStream, options);
       
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
           videoChunks.push(event.data);
+          console.log(`Video chunk received: ${event.data.size} bytes (total chunks: ${videoChunks.length})`);
         }
       };
       
       mediaRecorder.onstop = () => {
+        console.log(`Video recording stopped. Total chunks: ${videoChunks.length}`);
+        
+        if (videoChunks.length === 0) {
+          console.warn('No video chunks recorded!');
+          return;
+        }
+
         // Create video file when recording stops
         const videoBlob = new Blob(videoChunks, { type: 'video/webm' });
-        const videoUrl = URL.createObjectURL(videoBlob);
-        const a = document.createElement('a');
-        a.href = videoUrl;
-        a.download = `webcam_recording_${participant}_${timestamp}.webm`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(videoUrl);
         
-        console.log('Video recording saved:', a.download);
+        // Create a filename with metadata
+        const startUnixTime = recordingSession?.startTime || Date.now();
+        const filename = `webcam_${participant}_${timestamp}_start${startUnixTime}.webm`;
+        
+        // Download the video file
+        downloadVideoWithMetadata(videoBlob, filename, participant, startUnixTime);
+        
+        console.log('Video recording saved:', filename);
+      };
+
+      mediaRecorder.onerror = (event) => {
+        console.error('MediaRecorder error:', event);
+      };
+
+      mediaRecorder.onstart = () => {
+        console.log('MediaRecorder started successfully');
       };
       
       mediaRecorder.start(100); // Collect data every 100ms
-      console.log('Video recording started');
+      console.log(`Video recording started for participant ${participant} at unix time ${recordingSession?.startTime}`, {
+        state: mediaRecorder.state,
+        mimeType: options.mimeType
+      });
       return true;
       
     } catch (error) {
       console.error('Failed to start video recording:', error);
       return false;
     }
+  }
+
+  function downloadVideoWithMetadata(videoBlob: Blob, filename: string, participant: string, startUnixTime: number) {
+    // For now, download the video directly since adding metadata to WebM is complex
+    // The metadata is encoded in the filename: webcam_PARTICIPANT_TIMESTAMP_startUNIXTIME.webm
+    const videoUrl = URL.createObjectURL(videoBlob);
+    const a = document.createElement('a');
+    a.href = videoUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(videoUrl);
+    
+    // Log metadata for reference
+    console.log('Video metadata:', {
+      participant,
+      startUnixTime,
+      filename,
+      fileSize: videoBlob.size
+    });
   }
 
   function stopLocalVideoRecording() {
@@ -773,6 +834,14 @@
 
     // Start video recording
     const videoStarted = startLocalVideoRecording(participant, timestamp);
+    if (!videoStarted) {
+      console.warn('Video recording failed to start - stream may not be ready yet');
+      // Try again after a short delay
+      setTimeout(() => {
+        const retryVideoStarted = startLocalVideoRecording(participant, timestamp);
+        console.log('Video recording retry result:', retryVideoStarted);
+      }, 1000);
+    }
 
     console.log('Started recording pose data:', recordingSession!.filename);
     console.log('Video recording started:', videoStarted);
