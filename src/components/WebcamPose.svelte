@@ -687,7 +687,7 @@
   <!-- Control buttons -->
   {#if !isLoading && !error}
     <div class="controls">
-      <div class="toggle-group">
+      <!-- <div class="toggle-group">
         <label class="toggle-btn" class:active={showPose}>
           <input type="checkbox" bind:checked={showPose} />
           <span class="btn-content">
@@ -711,7 +711,7 @@
             Face
           </span>
         </label>
-      </div>
+      </div> -->
       
       <!-- Game Score Display -->
       {#if gameActive}
