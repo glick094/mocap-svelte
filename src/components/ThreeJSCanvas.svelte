@@ -1413,8 +1413,11 @@
   function drawHandLandmarks(landmarks: any, hand: any): void {
     if (!landmarks || landmarks.length === 0 || !ctx) return;
     
-    // Use specific colors for left and right hands that match the target colors
-    const color = hand === 'left' ? $poseColors.leftHand : $poseColors.rightHand;
+    // In random mode, both hands should be red to match the target color
+    // In other modes, use specific colors for left and right hands
+    const color = gameMode === GAME_MODES.RANDOM 
+      ? $gameColors.hand 
+      : (hand === 'left' ? $poseColors.leftHand : $poseColors.rightHand);
     
     // Hand connections for better visualization
     const handConnections = [
