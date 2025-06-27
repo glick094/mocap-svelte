@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
 
   // Type definitions
   interface UserSettings {
@@ -102,6 +102,14 @@
       closeModal();
     }
   }
+
+  // Initialize with responsive defaults on mount
+  onMount(() => {
+    if (typeof window !== 'undefined') {
+      localCanvasSettings = getDefaultCanvasSize();
+    }
+  });
+
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
@@ -254,19 +262,6 @@
           </div>
         </section>
 
-        <!-- Advanced Settings -->
-        <section class="settings-section">
-          <h3>🔧 Advanced</h3>
-          <div class="advanced-info">
-            <p>Additional settings will be available in future updates:</p>
-            <ul>
-              <li>Custom keybindings</li>
-              <li>Export preferences</li>
-              <li>Cloud sync options</li>
-              <li>Plugin management</li>
-            </ul>
-          </div>
-        </section>
       </form>
     </div>
 
@@ -447,23 +442,6 @@
     font-size: 12px;
   }
 
-  .advanced-info {
-    color: #888;
-    font-size: 0.85rem;
-  }
-
-  .advanced-info p {
-    margin: 0 0 0.5rem 0;
-  }
-
-  .advanced-info ul {
-    margin: 0;
-    padding-left: 1.5rem;
-  }
-
-  .advanced-info li {
-    margin-bottom: 0.25rem;
-  }
 
   .modal-footer {
     display: flex;
@@ -584,5 +562,44 @@
     color: white;
     border-radius: 4px;
     font-size: 0.8rem;
+  }
+
+  /* FPS Slider Styles */
+  .fps-slider {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.2);
+    outline: none;
+    margin: 0.5rem 0;
+    cursor: pointer;
+  }
+
+  .fps-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #00ff88;
+    cursor: pointer;
+    border: 2px solid #fff;
+  }
+
+  .fps-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #00ff88;
+    cursor: pointer;
+    border: 2px solid #fff;
+  }
+
+  .fps-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: -0.5rem;
+    margin-bottom: 0.5rem;
   }
 </style>

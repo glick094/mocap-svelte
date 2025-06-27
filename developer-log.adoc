@@ -117,4 +117,10 @@ yellow boxes with bubbles that move
 == Analysis Next Steps: 
 
 * [ ] add signal to noise ratio
-* [ ] 
+
+* [ ] add 15-20 seconds for wait time
+* [ ] edit the descriptions - for what we want - have descriptions in shareable doc
+
+* [ ] give them a box to do the task in 
+
+* [ ] layout center line and trigger crosshairs 
