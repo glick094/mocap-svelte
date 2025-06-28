@@ -5,7 +5,7 @@ export default {
     adapter: adapter({
       pages: 'build',
       assets: 'build',
-      fallback: undefined, //'index.html', // Add fallback for SPA
+      fallback: 'index.html', // Enable SPA mode for GitHub Pages
       precompress: false,
       strict: false // Allow missing routes
     }),
