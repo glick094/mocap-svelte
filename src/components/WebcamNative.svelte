@@ -11,6 +11,7 @@
   export let height = 1080;
   export let gameActive = false;
   export let gameMode: GameMode = GAME_MODES.RANDOM;
+  export let showPoseOverlay = true; // Control pose visibility
   export let participantInfo: { participantId: string; age: number | null; height: number | null } = {
     participantId: '',
     age: null,
@@ -217,6 +218,12 @@
       // Update target data
       const targetData = gameService.getCurrentTargetData();
       dispatch('targetDataUpdate', targetData);
+      
+      // Check if game is completed
+      if (gameService.isGameComplete()) {
+        console.log('Game completed, dispatching gameEnded event');
+        dispatch('gameEnded', { finalScore: gameScore, scoreBreakdown });
+      }
     }
   }
 
@@ -262,6 +269,7 @@
     if (!currentPoseData?.poseLandmarks || !overlayCtx) return;
 
     const landmarks = currentPoseData.poseLandmarks;
+    overlayCtx.globalAlpha = showPoseOverlay ? 1.0 : 0.0;
     overlayCtx.fillStyle = $poseColors.torso;
     overlayCtx.strokeStyle = $poseColors.torso;
     overlayCtx.lineWidth = 2;
@@ -306,10 +314,14 @@
         overlayCtx.fill();
       }
     });
+    
+    overlayCtx.globalAlpha = 1.0; // Reset alpha
   }
 
   function drawHandLandmarks() {
     if (!overlayCtx) return;
+    
+    overlayCtx.globalAlpha = showPoseOverlay ? 1.0 : 0.0;
 
     // Draw left hand
     if (currentPoseData?.leftHandLandmarks) {
@@ -322,6 +334,8 @@
       const color = gameMode === GAME_MODES.RANDOM ? $gameColors.hand : $poseColors.rightHand;
       drawHand(currentPoseData.rightHandLandmarks, color);
     }
+    
+    overlayCtx.globalAlpha = 1.0; // Reset alpha
   }
 
   function drawHand(landmarks: any[], color: string) {
@@ -376,6 +390,7 @@
     if (!currentPoseData?.faceLandmarks || !overlayCtx) return;
 
     const landmarks = currentPoseData.faceLandmarks;
+    overlayCtx.globalAlpha = showPoseOverlay ? 1.0 : 0.0;
     
     // Key facial feature landmarks (matching ThreeJSCanvas implementation)
     const facialFeatures = {
@@ -449,10 +464,14 @@
     
     // Draw connections for key features
     drawFaceConnections(landmarks, facialFeatures);
+    
+    overlayCtx.globalAlpha = 1.0; // Reset alpha
   }
 
   function drawFaceConnections(landmarks: any[], facialFeatures: any) {
     if (!overlayCtx) return;
+    
+    overlayCtx.globalAlpha = showPoseOverlay ? 1.0 : 0.0;
     
     // Define connections for key facial features
     const connections = {
@@ -509,6 +528,8 @@
         }
       });
     });
+    
+    overlayCtx.globalAlpha = 1.0; // Reset alpha
   }
 
   function drawGameElements() {

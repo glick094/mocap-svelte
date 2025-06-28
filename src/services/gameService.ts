@@ -193,6 +193,9 @@ export interface GameState {
   currentFixedTargetIndex: number;
   currentTarget: Target | null;
   activeExplosions: TargetExplosion[];
+  // Target timeout state
+  targetStartTime: number | null;
+  targetTimeoutMs: number; // 10 seconds = 10000ms
 }
 
 export interface PoseData {
@@ -212,6 +215,7 @@ export class GameService {
   private height: number;
   private gameMode: GameMode;
   private randomTargetCounter: number = 1; // Counter for random targets
+  private timeoutTimer: number | null = null;
 
   // Helper function for zero-padded trial numbers
   private formatTrialNumber(num: number): string {
@@ -289,7 +293,10 @@ export class GameService {
       fixedTargets: [],
       currentFixedTargetIndex: 0,
       currentTarget: null,
-      activeExplosions: []
+      activeExplosions: [],
+      // Target timeout state
+      targetStartTime: null,
+      targetTimeoutMs: 10000 // 10 seconds
     };
   }
 
@@ -606,6 +613,7 @@ export class GameService {
       default:
         this.state.currentTarget = this.generateRandomTarget();
         this.createTargetData();
+        this.startTargetTimeout();
         break;
     }
   }
@@ -616,6 +624,7 @@ export class GameService {
       this.state.targetHistory.push({ ...this.state.currentTargetData });
     }
     
+    this.clearTargetTimeout();
     this.state.currentTarget = null;
     this.state.currentTargetData = null;
   }
@@ -1299,6 +1308,9 @@ export class GameService {
       
       const hitTargetType = this.state.currentTarget.type;
       
+      // Clear timeout since target was hit
+      this.clearTargetTimeout();
+      
       setTimeout(() => {
         if (this.state.currentTargetData) {
           this.state.currentTargetData.status = 'end';
@@ -1307,6 +1319,7 @@ export class GameService {
         
         this.state.currentTarget = this.generateRandomTarget();
         this.createTargetData();
+        this.startTargetTimeout();
       }, 100);
       
       return { hit: true, hitType: hitTargetType, hitKeypoint: hitKeypoint || undefined, playSound: true };
@@ -1958,5 +1971,43 @@ export class GameService {
       
       return explosion.particles.length > 0;
     });
+  }
+
+  // Target timeout management
+  private startTargetTimeout(): void {
+    // Only start timeout for random targets
+    if (this.gameMode !== GAME_MODES.RANDOM) return;
+    
+    this.clearTargetTimeout(); // Clear any existing timeout
+    this.state.targetStartTime = Date.now();
+    
+    this.timeoutTimer = setTimeout(() => {
+      // Target timed out, generate a new one
+      if (this.state.currentTargetData) {
+        this.state.currentTargetData.status = 'end';
+        this.state.targetHistory.push({ ...this.state.currentTargetData });
+      }
+      
+      this.state.currentTarget = this.generateRandomTarget();
+      this.createTargetData();
+      this.startTargetTimeout(); // Start timeout for the new target
+    }, this.state.targetTimeoutMs) as any;
+  }
+  
+  private clearTargetTimeout(): void {
+    if (this.timeoutTimer) {
+      clearTimeout(this.timeoutTimer);
+      this.timeoutTimer = null;
+    }
+    this.state.targetStartTime = null;
+  }
+  
+  // Get remaining time for current target (useful for UI display)
+  public getTargetTimeRemaining(): number {
+    if (!this.state.targetStartTime || this.gameMode !== GAME_MODES.RANDOM) return 0;
+    
+    const elapsed = Date.now() - this.state.targetStartTime;
+    const remaining = Math.max(0, this.state.targetTimeoutMs - elapsed);
+    return Math.ceil(remaining / 1000); // Return seconds remaining
   }
 }
