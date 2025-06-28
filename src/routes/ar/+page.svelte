@@ -79,6 +79,7 @@
   let gameScore = 0; // Current game score
   let currentTargetType: string | null = null; // Current target type for display
   let scoreBreakdown: ScoreBreakdown = { hand: 0, head: 0, knee: 0 }; // Score breakdown by body part
+  let isDataCollectionMode = true; // Toggle for data collection vs practice mode
   
   // Game flow state
   let gameFlowService: GameFlowService | null = null;
@@ -382,8 +383,8 @@
       initializeGameFlow();
     }
     
-    // Start overall pose data recording
-    if (!isRecording) {
+    // Start overall pose data recording if in data collection mode
+    if (!isRecording && isDataCollectionMode) {
       startPoseDataRecording();
     }
     
@@ -421,7 +422,7 @@
     gameFlowService = new GameFlowService({
       games: [GAME_MODES.HIPS_SWAY, GAME_MODES.HANDS_FIXED, GAME_MODES.HEAD_FIXED, GAME_MODES.RANDOM] as GameMode[],
       delayBetweenGames: 15000, // 15 seconds (countdown timer)
-      autoStartRecording: true
+      autoStartRecording: isDataCollectionMode
     });
     
     gameFlowService.setCallbacks({
@@ -431,8 +432,10 @@
         isGameActive = true;
         resetGameModeProgress();
         
-        // Start game-specific recording
-        startGameDataRecording(gameMode);
+        // Start game-specific recording if in data collection mode
+        if (isDataCollectionMode) {
+          startGameDataRecording(gameMode);
+        }
         
         // Start 1-minute timer for random mode
         if (gameMode === GAME_MODES.RANDOM) {
@@ -553,8 +556,8 @@
       // Update current pose data for visualization
       currentPoseData = processedPoseData;
 
-      // Record RAW data if recording is active (not smoothed)
-      if (isRecording && recordingSession) {
+      // Record RAW data if recording is active and in data collection mode (not smoothed)
+      if (isRecording && recordingSession && isDataCollectionMode) {
         const unixTimestamp = Date.now(); // Unix timestamp in milliseconds
         const preciseFrameTime = performance.now() - recordingSession.performanceStartTime; // High-precision relative time
         const csvRow = formatPoseDataForCSV(rawPoseData, unixTimestamp, preciseFrameTime); // Use raw data for recording
@@ -855,8 +858,8 @@
 
   function startRecording() {
     startPoseDataRecording();
-    if (!isFlowMode) {
-      // In manual mode, also start game data recording
+    if (!isFlowMode && isDataCollectionMode) {
+      // In manual mode and data collection mode, also start game data recording
       startGameDataRecording(currentGameMode);
     }
   }
@@ -1114,6 +1117,12 @@
       <a href="/" class="header-btn version-switch">
         🔄 Switch to Reality Version
       </a>
+      
+      <!-- Data Collection/Practice Mode Toggle -->
+      <button class="header-btn" class:active={isDataCollectionMode} on:click={() => isDataCollectionMode = !isDataCollectionMode}>
+        {isDataCollectionMode ? '📊 Collect Data' : '🏃 Practice'}
+      </button>
+      
       <!-- Mode Toggle Switch -->
       <div class="toggle-switch" class:disabled={isGameActive || gameFlowState.isActive}>
         <button 
@@ -1134,8 +1143,8 @@
         </button>
       </div>
       
-      <!-- Recording Button (only in manual mode) -->
-      {#if !isFlowMode}
+      <!-- Recording Button (only in manual mode and data collection mode) -->
+      {#if !isFlowMode && isDataCollectionMode}
         <button 
           class="header-btn record-btn" 
           class:recording={isRecording}

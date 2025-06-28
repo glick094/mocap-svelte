@@ -1,9 +1,11 @@
 <script lang="ts">
   import { onMount, createEventDispatcher } from 'svelte';
   import { get } from 'svelte/store';
-  import type { PoseResults } from '../services/mediaPipeService.js';
+  import type { PoseResults, MediaPipeConfig } from '../services/mediaPipeService.js';
+  import { initializeMediaPipe as initializeOptimizedMediaPipe, createOptimizedMediaPipeCamera } from '../services/mediaPipeService.js';
   import type { GameMode } from '../services/gameService.js';
   import { GameService, GAME_MODES } from '../services/gameService.js';
+  import type { GameFlowState } from '../services/gameFlowService.js';
   import { poseColors, gameColors, uiColors } from '../stores/themeStore.js';
 
   // Component props
@@ -12,6 +14,10 @@
   export let gameActive = false;
   export let gameMode: GameMode = GAME_MODES.RANDOM;
   export let showPoseOverlay = true; // Control pose visibility
+  export let gameFlowState: GameFlowState | null = null; // Game flow state for delay countdown
+  export let isCountdownActive = false; // Manual mode countdown state
+  export let countdownRemaining = 0; // Manual mode countdown time remaining
+  export let isDataCollectionMode = true; // Data collection vs practice mode
   export let participantInfo: { participantId: string; age: number | null; height: number | null } = {
     participantId: '',
     age: null,
@@ -48,6 +54,10 @@
   let holistic: any = null;
   let camera: any = null;
   let isMediaPipeLoaded = false;
+  let mediaPipeConfig: MediaPipeConfig;
+  
+  // Performance tracking
+  let processingStartTime = 0;
 
   // Game state
   let gameService: GameService | null = null;
@@ -130,49 +140,90 @@
 
   async function initializeMediaPipe() {
     try {
-      // Dynamic import to avoid SSR issues
-      const mediaPipeModule = await import('@mediapipe/holistic');
-      const cameraModule = await import('@mediapipe/camera_utils');
-
-      const { Holistic } = mediaPipeModule;
-      const { Camera } = cameraModule;
-
-      // Initialize Holistic
-      holistic = new Holistic({
-        locateFile: (file: string) => {
-          return `https://cdn.jsdelivr.net/npm/@mediapipe/holistic/${file}`;
+      // Create optimized MediaPipe configuration
+      mediaPipeConfig = {
+        width: width,
+        height: height,
+        downsampleFactor: 0.5, // Process at half resolution for better performance
+        useGPU: true, // Try GPU acceleration
+        modelComplexity: 0, // Start with lightweight model
+        enableOptimizations: true
+      };
+      
+      console.log('Initializing optimized MediaPipe with config:', mediaPipeConfig);
+      
+      // Use the optimized MediaPipe initialization
+      const mediaPipeResult = await initializeOptimizedMediaPipe(onPoseResults, mediaPipeConfig);
+      
+      if (mediaPipeResult) {
+        holistic = mediaPipeResult.holistic;
+        const { Camera } = mediaPipeResult;
+        
+        // Initialize optimized camera
+        if (videoElement) {
+          const createCameraFn = createOptimizedMediaPipeCamera(videoElement, holistic, mediaPipeConfig);
+          camera = await createCameraFn(Camera);
+          
+          camera.start();
+          isMediaPipeLoaded = true;
+          
+          console.log('MediaPipe initialization completed with optimizations');
         }
-      });
-
-      holistic.setOptions({
-        modelComplexity: 1,
-        smoothLandmarks: true,
-        enableSegmentation: false,
-        smoothSegmentation: true,
-        minDetectionConfidence: 0.5,
-        minTrackingConfidence: 0.5,
-        selfieMode: true // Enable selfie mode for automatic mirroring
-      });
-
-      holistic.onResults(onPoseResults);
-
-      // Initialize camera
-      if (videoElement) {
-        camera = new Camera(videoElement, {
-          onFrame: async () => {
-            if (holistic && videoElement) {
-              await holistic.send({ image: videoElement });
-            }
-          },
-          width: width,
-          height: height
-        });
-
-        camera.start();
-        isMediaPipeLoaded = true;
       }
     } catch (error) {
-      console.error('Error initializing MediaPipe:', error);
+      console.error('Error initializing optimized MediaPipe:', error);
+      
+      // Fallback to basic MediaPipe configuration
+      try {
+        console.log('Falling back to basic MediaPipe configuration');
+        await initializeBasicMediaPipe();
+      } catch (fallbackError) {
+        console.error('Fallback MediaPipe initialization also failed:', fallbackError);
+      }
+    }
+  }
+  
+  async function initializeBasicMediaPipe() {
+    // Dynamic import to avoid SSR issues
+    const mediaPipeModule = await import('@mediapipe/holistic');
+    const cameraModule = await import('@mediapipe/camera_utils');
+
+    const { Holistic } = mediaPipeModule;
+    const { Camera } = cameraModule;
+
+    // Initialize basic Holistic
+    holistic = new Holistic({
+      locateFile: (file: string) => {
+        return `https://cdn.jsdelivr.net/npm/@mediapipe/holistic/${file}`;
+      }
+    });
+
+    holistic.setOptions({
+      modelComplexity: 0, // Use lightweight model for fallback
+      smoothLandmarks: true,
+      enableSegmentation: false,
+      smoothSegmentation: false,
+      minDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.5,
+      selfieMode: true
+    });
+
+    holistic.onResults(onPoseResults);
+
+    // Initialize basic camera
+    if (videoElement) {
+      camera = new Camera(videoElement, {
+        onFrame: async () => {
+          if (holistic && videoElement) {
+            await holistic.send({ image: videoElement });
+          }
+        },
+        width: width,
+        height: height
+      });
+
+      camera.start();
+      isMediaPipeLoaded = true;
     }
   }
 
@@ -184,13 +235,22 @@
     currentPoseData = results;
     frameCount++;
     
-    // Calculate FPS
+    // Calculate FPS and processing time
     const now = performance.now();
+    const processingTime = processingStartTime > 0 ? now - processingStartTime : 0;
+    
     if (now - lastFpsTime >= 1000) {
       currentFps = Math.round((frameCount * 1000) / (now - lastFpsTime));
       frameCount = 0;
       lastFpsTime = now;
+      
+      // Log performance metrics
+      if (mediaPipeConfig?.enableOptimizations) {
+        console.log(`MediaPipe Performance: ${currentFps} FPS, Processing: ${processingTime.toFixed(1)}ms, Downsampling: ${mediaPipeConfig.downsampleFactor}x`);
+      }
     }
+    
+    processingStartTime = now; // Mark start of next processing cycle
 
     // Dispatch pose update
     dispatch('poseUpdate', results);
@@ -253,8 +313,10 @@
     // Draw face landmarks (from face model)
     drawFaceLandmarks();
 
-    // Draw game elements
-    if (gameActive && gameService) {
+    // Draw delay visuals or game elements
+    if ((gameFlowState && gameFlowState.phase === 'delay') || isCountdownActive) {
+      drawDelayVisuals();
+    } else if (gameActive && gameService) {
       drawGameElements();
       drawGameInstructions();
     }
@@ -565,7 +627,11 @@
       
       let emoji = '';
       if (currentTarget.type === 'hand') {
-        emoji = '✋';
+        emoji = '🖐️';
+      } else if (currentTarget.type === 'hand-left') {
+        emoji = '🖐️'; // Smiley face for head targets
+      } else if (currentTarget.type === 'hand-right') {
+        emoji = '🖐️'; // Smiley face for head targets
       } else if (currentTarget.type === 'head') {
         emoji = '😃'; // Smiley face for head targets
       } else if (currentTarget.type === 'knee') {
@@ -791,7 +857,7 @@
         overlayCtx.fillText('Touch either center cross to select primary hand', width / 2, 100);
       } else {
         const trialText = handsState.currentTrial === 1 ? 'Primary Hand Trial' : 'Secondary Hand Trial';
-        const handText = handsState.activeHand === 'left' ? 'Left Hand' : 'Right Hand';
+        const handText = handsState.activeHand === 'left' ? 'Right Hand' : 'Left Hand';
         overlayCtx.fillText(`${trialText}: ${handText}`, width / 2, 100);
       }
       
@@ -833,11 +899,179 @@
       overlayCtx.fillText(`ID: ${participantInfo.participantId}`, 10, 55);
     }
 
+    // Draw mode indicator
+    overlayCtx.font = '18px Arial';
+    overlayCtx.fillStyle = isDataCollectionMode ? '#00ff88' : '#ff8800';
+    overlayCtx.fillText(isDataCollectionMode ? '📊 Data Collection' : '🏃 Practice Mode', 10, 80);
+
     // Draw game score if active
     if (gameActive) {
       overlayCtx.font = '24px Arial';
-      overlayCtx.fillText(`Score: ${gameScore}`, 10, 90);
+      overlayCtx.fillStyle = '#ffffff';
+      overlayCtx.fillText(`Score: ${gameScore}`, 10, 110);
     }
+  }
+
+  function drawDelayVisuals() {
+    if (!overlayCtx) return;
+    
+    // Handle manual countdown mode
+    if (isCountdownActive) {
+      drawManualCountdown();
+      return;
+    }
+    
+    // Handle flow mode delay
+    if (!gameFlowState || gameFlowState.phase !== 'delay') return;
+    
+    // Get the next game mode (during delay, we want to show what's coming next)
+    const gameSequence = [GAME_MODES.HIPS_SWAY, GAME_MODES.HANDS_FIXED, GAME_MODES.HEAD_FIXED, GAME_MODES.RANDOM];
+    const nextGameIndex = gameFlowState.currentGameIndex + 1;
+    const nextGame = nextGameIndex < gameSequence.length ? gameSequence[nextGameIndex] : null;
+    
+    if (!nextGame) return; // No next game to show
+    
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const radius = Math.min(width, height) * 0.15; // 15% of smaller dimension
+    
+    // Calculate progress (0 to 1) - use the actual delay time from game flow state
+    const totalDelay = 15000; // 15 seconds
+    const progress = 1 - (gameFlowState.delayRemaining / totalDelay);
+    
+    overlayCtx.save();
+    
+    // Draw countdown circle timer
+    overlayCtx.globalAlpha = 0.8;
+    
+    // Background circle
+    overlayCtx.strokeStyle = '#333';
+    overlayCtx.lineWidth = 8;
+    overlayCtx.beginPath();
+    overlayCtx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+    overlayCtx.stroke();
+    
+    // Progress circle (counts down)
+    overlayCtx.strokeStyle = '#4CAF50';
+    overlayCtx.lineWidth = 8;
+    overlayCtx.lineCap = 'round';
+    overlayCtx.beginPath();
+    // Start from top (-π/2) and draw clockwise, but reverse progress for countdown
+    const endAngle = -Math.PI / 2 + (1 - progress) * 2 * Math.PI;
+    overlayCtx.arc(centerX, centerY, radius, -Math.PI / 2, endAngle);
+    overlayCtx.stroke();
+    
+    // Draw countdown number in center
+    const secondsRemaining = Math.ceil(gameFlowState.delayRemaining / 1000);
+    overlayCtx.fillStyle = '#ffffff';
+    overlayCtx.font = 'bold 64px Arial'; // Increased size
+    overlayCtx.textAlign = 'center';
+    overlayCtx.textBaseline = 'middle';
+    overlayCtx.fillText(secondsRemaining.toString(), centerX, centerY);
+    
+    // Draw next game mode text
+    const nextGameText = getGameDisplayName(nextGame);
+    overlayCtx.fillStyle = '#ffffff';
+    overlayCtx.font = 'bold 48px Arial';
+    overlayCtx.textAlign = 'center';
+    overlayCtx.fillText(`Next: ${nextGameText}`, centerX, centerY - radius - 100);
+    
+    // Draw task description
+    const taskDescription = getTaskDescription(nextGame);
+    overlayCtx.fillStyle = '#cccccc';
+    overlayCtx.font = '32px Arial';
+    overlayCtx.textAlign = 'center';
+    overlayCtx.fillText(taskDescription, centerX, centerY - radius - 50);
+    
+    overlayCtx.restore();
+  }
+
+  // Helper functions for game display names and descriptions
+  function getGameDisplayName(gameMode: GameMode): string {
+    switch (gameMode) {
+      case GAME_MODES.HIPS_SWAY:
+        return 'Hips';
+      case GAME_MODES.HANDS_FIXED:
+        return 'Hands';
+      case GAME_MODES.HEAD_FIXED:
+        return 'Head';
+      case GAME_MODES.RANDOM:
+        return 'Random';
+      default:
+        return gameMode;
+    }
+  }
+  
+  function getTaskDescription(gameMode: GameMode): string {
+    switch (gameMode) {
+      case GAME_MODES.HIPS_SWAY:
+        return 'Sway your hips left and right';
+      case GAME_MODES.HANDS_FIXED:
+        return 'Move your hands in a figure-8 pattern';
+      case GAME_MODES.HEAD_FIXED:
+        return 'Move your head in a circle';
+      case GAME_MODES.RANDOM:
+        return 'Hit the random targets';
+      default:
+        return 'Follow the on-screen instructions';
+    }
+  }
+
+  function drawManualCountdown() {
+    if (!overlayCtx) return;
+    
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const radius = Math.min(width, height) * 0.15; // 15% of smaller dimension
+    
+    // Calculate progress (0 to 1) for manual countdown
+    const totalDelay = 15000; // 15 seconds
+    const progress = 1 - (countdownRemaining * 1000 / totalDelay);
+    
+    overlayCtx.save();
+    
+    // Draw countdown circle timer
+    overlayCtx.globalAlpha = 0.8;
+    
+    // Background circle
+    overlayCtx.strokeStyle = '#333';
+    overlayCtx.lineWidth = 8;
+    overlayCtx.beginPath();
+    overlayCtx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+    overlayCtx.stroke();
+    
+    // Progress circle (counts down)
+    overlayCtx.strokeStyle = '#4CAF50';
+    overlayCtx.lineWidth = 8;
+    overlayCtx.lineCap = 'round';
+    overlayCtx.beginPath();
+    // Start from top (-π/2) and draw clockwise, but reverse progress for countdown
+    const endAngle = -Math.PI / 2 + (1 - progress) * 2 * Math.PI;
+    overlayCtx.arc(centerX, centerY, radius, -Math.PI / 2, endAngle);
+    overlayCtx.stroke();
+    
+    // Draw countdown number in center
+    const secondsRemaining = countdownRemaining;
+    overlayCtx.fillStyle = '#ffffff';
+    overlayCtx.font = 'bold 64px Arial'; // Increased size
+    overlayCtx.textAlign = 'center';
+    overlayCtx.textBaseline = 'middle';
+    overlayCtx.fillText(secondsRemaining.toString(), centerX, centerY);
+    
+    // Draw current game mode text
+    overlayCtx.fillStyle = '#ffffff';
+    overlayCtx.font = 'bold 48px Arial';
+    overlayCtx.textAlign = 'center';
+    overlayCtx.fillText(`Starting: ${getGameDisplayName(gameMode)}`, centerX, centerY - radius - 100);
+    
+    // Draw task description
+    const taskDescription = getTaskDescription(gameMode);
+    overlayCtx.fillStyle = '#cccccc';
+    overlayCtx.font = '32px Arial';
+    overlayCtx.textAlign = 'center';
+    overlayCtx.fillText(taskDescription, centerX, centerY - radius - 50);
+    
+    overlayCtx.restore();
   }
 
   // Game control functions

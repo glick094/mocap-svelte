@@ -517,7 +517,7 @@
     } else {
       const trialText = handsState.currentTrial === 1 ? 'Primary Hand Trial' : 'Secondary Hand Trial';
       // The activeHand already represents the correct physical hand
-      const handText = activeHand === 'left' ? 'Left Hand' : 'Right Hand';
+      const handText = activeHand === 'left' ? 'Right Hand': 'Left Hand';
       ctx.fillText(
         `${trialText}: ${handText}`,
         -width / 2,
@@ -1093,7 +1093,7 @@
     const radius = Math.min(width, height) * 0.15; // 15% of smaller dimension
     
     // Calculate progress (0 to 1)
-    const totalDelay = 10000; // 10 seconds
+    const totalDelay = 15000; // 10 seconds
     const progress = 1 - (gameFlowState.delayRemaining / totalDelay);
     
     ctx.save();

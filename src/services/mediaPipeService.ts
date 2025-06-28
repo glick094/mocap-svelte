@@ -19,6 +19,22 @@ export interface PoseResults {
   timestamp?: number;
 }
 
+export interface MediaPipeConfig {
+  width: number;
+  height: number;
+  downsampleFactor: number; // 0.5 = half resolution, 0.25 = quarter resolution
+  useGPU: boolean;
+  modelComplexity: number; // 0 = light, 1 = full, 2 = heavy
+  enableOptimizations: boolean;
+}
+
+export interface PerformanceMetrics {
+  processingTime: number;
+  fps: number;
+  gpuAccelerated: boolean;
+  downsampleFactor: number;
+}
+
 // MediaPipe landmark connections
 export const POSE_CONNECTIONS = [
   [11, 12], [11, 13], [13, 15], [15, 17], [15, 19], [15, 21], [17, 19],
@@ -45,12 +61,18 @@ export const FACE_OVAL_CONNECTIONS = [
 ];
 
 /**
- * Initialize MediaPipe Holistic with CDN fallbacks
+ * Initialize MediaPipe Holistic with performance optimizations
  */
 export async function initializeMediaPipe(
   onResultsCallback: (results: PoseResults) => void, 
-  width: number = 640, 
-  height: number = 480
+  config: MediaPipeConfig = {
+    width: 640,
+    height: 480,
+    downsampleFactor: 0.5, // Process at half resolution by default
+    useGPU: true,
+    modelComplexity: 0, // Use lightweight model by default
+    enableOptimizations: true
+  }
 ) {
   const cdnOptions = [
     'https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5.1675471629',
@@ -70,19 +92,18 @@ export async function initializeMediaPipe(
         locateFile: (file) => `${cdnUrl}/${file}`
       });
 
-      await holistic.setOptions({
-        modelComplexity: 0,
-        smoothLandmarks: true,
-        enableSegmentation: false,
-        smoothSegmentation: false,
-        refineFaceLandmarks: false,
-        minDetectionConfidence: 0.6,
-        minTrackingConfidence: 0.5
-      });
+      // Determine optimal settings based on config and hardware
+      const holisticOptions = await getOptimalMediaPipeSettings(config);
+      await holistic.setOptions(holisticOptions);
 
-      holistic.onResults(onResultsCallback);
+      // Wrap callback to handle upsampling if needed
+      const wrappedCallback = config.enableOptimizations 
+        ? createUpsamplingCallback(onResultsCallback, config)
+        : onResultsCallback;
+
+      holistic.onResults(wrappedCallback);
       
-      return { holistic, Camera };
+      return { holistic, Camera, config };
     } catch (error) {
       console.warn(`Failed to initialize with ${cdnUrl}:`, error);
       if (cdnUrl === cdnOptions[cdnOptions.length - 1]) {
@@ -160,24 +181,192 @@ export function drawConnections(
 }
 
 /**
- * Create MediaPipe camera instance
+ * Detect hardware acceleration capabilities
  */
-export function createMediaPipeCamera(videoElement, holistic, width, height) {
-  return async function createCamera(Camera) {
+export async function detectHardwareCapabilities(): Promise<{supportsGPU: boolean, supportsWASM: boolean}> {
+  try {
+    // Check for WebGL support (GPU acceleration)
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    const supportsGPU = !!gl && !!(gl as WebGLRenderingContext)?.getExtension('OES_texture_float');
+    
+    // Check for WebAssembly support
+    const supportsWASM = typeof WebAssembly === 'object';
+    
+    console.log('Hardware capabilities:', { supportsGPU, supportsWASM });
+    return { supportsGPU, supportsWASM };
+  } catch (error) {
+    console.warn('Error detecting hardware capabilities:', error);
+    return { supportsGPU: false, supportsWASM: false };
+  }
+}
+
+/**
+ * Get optimal MediaPipe settings based on config and hardware
+ */
+export async function getOptimalMediaPipeSettings(config: MediaPipeConfig) {
+  const hardware = await detectHardwareCapabilities();
+  
+  // Adjust settings based on hardware capabilities
+  const useGPU = config.useGPU && hardware.supportsGPU;
+  const modelComplexity = (hardware.supportsGPU ? config.modelComplexity : Math.min(config.modelComplexity, 0)) as 0 | 1 | 2;
+  
+  console.log(`MediaPipe settings: GPU=${useGPU}, Model Complexity=${modelComplexity}`);
+  
+  return {
+    modelComplexity: modelComplexity,
+    smoothLandmarks: true,
+    enableSegmentation: false,
+    smoothSegmentation: false,
+    refineFaceLandmarks: modelComplexity > 0, // Only enable for higher complexity
+    minDetectionConfidence: 0.5,
+    minTrackingConfidence: 0.5,
+    selfieMode: true,
+    // GPU acceleration settings
+    ...(useGPU && {
+      runtime: 'mediapipe_gpu'
+    })
+  };
+}
+
+/**
+ * Create canvas for downsampling
+ */
+export function createDownsampleCanvas(width: number, height: number, factor: number): {
+  canvas: HTMLCanvasElement;
+  ctx: CanvasRenderingContext2D;
+  downsampledWidth: number;
+  downsampledHeight: number;
+} {
+  const canvas = document.createElement('canvas');
+  const downsampledWidth = Math.round(width * factor);
+  const downsampledHeight = Math.round(height * factor);
+  
+  canvas.width = downsampledWidth;
+  canvas.height = downsampledHeight;
+  
+  const ctx = canvas.getContext('2d')!;
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  
+  return { canvas, ctx, downsampledWidth, downsampledHeight };
+}
+
+/**
+ * Create upsampling callback that scales landmarks back to original resolution
+ */
+export function createUpsamplingCallback(
+  originalCallback: (results: PoseResults) => void,
+  config: MediaPipeConfig
+): (results: PoseResults) => void {
+  const scaleFactor = 1 / config.downsampleFactor;
+  
+  return (results: PoseResults) => {
+    // Scale landmarks back to original resolution
+    // Note: MediaPipe returns normalized coordinates (0-1), so no scaling needed
+    const upsampledResults: PoseResults = {
+      ...results,
+      poseLandmarks: results.poseLandmarks?.map(landmark => ({
+        ...landmark,
+        x: landmark.x, // Already normalized
+        y: landmark.y,
+        z: landmark.z
+      })),
+      leftHandLandmarks: results.leftHandLandmarks?.map(landmark => ({
+        ...landmark,
+        x: landmark.x,
+        y: landmark.y,
+        z: landmark.z
+      })),
+      rightHandLandmarks: results.rightHandLandmarks?.map(landmark => ({
+        ...landmark,
+        x: landmark.x,
+        y: landmark.y,
+        z: landmark.z
+      })),
+      faceLandmarks: results.faceLandmarks?.map(landmark => ({
+        ...landmark,
+        x: landmark.x,
+        y: landmark.y,
+        z: landmark.z
+      }))
+    };
+    
+    originalCallback(upsampledResults);
+  };
+}
+
+/**
+ * Create optimized MediaPipe camera instance with downsampling
+ */
+export function createOptimizedMediaPipeCamera(
+  videoElement: HTMLVideoElement, 
+  holistic: any, 
+  config: MediaPipeConfig
+) {
+  return async function createCamera(Camera: any) {
+    let downsampleCanvas: HTMLCanvasElement | null = null;
+    let downsampleCtx: CanvasRenderingContext2D | null = null;
+    let downsampledWidth: number;
+    let downsampledHeight: number;
+    
+    // Create downsampling canvas if optimizations are enabled
+    if (config.enableOptimizations && config.downsampleFactor < 1) {
+      const downsampleSetup = createDownsampleCanvas(
+        config.width, 
+        config.height, 
+        config.downsampleFactor
+      );
+      downsampleCanvas = downsampleSetup.canvas;
+      downsampleCtx = downsampleSetup.ctx;
+      downsampledWidth = downsampleSetup.downsampledWidth;
+      downsampledHeight = downsampleSetup.downsampledHeight;
+      
+      console.log(`Downsampling enabled: ${config.width}x${config.height} -> ${downsampledWidth}x${downsampledHeight}`);
+    }
+    
     const camera = new Camera(videoElement, {
       onFrame: async () => {
         if (holistic && videoElement) {
           try {
-            await holistic.send({ image: videoElement });
+            let imageToSend = videoElement;
+            
+            // Downsample if optimizations are enabled
+            if (config.enableOptimizations && downsampleCanvas && downsampleCtx) {
+              downsampleCtx.drawImage(
+                videoElement, 
+                0, 0, videoElement.videoWidth, videoElement.videoHeight,
+                0, 0, downsampledWidth, downsampledHeight
+              );
+              imageToSend = downsampleCanvas as any; // Canvas can be sent to MediaPipe
+            }
+            
+            await holistic.send({ image: imageToSend });
           } catch (error) {
             console.error('Error sending frame to MediaPipe:', error);
           }
         }
       },
-      width: width,
-      height: height
+      width: config.width,
+      height: config.height
     });
     
     return camera;
   };
+}
+
+/**
+ * Legacy MediaPipe camera function for backward compatibility
+ */
+export function createMediaPipeCamera(videoElement: any, holistic: any, width: any, height: any) {
+  const config: MediaPipeConfig = {
+    width,
+    height,
+    downsampleFactor: 1, // No downsampling for legacy
+    useGPU: false,
+    modelComplexity: 0,
+    enableOptimizations: false
+  };
+  
+  return createOptimizedMediaPipeCamera(videoElement, holistic, config);
 }

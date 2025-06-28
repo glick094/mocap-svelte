@@ -56,6 +56,7 @@
   let currentTargetType: string | null = null;
   let scoreBreakdown = { hand: 0, head: 0, knee: 0 };
   let showPoseOverlay = true; // Toggle for pose visibility
+  let isDataCollectionMode = true; // Toggle for data collection vs practice mode
   
   // Game flow state
   let gameFlowService: GameFlowService | null = null;
@@ -248,7 +249,7 @@
       initializeGameFlow();
     }
     
-    if (!isRecording) {
+    if (!isRecording && isDataCollectionMode) {
       startPoseDataRecording();
     }
     
@@ -282,7 +283,7 @@
     gameFlowService = new GameFlowService({
       games: [GAME_MODES.HIPS_SWAY, GAME_MODES.HANDS_FIXED, GAME_MODES.HEAD_FIXED, GAME_MODES.RANDOM] as GameMode[],
       delayBetweenGames: 15000, // 15 seconds (countdown timer)
-      autoStartRecording: true
+      autoStartRecording: isDataCollectionMode
     });
     
     gameFlowService.setCallbacks({
@@ -411,7 +412,7 @@
   function handlePoseUpdate(event: CustomEvent) {
     const rawPoseData = event.detail;
     
-    if (isRecording && recordingSession) {
+    if (isRecording && recordingSession && isDataCollectionMode) {
       const unixTimestamp = Date.now();
       const preciseFrameTime = performance.now() - recordingSession.performanceStartTime;
       const csvRow = formatPoseDataForCSV(rawPoseData, unixTimestamp, preciseFrameTime);
@@ -683,6 +684,11 @@
         {showPoseOverlay ? '👤 Hide Pose' : '👤 Show Pose'}
       </button>
       
+      <!-- Data Collection/Practice Mode Toggle -->
+      <button class="header-btn" class:active={isDataCollectionMode} on:click={() => isDataCollectionMode = !isDataCollectionMode}>
+        {isDataCollectionMode ? '📊 Collect Data' : '🏃 Practice'}
+      </button>
+      
       <!-- Mode Toggle Switch -->
       <div class="toggle-switch" class:disabled={isGameActive || gameFlowState.isActive}>
         <button 
@@ -703,8 +709,8 @@
         </button>
       </div>
       
-      <!-- Recording Button (only in manual mode) -->
-      {#if !isFlowMode}
+      <!-- Recording Button (only in manual mode and data collection mode) -->
+      {#if !isFlowMode && isDataCollectionMode}
         <button 
           class="header-btn record-btn" 
           class:recording={isRecording}
@@ -782,6 +788,10 @@
         gameMode={currentGameMode}
         {participantInfo}
         {showPoseOverlay}
+        {gameFlowState}
+        {isCountdownActive}
+        {countdownRemaining}
+        {isDataCollectionMode}
         on:poseUpdate={handlePoseUpdate}
         on:streamReady={handleStreamReady}
         on:gameStarted={handleGameStarted}
