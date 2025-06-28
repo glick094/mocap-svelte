@@ -20,6 +20,8 @@ export type GameMode = typeof GAME_MODES[keyof typeof GAME_MODES];
 // Target type constants
 export const TARGET_TYPES = {
   HAND: 'hand',
+  HAND_LEFT: 'hand-left',
+  HAND_RIGHT: 'hand-right',
   HEAD: 'head', 
   KNEE: 'knee',
   HIP_LEFT: 'hip-left',
@@ -30,7 +32,9 @@ export type TargetType = typeof TARGET_TYPES[keyof typeof TARGET_TYPES];
 
 // Target colors - Default fallback colors (will be overridden by theme colors in most cases)
 export const TARGET_COLORS = {
-  [TARGET_TYPES.HAND]: '#ff0000', // Red for hands
+  [TARGET_TYPES.HAND]: '#ff0000', // Red for hands (generic)
+  [TARGET_TYPES.HAND_LEFT]: '#ff6600', // Orange for left hand
+  [TARGET_TYPES.HAND_RIGHT]: '#cc00ff', // Purple for right hand
   [TARGET_TYPES.HEAD]: '#00ff88', // Green for head
   [TARGET_TYPES.KNEE]: '#0000ff',  // Blue for knees
   [TARGET_TYPES.HIP_LEFT]: '#ffff00', // Yellow for left hip region
@@ -42,6 +46,8 @@ function getThemeColors() {
   const colors = get(gameColors);
   return {
     [TARGET_TYPES.HAND]: colors.hand,
+    [TARGET_TYPES.HAND_LEFT]: colors.handLeft,
+    [TARGET_TYPES.HAND_RIGHT]: colors.handRight,
     [TARGET_TYPES.HEAD]: colors.head,
     [TARGET_TYPES.KNEE]: colors.knee,
     [TARGET_TYPES.HIP_LEFT]: colors.hipLeft,
@@ -393,12 +399,14 @@ export class GameService {
       const x = centerX + radiusX * Math.sin(t);
       const y = centerY + radiusY * Math.sin(2 * t);
       
-      // Use hand-specific colors from theme store
-      const handColor = hand === 'left' ? '#E69F00' : '#CC79A7'; // Orange for left, reddish purple for right
+      // Use hand-specific target colors from theme store
+      const themeColors = getThemeColors();
+      const targetType = hand === 'left' ? TARGET_TYPES.HAND_LEFT : TARGET_TYPES.HAND_RIGHT;
+      const handColor = themeColors[targetType];
       
       targets.push({
         id: `${hand}_hand_figure8_trial${trialNumber}_${this.formatTrialNumber(i + 1)}`, 
-        type: TARGET_TYPES.HAND,
+        type: targetType,
         x: x,
         y: y,
         color: handColor
@@ -1002,34 +1010,50 @@ export class GameService {
     
     switch (headState.phase) {
       case 'centering':
-        // Check if head is near center position
+        // Check if head (forehead area) is near center position
         let headCentered = false;
         
-        // Check face landmarks (nose)
-        if (data.faceLandmarks && data.faceLandmarks[1]) {
-          const nose = data.faceLandmarks[1];
-          const headX = nose.x * this.width;
-          const headY = nose.y * this.height;
-          const distance = Math.sqrt(
-            Math.pow(headX - headState.centerX, 2) + 
-            Math.pow(headY - headState.centerY, 2)
-          );
-          if (distance <= headState.centeringTolerance) {
-            headCentered = true;
+        // Check face landmarks (forehead and nose area)
+        if (data.faceLandmarks) {
+          const foreheadLandmarks = [9, 10, 151]; // Center forehead landmarks
+          const noseLandmarks = [1, 2]; // Main nose landmarks
+          const allCenteringLandmarks = [...foreheadLandmarks, ...noseLandmarks];
+          
+          for (const landmarkIndex of allCenteringLandmarks) {
+            if (data.faceLandmarks[landmarkIndex]) {
+              const headPoint = data.faceLandmarks[landmarkIndex];
+              const headX = headPoint.x * this.width;
+              const headY = headPoint.y * this.height;
+              const distance = Math.sqrt(
+                Math.pow(headX - headState.centerX, 2) + 
+                Math.pow(headY - headState.centerY, 2)
+              );
+              if (distance <= headState.centeringTolerance) {
+                headCentered = true;
+                break;
+              }
+            }
           }
         }
         
-        // Fallback to pose landmarks if face not available
-        if (!headCentered && data.poseLandmarks && data.poseLandmarks[0]) {
-          const poseNose = data.poseLandmarks[0];
-          const headX = poseNose.x * this.width;
-          const headY = poseNose.y * this.height;
-          const distance = Math.sqrt(
-            Math.pow(headX - headState.centerX, 2) + 
-            Math.pow(headY - headState.centerY, 2)
-          );
-          if (distance <= headState.centeringTolerance) {
-            headCentered = true;
+        // Fallback to pose landmarks head area if face not available
+        if (!headCentered && data.poseLandmarks) {
+          const headPoseLandmarks = [0, 1, 2, 3, 4, 5, 6, 7, 8]; // Full head area in pose landmarks
+          
+          for (const landmarkIndex of headPoseLandmarks) {
+            if (data.poseLandmarks[landmarkIndex]) {
+              const headPoint = data.poseLandmarks[landmarkIndex];
+              const headX = headPoint.x * this.width;
+              const headY = headPoint.y * this.height;
+              const distance = Math.sqrt(
+                Math.pow(headX - headState.centerX, 2) + 
+                Math.pow(headY - headState.centerY, 2)
+              );
+              if (distance <= headState.centeringTolerance) {
+                headCentered = true;
+                break;
+              }
+            }
           }
         }
         
@@ -1202,18 +1226,39 @@ export class GameService {
         break;
         
       case TARGET_TYPES.HEAD:
+        // Check forehead and nose landmarks from face detection
         if (data.faceLandmarks && data.faceLandmarks.length > 0) {
-          const nose = data.faceLandmarks[1];
-          if (nose && this.checkDistance(nose.x * this.width, nose.y * this.height, targetX, targetY)) {
-            targetHit = true;
-            hitKeypoint = 'face_1';
+          const foreheadLandmarks = [9, 10, 151, 25, 26, 24, 23];
+          const noseLandmarks = [1, 2, 5, 4, 6, 19, 20];
+          const allHeadLandmarks = [...foreheadLandmarks, ...noseLandmarks];
+          
+          for (let i = 0; i < allHeadLandmarks.length; i++) {
+            const landmarkIndex = allHeadLandmarks[i];
+            if (data.faceLandmarks[landmarkIndex]) {
+              const headPoint = data.faceLandmarks[landmarkIndex];
+              if (this.checkDistance(headPoint.x * this.width, headPoint.y * this.height, targetX, targetY)) {
+                targetHit = true;
+                hitKeypoint = `face_head_${landmarkIndex}`;
+                break;
+              }
+            }
           }
         }
-        if (!targetHit && data.poseLandmarks && data.poseLandmarks[0]) {
-          const poseNose = data.poseLandmarks[0];
-          if (poseNose && this.checkDistance(poseNose.x * this.width, poseNose.y * this.height, targetX, targetY)) {
-            targetHit = true;
-            hitKeypoint = 'pose_0';
+        
+        // Fallback to pose landmarks head area
+        if (!targetHit && data.poseLandmarks) {
+          const headPoseLandmarks = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+          
+          for (let i = 0; i < headPoseLandmarks.length; i++) {
+            const landmarkIndex = headPoseLandmarks[i];
+            if (data.poseLandmarks[landmarkIndex]) {
+              const headPoint = data.poseLandmarks[landmarkIndex];
+              if (this.checkDistance(headPoint.x * this.width, headPoint.y * this.height, targetX, targetY)) {
+                targetHit = true;
+                hitKeypoint = `pose_head_${landmarkIndex}`;
+                break;
+              }
+            }
           }
         }
         break;
@@ -1352,7 +1397,9 @@ export class GameService {
         this.state.fixedTargets = this.generateHandTrialTargets(hitHand, 1);
         // Update current target to use the new colored version
         this.state.currentTarget = this.state.fixedTargets[0];
-        this.state.currentTarget.color = hitHand === 'left' ? '#E69F00' : '#CC79A7';
+        const themeColors = getThemeColors();
+        const targetType = hitHand === 'left' ? TARGET_TYPES.HAND_LEFT : TARGET_TYPES.HAND_RIGHT;
+        this.state.currentTarget.color = themeColors[targetType];
       }
     } else {
       // For subsequent targets or trial 2, only check the active hand
@@ -1505,18 +1552,40 @@ export class GameService {
   }
   
   private checkHeadCollision(data: PoseData, targetX: number, targetY: number): boolean {
-    if (data.faceLandmarks && data.faceLandmarks[1]) {
-      const nose = data.faceLandmarks[1];
-      if (this.checkDistance(nose.x * this.width, nose.y * this.height, targetX, targetY)) {
-        return true;
+    // Check forehead and nose landmarks from face detection
+    if (data.faceLandmarks) {
+      // Forehead landmarks: center forehead area
+      const foreheadLandmarks = [9, 10, 151, 25, 26, 24, 23];
+      // Nose landmarks: nose tip and bridge
+      const noseLandmarks = [1, 2, 5, 4, 6, 19, 20, 94, 125, 141, 235, 236, 237, 238, 239, 240, 241, 242];
+      
+      const allHeadLandmarks = [...foreheadLandmarks, ...noseLandmarks];
+      
+      for (const landmarkIndex of allHeadLandmarks) {
+        if (data.faceLandmarks[landmarkIndex]) {
+          const headPoint = data.faceLandmarks[landmarkIndex];
+          if (this.checkDistance(headPoint.x * this.width, headPoint.y * this.height, targetX, targetY)) {
+            return true;
+          }
+        }
       }
     }
-    if (data.poseLandmarks && data.poseLandmarks[0]) {
-      const poseNose = data.poseLandmarks[0];
-      if (this.checkDistance(poseNose.x * this.width, poseNose.y * this.height, targetX, targetY)) {
-        return true;
+    
+    // Fallback to pose landmarks forehead and nose area
+    if (data.poseLandmarks) {
+      // Use landmarks around the forehead/upper face area and nose from pose detection
+      const headPoseLandmarks = [0, 1, 2, 3, 4, 5, 6, 7, 8]; // Face area including nose in pose landmarks
+      
+      for (const landmarkIndex of headPoseLandmarks) {
+        if (data.poseLandmarks[landmarkIndex]) {
+          const headPoint = data.poseLandmarks[landmarkIndex];
+          if (this.checkDistance(headPoint.x * this.width, headPoint.y * this.height, targetX, targetY)) {
+            return true;
+          }
+        }
       }
     }
+    
     return false;
   }
 
@@ -1709,7 +1778,11 @@ export class GameService {
       type: 'centering' as any,
       x: centerX || (handsState.leftCenterX + handsState.rightCenterX) / 2, // Fallback to midpoint
       y: centerY || handsState.leftCenterY,
-      color: activeHand === 'left' ? '#E69F00' : '#CC79A7' // Use hand-specific color
+      color: (() => {
+        const themeColors = getThemeColors();
+        const targetType = activeHand === 'left' ? TARGET_TYPES.HAND_LEFT : TARGET_TYPES.HAND_RIGHT;
+        return themeColors[targetType];
+      })()
     };
     
     this.state.currentTargetData = {

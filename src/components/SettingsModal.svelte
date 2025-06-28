@@ -1,10 +1,12 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte';
+  import { setUITheme, setGameTheme } from '../stores/themeStore.js';
 
   // Type definitions
   interface UserSettings {
     username: string;
-    theme: string;
+    uiTheme: string;
+    gameTheme: string;
     quality: string;
     enableAudio: boolean;
     fps: number;
@@ -26,7 +28,8 @@
   // Component props
   export let userSettings: UserSettings = {
     username: '',
-    theme: 'dark',
+    uiTheme: 'dark',
+    gameTheme: 'vibrant',
     quality: 'high',
     enableAudio: true,
     fps: 15,
@@ -67,6 +70,10 @@
   }
 
   function saveSettings(): void {
+    // Apply theme changes immediately
+    setUITheme(localSettings.uiTheme);
+    setGameTheme(localSettings.gameTheme);
+    
     dispatch('save', { 
       userSettings: localSettings,
       canvasSettings: localCanvasSettings 
@@ -76,7 +83,8 @@
   function resetToDefaults(): void {
     localSettings = {
       username: '',
-      theme: 'dark',
+      uiTheme: 'dark',
+      gameTheme: 'vibrant',
       quality: 'high',
       enableAudio: true,
       fps: 15,
@@ -106,7 +114,12 @@
   // Initialize with responsive defaults on mount
   onMount(() => {
     if (typeof window !== 'undefined') {
-      localCanvasSettings = getDefaultCanvasSize();
+      // Simple responsive defaults
+      const responsiveDefaults = {
+        width: Math.min(window.innerWidth - 100, 1920),
+        height: Math.min(window.innerHeight - 200, 1080)
+      };
+      localCanvasSettings = { ...localCanvasSettings, ...responsiveDefaults };
     }
   });
 
@@ -142,12 +155,21 @@
         <section class="settings-section">
           <h3>🎨 Appearance</h3>
           <div class="form-group">
-            <label for="theme">Theme:</label>
-            <select id="theme" bind:value={localSettings.theme}>
+            <label for="ui-theme">UI Theme:</label>
+            <select id="ui-theme" bind:value={localSettings.uiTheme}>
               <option value="dark">Dark</option>
               <option value="light">Light</option>
-              <option value="auto">Auto</option>
             </select>
+          </div>
+          <div class="form-group">
+            <label for="game-theme">Game Theme:</label>
+            <select id="game-theme" bind:value={localSettings.gameTheme}>
+              <option value="vibrant">Vibrant (Default)</option>
+              <option value="colorblind-accessible">Colorblind Accessible</option>
+              <option value="default">Classic</option>
+              <option value="pastel">Pastel</option>
+            </select>
+            <small>Changes colors for pose tracking and game targets</small>
           </div>
         </section>
 

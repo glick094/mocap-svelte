@@ -65,6 +65,8 @@ export interface GameTheme {
   name: string;
   targetColors: {
     hand: string;
+    handLeft: string;
+    handRight: string;
     head: string;
     knee: string;
     hipLeft: string;
@@ -158,16 +160,18 @@ export const darkTheme: UITheme = {
 export const colorblindAccessibleTheme: GameTheme = {
   name: 'colorblind-accessible',
   targetColors: {
-    // Left hand uses orange for hand tracking
-    hand: '#E69F00',      // Orange - for hand targets and left hand landmarks
-    // Head uses sky blue for head/face tracking  
-    // head: '#56B4E9',      // Sky blue - for head targets and face landmarks
+    // Generic hand color (fallback)
+    hand: '#E69F00',      // Orange - for general hand targets
+    // Specific hand colors for left/right distinction
+    handLeft: '#E69F00',  // Orange - for left hand targets
+    handRight: '#CC79A7', // Reddish purple - for right hand targets
+    // Head uses light green for head/face tracking  
     head: '#44AA99',      // Light green - for head targets and face landmarks
     // Knees use blue for knee tracking
     knee: '#0173B2',      // Blue - for knee targets and leg landmarks
     // Hips use orange and reddish purple for left/right distinction
-    hipRight: '#E69F00',   // Orange - for left hip region (matches hand color)
-    hipLeft: '#CC79A7'   // Reddish purple - for right hip region
+    hipLeft: '#E69F00',   // Orange - for left hip region (matches left hand)
+    hipRight: '#CC79A7'   // Reddish purple - for right hip region (matches right hand)
   },
   hipSwayRegions: {
     fillOpacity: 0.6,
@@ -194,10 +198,12 @@ export const defaultGameTheme: GameTheme = {
   name: 'default',
   targetColors: {
     hand: '#ff6b6b',
+    handLeft: '#f1b603',
+    handRight: '#ff6b6b',
     head: '#4ecdc4', 
     knee: '#45b7d1',
     hipLeft: '#f1b603',
-    hipRight: '#f39c12'
+    hipRight: '#ff6b6b'
   },
   hipSwayRegions: {
     fillOpacity: 0.6,
@@ -210,8 +216,8 @@ export const defaultGameTheme: GameTheme = {
     arms: '#ff6b6b',    // Red for arms/hands  
     legs: '#45b7d1',    // Blue for legs
     hands: '#ff6b6b',   // Red for hands (matches arms)
-    leftHand: '#ff6b6b', // Red for left hand
-    rightHand: '#45b7d1', // Blue for right hand
+    leftHand: '#f1b603', // Yellow-orange (matches hipLeft)
+    rightHand: '#ff6b6b', // Orange (matches hipRight)
     face: '#4ecdc4',    // Teal for face (matches head)
     torso: '#95a5a6'    // Gray for torso/body
   }
@@ -221,10 +227,12 @@ export const vibrantGameTheme: GameTheme = {
   name: 'vibrant',
   targetColors: {
     hand: '#e74c3c',
+    handLeft: '#f39c12',
+    handRight: '#e74c3c',
     head: '#2ecc71', 
     knee: '#3498db',
-    hipLeft: '#f1c40f',
-    hipRight: '#f1c40f'
+    hipLeft: '#f39c12',
+    hipRight: '#e74c3c'
   },
   hipSwayRegions: {
     fillOpacity: 0.7,
@@ -237,8 +245,8 @@ export const vibrantGameTheme: GameTheme = {
     arms: '#e74c3c',    // Red
     legs: '#3498db',    // Blue
     hands: '#e74c3c',   // Red
-    leftHand: '#e74c3c', // Red for left hand
-    rightHand: '#3498db', // Blue for right hand
+    leftHand: '#f39c12', // Orange (matches hipLeft)
+    rightHand: '#e74c3c', // Darker orange (matches hipRight)
     face: '#2ecc71',    // Green
     torso: '#95a5a6'    // Gray
   }
@@ -248,10 +256,12 @@ export const pastelGameTheme: GameTheme = {
   name: 'pastel',
   targetColors: {
     hand: '#ff9ff3',
+    handLeft: '#ffd93d',
+    handRight: '#ff9ff3',
     head: '#70d0e4', 
     knee: '#a8e6cf',
     hipLeft: '#ffd93d',
-    hipRight: '#ffd93d'
+    hipRight: '#ff9ff3'
   },
   hipSwayRegions: {
     fillOpacity: 0.4,
@@ -264,8 +274,8 @@ export const pastelGameTheme: GameTheme = {
     arms: '#ff9ff3',    // Light pink
     legs: '#a8e6cf',    // Light green
     hands: '#ff9ff3',   // Light pink
-    leftHand: '#ff9ff3', // Light pink for left hand
-    rightHand: '#a8e6cf', // Light green for right hand
+    leftHand: '#ffd93d', // Bright yellow (matches hipLeft)
+    rightHand: '#ff9ff3', // Pink (matches hipRight)
     face: '#70d0e4',    // Light blue
     torso: '#d1d5db'    // Light gray
   }
@@ -277,7 +287,7 @@ export const gameThemes = [colorblindAccessibleTheme, defaultGameTheme, vibrantG
 
 // Current theme stores
 export const currentUITheme = writable<UITheme>(darkTheme);
-export const currentGameTheme = writable<GameTheme>(colorblindAccessibleTheme);
+export const currentGameTheme = writable<GameTheme>(vibrantGameTheme);
 
 // Derived stores for easy access
 export const uiColors = derived(currentUITheme, $theme => $theme.colors);

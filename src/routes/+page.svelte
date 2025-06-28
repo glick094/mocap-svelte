@@ -44,7 +44,8 @@
 
   interface UserSettings {
     username: string;
-    theme: string;
+    uiTheme: string;
+    gameTheme: string;
     quality: string;
     enableAudio: boolean;
     fps: number;
@@ -111,7 +112,8 @@
   // Settings data
   let userSettings: UserSettings = {
     username: '',
-    theme: 'dark',
+    uiTheme: 'dark',
+    gameTheme: 'vibrant',
     quality: 'high',
     enableAudio: true,
     fps: 15,
@@ -1050,11 +1052,16 @@
 <div class="app-container">
   <!-- Header -->
   <header class="app-header">
-    <h1>Play2Move</h1>
+    <h1>Play2Move <span class="version-badge">3D</span></h1>
     <div class="header-buttons">
       <button class="header-btn" class:active={isWebcamActive} on:click={toggleWebcam}>
         {isWebcamActive ? '📵 Stop Camera' : '📷 Start Camera'}
       </button>
+      
+      <!-- Version toggle -->
+      <a href="/native" class="header-btn version-switch">
+        🔄 Switch to Native Version
+      </a>
       <!-- Mode Toggle Switch -->
       <div class="toggle-switch" class:disabled={isGameActive || gameFlowState.isActive}>
         <button 
@@ -1237,6 +1244,19 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .version-badge {
+    background: rgba(0, 255, 136, 0.2);
+    border: 1px solid rgba(0, 255, 136, 0.5);
+    color: #00ff88;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 500;
   }
 
   .header-buttons {
@@ -1259,6 +1279,17 @@
   .header-btn:hover {
     background: rgba(255, 255, 255, 0.2);
     transform: translateY(-1px);
+  }
+
+  .version-switch {
+    background: rgba(255, 136, 0, 0.1);
+    border-color: rgba(255, 136, 0, 0.3);
+    color: #ff8800;
+    text-decoration: none;
+  }
+
+  .version-switch:hover {
+    background: rgba(255, 136, 0, 0.2);
   }
 
   .header-select {
