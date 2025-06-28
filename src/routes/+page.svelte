@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { base } from '$app/paths';
   import WebcamNative from '../components/WebcamNative.svelte';
   import SettingsModal from '../components/SettingsModal.svelte';
   import { GameFlowService, type GameFlowState } from '../services/gameFlowService.js';
@@ -675,7 +676,7 @@
       </button>
       
       <!-- Version toggle -->
-      <a href="/ar" class="header-btn version-switch">
+      <a href="{base}/ar" class="header-btn version-switch">
         🔄 Switch to AR Version
       </a>
       

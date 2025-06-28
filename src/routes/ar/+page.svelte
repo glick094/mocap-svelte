@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { base } from '$app/paths';
   
   // Suppress MediaPipe console warnings on mount
   const originalConsoleWarn = console.warn;
@@ -1114,7 +1115,7 @@
       </button>
       
       <!-- Version toggle -->
-      <a href="/" class="header-btn version-switch">
+      <a href="{base}/" class="header-btn version-switch">
         🔄 Switch to Reality Version
       </a>
       
