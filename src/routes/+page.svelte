@@ -472,6 +472,11 @@
       gameFlowService.onGameCompleted();
       gameFlowState = gameFlowService.getState();
       console.log('Updated gameFlowState:', gameFlowState);
+    } else {
+      // Manual mode: deactivate the game button but keep pose tracking active
+      console.log('Manual mode: Game completed, deactivating game button');
+      isGameActive = false;
+      currentTargetType = null;
     }
   }
 

@@ -599,6 +599,15 @@
 
     // Draw current target (adjust for scaling and offset)
     const currentTarget = gameService.getCurrentTarget();
+    
+    // Don't draw targets if hand trials are completed
+    if (gameMode === GAME_MODES.HANDS_FIXED) {
+      const handsState = gameService.getHandsCenteringState();
+      if (handsState && handsState.phase === 'completed') {
+        return; // Exit early, don't draw any targets
+      }
+    }
+    
     if (currentTarget) {
       overlayCtx.fillStyle = currentTarget.color;
       overlayCtx.strokeStyle = currentTarget.color;
@@ -661,6 +670,11 @@
 
     // Draw explosions
     drawExplosions();
+    
+    // Draw hand trial indicators for HANDS_FIXED mode
+    if (gameMode === GAME_MODES.HANDS_FIXED) {
+      drawHandTrialIndicators();
+    }
   }
 
   function drawHipSwayRegions() {
@@ -803,6 +817,86 @@
     overlayCtx.moveTo(x, y - crossSize/2);
     overlayCtx.lineTo(x, y + crossSize/2);
     overlayCtx.stroke();
+    
+    overlayCtx.restore();
+  }
+
+  function drawHandTrialIndicators() {
+    if (!gameService || !overlayCtx) return;
+    
+    const handsState = gameService.getHandsCenteringState();
+    const themeColors = currentGameColors;
+    
+    // Only show indicators during hands trials, but not when completed
+    if (!handsState || handsState.phase === 'completed') return;
+    
+    overlayCtx.save();
+    
+    // Set font properties for large letters
+    overlayCtx.font = 'bold 240px Arial';
+    overlayCtx.textAlign = 'center';
+    overlayCtx.textBaseline = 'middle';
+    
+    // Position letters in top corners (with enough margin for large font)
+    const margin = 120;  // Increase margin to account for 240px font
+    const leftX = margin;
+    const rightX = overlayCanvas.width - margin;
+    const letterY = margin;
+    
+    // Determine colors based on game phase and state
+    let leftColor = '#999999';  // Default grey
+    let rightColor = '#999999'; // Default grey
+    let showLeft = true;
+    let showRight = true;
+    
+    if (handsState.phase === 'centering') {
+      if (handsState.primaryHand === null) {
+        // Initial centering phase - both letters white to match centering targets
+        leftColor = '#ffffff';  // White to match centering targets
+        rightColor = '#ffffff'; // White to match centering targets
+      } else {
+        // Secondary hand trial centering phase - both letters should appear white
+        leftColor = '#ffffff';  // White to match centering targets
+        rightColor = '#ffffff'; // White to match centering targets
+      }
+    } else if (handsState.phase === 'targeting') {
+      // During targeting phase
+      const currentTargetIndex = gameService.getCurrentFixedTargetIndex();
+      
+      if (handsState.currentTrial === 1 && currentTargetIndex === 1) {
+        // First target (grey selection target) - both letters grey
+        leftColor = '#999999';
+        rightColor = '#999999';
+      } else {
+        // Active targeting phase - only show the active hand in its color
+        // Note: activeHand refers to the game logic hand, we need to show opposite letter due to mirrored view
+        showLeft = handsState.activeHand === 'right';  // Show L when right hand is active
+        showRight = handsState.activeHand === 'left';   // Show R when left hand is active
+        
+        if (handsState.activeHand === 'left') {
+          rightColor = themeColors.handLeft;  // Right side shows left hand color
+        } else if (handsState.activeHand === 'right') {
+          leftColor = themeColors.handRight;  // Left side shows right hand color
+        }
+      }
+    }
+    
+    // Draw letters with stroke for better visibility
+    overlayCtx.strokeStyle = '#000000';
+    overlayCtx.lineWidth = 3;
+    
+    // Show correct letters on correct sides (accounting for mirrored view)
+    if (showLeft) {
+      overlayCtx.fillStyle = leftColor;
+      overlayCtx.strokeText('L', leftX, letterY);  // Show L on left side
+      overlayCtx.fillText('L', leftX, letterY);
+    }
+    
+    if (showRight) {
+      overlayCtx.fillStyle = rightColor;
+      overlayCtx.strokeText('R', rightX, letterY);  // Show R on right side
+      overlayCtx.fillText('R', rightX, letterY);
+    }
     
     overlayCtx.restore();
   }
