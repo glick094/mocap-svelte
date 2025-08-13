@@ -1,1125 +1,1821 @@
-Component mounted WebcamPose.svelte:625:11
-Elements are ready, checking if we should start webcam... WebcamPose.svelte:631:13
-Starting webcam... (attempt 1/3) WebcamPose.svelte:540:12
-Camera stream obtained WebcamPose.svelte:557:12
-Video playing WebcamPose.svelte:561:12
-Video stream ready for recording +page.svelte:272:11
-Webcam working! WebcamPose.svelte:596:12
-Trying MediaPipe initialization with CDN: https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5.1675471629 WebcamPose.svelte:386:12
-MediaPipe modules loaded WebcamPose.svelte:401:13
-Holistic configured and onResults callback set WebcamPose.svelte:439:13
-MediaPipe pose tracking active with CDN: https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5.1675471629 WebcamPose.svelte:475:13
-I0000 00:00:1749833614.455000       1 gl_context_webgl.cc:151] Successfully created a WebGL context with major version 3 and handle 3 client.js:2976:15
-I0000 00:00:1749833614.456000       1 gl_context.cc:359] GL version: 3.0 (OpenGL ES 3.0 (WebGL 2.0)) client.js:2976:15
-W0000 00:00:1749833614.456000       1 gl_context.cc:1000] OpenGL error checking is disabled client.js:2976:15
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-WebGL warning: drawArraysInstanced: Tex image TEXTURE_2D level 0 is incurring lazy initialization. 4
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-WebGL warning: drawArraysInstanced: Tex image TEXTURE_2D level 0 is incurring lazy initialization. 4
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: true, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe results received: 
-Object { pose: true, leftHand: false, rightHand: false, face: true }
-WebcamPose.svelte:322:12
-MediaPipe paused for QR scanning WebcamPose.svelte:714:13
-Starting QR scanner camera... 2 QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-The camera stream is only accessible if the page is transferred via https. client.js:2976:15
-QR Scanner started successfully QRScanModal.svelte:112:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-The camera stream is only accessible if the page is transferred via https. client.js:2976:15
-QR Scanner started successfully QRScanModal.svelte:112:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-The camera stream is only accessible if the page is transferred via https. client.js:2976:15
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-The camera stream is only accessible if the page is transferred via https. client.js:2976:15
-QR Scanner started successfully QRScanModal.svelte:112:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-The camera stream is only accessible if the page is transferred via https. client.js:2976:15
-QR Scanner started successfully QRScanModal.svelte:112:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-The camera stream is only accessible if the page is transferred via https. client.js:2976:15
-QR Scanner started successfully QRScanModal.svelte:112:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-The camera stream is only accessible if the page is transferred via https. client.js:2976:15
-QR Scanner started successfully QRScanModal.svelte:112:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-The camera stream is only accessible if the page is transferred via https. client.js:2976:15
-QR Scanner started successfully QRScanModal.svelte:112:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-The camera stream is only accessible if the page is transferred via https. client.js:2976:15
-QR Scanner started successfully QRScanModal.svelte:112:12
-QR Code detected: 
-Object { data: '{"participantid": "p2m_0001", "age": "32", "height": "75in"}', cornerPoints: (4) […] }
-QRScanModal.svelte:100:14
-QR Code detected: {"participantid": "p2m_0001", "age": "32", "height": "75in"} WebcamPose.svelte:698:11
-QR Code detected and participant info updated: 
-Object { participantId: "p2m_0001", age: "32", height: "75in" }
-+page.svelte:244:12
-QR Code detected: 
-Object { data: '{"participantid": "p2m_0001", "age": "32", "height": "75in"}', cornerPoints: (4) […] }
-QRScanModal.svelte:100:14
-QR Code detected: 
-Object { data: '{"participantid": "p2m_0001", "age": "32", "height": "75in"}', cornerPoints: (4) […] }
-QRScanModal.svelte:100:14
-QR Code detected: 
-Object { data: '{"participantid": "p2m_0001", "age": "32", "height": "75in"}', cornerPoints: (4) […] }
-QRScanModal.svelte:100:14
-QR Code detected: 
-Object { data: '{"participantid": "p2m_0001", "age": "32", "height": "75in"}', cornerPoints: (4) […] }
-QRScanModal.svelte:100:14
-QR Code detected: 
-Object { data: '{"participantid": "p2m_0001", "age": "32", "height": "75in"}', cornerPoints: (4) […] }
-QRScanModal.svelte:100:14
-Failed to start QR scanner: TypeError: $.get(...) is null
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-QR Code detected: 
-Object { data: '{"participantid": "p2m_0001", "age": "32", "height": "75in"}', cornerPoints: (4) […] }
-QRScanModal.svelte:100:14
-QR Code detected: 
-Object { data: '{"participantid": "p2m_0001", "age": "32", "height": "75in"}', cornerPoints: (4) […] }
-QRScanModal.svelte:100:14
-QR Code detected: 
-Object { data: '{"participantid": "p2m_0001", "age": "32", "height": "75in"}', cornerPoints: (4) […] }
-QRScanModal.svelte:100:14
-MediaPipe paused for QR scanning WebcamPose.svelte:714:13
-Starting QR scanner camera... 2 QRScanModal.svelte:85:12
-The camera stream is only accessible if the page is transferred via https. client.js:2976:15
-QR Scanner started successfully QRScanModal.svelte:112:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-The camera stream is only accessible if the page is transferred via https. client.js:2976:15
-QR Scanner started successfully QRScanModal.svelte:112:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-The camera stream is only accessible if the page is transferred via https. client.js:2976:15
-QR Scanner started successfully QRScanModal.svelte:112:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-The camera stream is only accessible if the page is transferred via https. client.js:2976:15
-QR Scanner started successfully QRScanModal.svelte:112:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-The camera stream is only accessible if the page is transferred via https. client.js:2976:15
-QR Scanner started successfully QRScanModal.svelte:112:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-The camera stream is only accessible if the page is transferred via https. client.js:2976:15
-QR Scanner started successfully QRScanModal.svelte:112:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-The camera stream is only accessible if the page is transferred via https. client.js:2976:15
-QR Scanner started successfully QRScanModal.svelte:112:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-The camera stream is only accessible if the page is transferred via https. client.js:2976:15
-QR Scanner started successfully QRScanModal.svelte:112:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-The camera stream is only accessible if the page is transferred via https. client.js:2976:15
-QR Scanner started successfully QRScanModal.svelte:112:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-Failed to start QR scanner: DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-The camera stream is only accessible if the page is transferred via https. client.js:2976:15
-QR Scanner started successfully QRScanModal.svelte:112:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-The camera stream is only accessible if the page is transferred via https. client.js:2976:15
-QR Scanner started successfully QRScanModal.svelte:112:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-The camera stream is only accessible if the page is transferred via https. client.js:2976:15
-QR Scanner started successfully QRScanModal.svelte:112:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-The camera stream is only accessible if the page is transferred via https. client.js:2976:15
-QR Scanner started successfully QRScanModal.svelte:112:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-The camera stream is only accessible if the page is transferred via https. client.js:2976:15
-QR Scanner started successfully QRScanModal.svelte:112:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-The camera stream is only accessible if the page is transferred via https. client.js:2976:15
-QR Scanner started successfully QRScanModal.svelte:112:12
-Starting QR scanner camera... QRScanModal.svelte:85:12
-The camera stream is only accessible if the page is transferred via https. client.js:2976:15
-QR Scanner started successfully QRScanModal.svelte:112:12
-QR Code detected: 
-Object { data: '{"participantid": "p2m_0001", "age": "32", "height": "75in"}', cornerPoints: (4) […] }
-QRScanModal.svelte:100:14
-QR Code detected: {"participantid": "p2m_0001", "age": "32", "height": "75in"} WebcamPose.svelte:698:11
-QR Code detected and participant info updated: 
-Object { participantId: "p2m_0001", age: "32", height: "75in" }
-+page.svelte:244:12
-Failed to start QR scanner: TypeError: $.get(...) is null
-    startCamera QRScanModal.svelte:30
-QRScanModal.svelte:114:12
+Trying MediaPipe initialization with CDN: https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5.1675471629 mediaPipeService.ts:112:15
+Hardware capabilities: 
+Object { supportsGPU: true, supportsWASM: true }
+mediaPipeService.ts:177:13
+MediaPipe settings: GPU=true, Model Complexity=0 mediaPipeService.ts:188:11
+Initializing optimized MediaPipe with config: 
+Object { width: 2130, height: 1311, downsampleFactor: 0.5, useGPU: true, modelComplexity: 0, enableOptimizations: true }
+WebcamNative.svelte:172:12
+Trying MediaPipe initialization with CDN: https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5.1675471629 mediaPipeService.ts:112:15
+Hardware capabilities: 
+Object { supportsGPU: true, supportsWASM: true }
+mediaPipeService.ts:177:13
+MediaPipe settings: GPU=true, Model Complexity=0 mediaPipeService.ts:188:11
+Video stream ready for recording: 
+Object { streamId: "{7e7c2f1b-6087-4b51-bf33-371625b43016}", active: true, videoTracks: 1, audioTracks: 0 }
++page.svelte:498:11
+Initializing optimized MediaPipe with config: 
+Object { width: 2130, height: 1311, downsampleFactor: 0.5, useGPU: true, modelComplexity: 0, enableOptimizations: true }
+WebcamNative.svelte:172:12
+Trying MediaPipe initialization with CDN: https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5.1675471629 mediaPipeService.ts:112:15
+Hardware capabilities: 
+Object { supportsGPU: true, supportsWASM: true }
+mediaPipeService.ts:177:13
+MediaPipe settings: GPU=true, Model Complexity=0 mediaPipeService.ts:188:11
+Downsampling enabled: 2130x1311 -> 1065x656 mediaPipeService.ts:266:15
+MediaPipe initialization completed with optimizations WebcamNative.svelte:189:14
+GameService.updateGameMode() called: 
+Object { oldMode: "random", newMode: "random", willReset: false }
+gameService.ts:1434:13
+No mode change, skipping state reset gameService.ts:1446:15
+[vite] connecting... client:789:9
+[vite] connected. client:912:15
+Video stream ready for recording: 
+Object { streamId: "{093a84d3-90a5-4a10-b078-3609c6a3ff8c}", active: true, videoTracks: 1, audioTracks: 0 }
++page.svelte:498:11
+Initializing optimized MediaPipe with config: 
+Object { width: 2130, height: 1311, downsampleFactor: 0.5, useGPU: true, modelComplexity: 0, enableOptimizations: true }
+WebcamNative.svelte:172:12
+Trying MediaPipe initialization with CDN: https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5.1675471629 mediaPipeService.ts:112:15
+Hardware capabilities: 
+Object { supportsGPU: true, supportsWASM: true }
+mediaPipeService.ts:177:13
+MediaPipe settings: GPU=true, Model Complexity=0 mediaPipeService.ts:188:11
+Downsampling enabled: 2130x1311 -> 1065x656 mediaPipeService.ts:266:15
+MediaPipe initialization completed with optimizations WebcamNative.svelte:189:14
+GameService.updateGameMode() called: 
+Object { oldMode: "hips-sway", newMode: "hips-sway", willReset: false }
+gameService.ts:1434:13
+No mode change, skipping state reset gameService.ts:1446:15
+Uncaught (in promise) DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+    O camera_utils.js:22
+    node_modules @mediapipe_camera_utils.js:424
+    promise callback*node_modules/ @mediapipe_camera_utils.js:423
+    H camera_utils.js:12
+    node_modules NextJS
+    node_modules @mediapipe_camera_utils.js:177
+    J camera_utils.js:13
+    node_modules @mediapipe_camera_utils.js:420
+    initializeMediaPipe WebcamNative.svelte:167
+    WebcamNative WebcamNative.svelte:84
+    run utils.js:39
+    fns lifecycle.js:51
+    untrack runtime.js:883
+    init lifecycle.js:51
+    update_reaction runtime.js:279
+    update_effect runtime.js:446
+    flush_queued_effects runtime.js:569
+    flush_queued_root_effects runtime.js:541
+    flushSync runtime.js:702
+    Svelte4Component legacy-client.js:124
+    <anonymous> legacy-client.js:52
+    initialize client.js:480
+    navigate client.js:1593
+    start client.js:327
+    async* (index):24
+    promise callback* (index):23
+@mediapipe_camera_utils.js:440
+I0000 00:00:1753375720.662000       1 gl_context_webgl.cc:151] Successfully created a WebGL context with major version 3 and handle 3 client.js:2976:15
+I0000 00:00:1753375720.664000       1 gl_context.cc:359] GL version: 3.0 (OpenGL ES 3.0 (WebGL 2.0)) client.js:2976:15
+W0000 00:00:1753375720.665000       1 gl_context.cc:1000] OpenGL error checking is disabled client.js:2976:15
+MediaPipe Performance: 0 FPS, Processing: 0.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+Starting game flow +page.svelte:331:11
+Creating MediaRecorder with options: 
+Object { mimeType: "video/webm;codecs=vp8", videoBitsPerSecond: 2500000 }
++page.svelte:630:12
+Video recording started for participant P2598 +page.svelte:663:12
+Started recording pose data: pose_data_native_P2598_2025-07-24T16-48-42.csv +page.svelte:597:11
+Starting game flow with config: 
+Object { games: (4) […], delayBetweenGames: 10000, autoStartRecording: true }
+gameFlowService.ts:48:13
+Starting delay: 10s until next game (hips-sway) gameFlowService.ts:123:15
+Flow: Starting 10s delay before hips-sway +page.svelte:409:13
+Next game will be: hips-sway +page.svelte:410:13
+WebGL warning: drawArraysInstanced: Tex image TEXTURE_2D level 0 is incurring lazy initialization. 8
+MediaPipe Performance: 6 FPS, Processing: 143.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 157.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 172.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 198.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 155.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 177.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 185.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 203.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 8 FPS, Processing: 120.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+Starting game 1/4: hips-sway gameFlowService.ts:108:13
+Flow: Starting game 1: hips-sway +page.svelte:381:13
+Setting currentGameMode to: hips-sway +page.svelte:382:13
+Calling webcamNativeComponent.startGame() +page.svelte:388:14
+GameService.startGame() called for mode: hips-sway gameService.ts:348:13
+Game started! 
+Object { score: 0, scoreBreakdown: {…} }
++page.svelte:525:11
+MediaPipe Performance: 8 FPS, Processing: 158.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 144.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 130.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 8 FPS, Processing: 125.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 140.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 148.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 139.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 142.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 127.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 137.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 134.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 144.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 167.0ms, Downsampling: 0.5x 2 WebcamNative.svelte:267:13
+Game completed, dispatching gameEnded event WebcamNative.svelte:303:13
+Game ended! 
+Object { finalScore: 10, scoreBreakdown: {…} }
++page.svelte:541:11
+Calling gameFlowService.onGameCompleted() +page.svelte:546:12
+Game completed: hips-sway gameFlowService.ts:67:13
+Flow: Ending game 1: hips-sway +page.svelte:397:13
+Starting delay: 10s until next game (hands-fixed) gameFlowService.ts:123:15
+Flow: Starting 10s delay before hands-fixed +page.svelte:409:13
+Next game will be: hands-fixed +page.svelte:410:13
+Updated gameFlowState: 
+Object { currentGameIndex: 0, currentGame: "hips-sway", phase: "delay", isActive: true, delayStartTime: 1753375748290, delayRemaining: 10000 }
++page.svelte:549:12
+MediaPipe Performance: 5 FPS, Processing: 258.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 165.0ms, Downsampling: 0.5x 2 WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 163.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 161.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 134.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 172.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 160.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 172.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 122.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+Starting game 2/4: hands-fixed gameFlowService.ts:108:13
+Flow: Starting game 2: hands-fixed +page.svelte:381:13
+Setting currentGameMode to: hands-fixed +page.svelte:382:13
+Calling webcamNativeComponent.startGame() +page.svelte:388:14
+GameService.startGame() called for mode: hips-sway gameService.ts:348:13
+Game started! 
+Object { score: 0, scoreBreakdown: {…} }
++page.svelte:525:11
+GameService.updateGameMode() called: 
+Object { oldMode: "hips-sway", newMode: "hands-fixed", willReset: true }
+gameService.ts:1434:13
+Game state reset due to mode change gameService.ts:1442:15
+Generated fixedTargets for hands game after mode change: 
+Object { count: 16, firstTarget: {…}, firstTargetId: "neutral_figure8_001" }
+gameService.ts:1454:17
+After state reset and target regeneration - fixedTargets length: 16 gameService.ts:1444:15
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
+gameService.ts:597:13
+Trial 1 hands centering debug: 
+Object { leftHandCentered: false, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:612:19
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
+gameService.ts:597:13
+Trial 1 hands centering debug: 
+Object { leftHandCentered: false, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:612:19
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
+gameService.ts:597:13
+Trial 1 hands centering debug: 
+Object { leftHandCentered: false, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:612:19
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
+gameService.ts:597:13
+Trial 1 hands centering debug: 
+Object { leftHandCentered: false, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:612:19
+MediaPipe Performance: 6 FPS, Processing: 159.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
+gameService.ts:597:13
+Trial 1 hands centering debug: 
+Object { leftHandCentered: false, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:612:19
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "centering", currentTrial: 1 }
+gameService.ts:597:13
+Trial 1 hands centering debug: 
+Object { leftHandCentered: false, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:612:19
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
+gameService.ts:597:13
+Trial 1 hands centering debug: 
+Object { leftHandCentered: false, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:612:19
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
+gameService.ts:597:13
+Trial 1 hands centering debug: 
+Object { leftHandCentered: false, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:612:19
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
+gameService.ts:597:13
+Trial 1 hands centering debug: 
+Object { leftHandCentered: false, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:612:19
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
+gameService.ts:597:13
+Trial 1 hands centering debug: 
+Object { leftHandCentered: true, rightHandCentered: true, bothHandsCentered: true, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:612:19
+Trial 1: Started centering timer at 1753375760077 gameService.ts:624:23
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
+gameService.ts:597:13
+Trial 1 hands centering debug: 
+Object { leftHandCentered: true, rightHandCentered: true, bothHandsCentered: true, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:612:19
+Trial 1: Centering duration: 149 ms, required: 1000 ms gameService.ts:627:23
+MediaPipe Performance: 6 FPS, Processing: 236.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
+gameService.ts:597:13
+Trial 1 hands centering debug: 
+Object { leftHandCentered: true, rightHandCentered: true, bothHandsCentered: true, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:612:19
+Trial 1: Centering duration: 386 ms, required: 1000 ms gameService.ts:627:23
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
+gameService.ts:597:13
+Trial 1 hands centering debug: 
+Object { leftHandCentered: true, rightHandCentered: true, bothHandsCentered: true, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:612:19
+Trial 1: Centering duration: 581 ms, required: 1000 ms gameService.ts:627:23
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
+gameService.ts:597:13
+Trial 1 hands centering debug: 
+Object { leftHandCentered: true, rightHandCentered: true, bothHandsCentered: true, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:612:19
+Trial 1: Centering duration: 758 ms, required: 1000 ms gameService.ts:627:23
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
+gameService.ts:597:13
+Trial 1 hands centering debug: 
+Object { leftHandCentered: true, rightHandCentered: true, bothHandsCentered: true, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:612:19
+Trial 1: Centering duration: 940 ms, required: 1000 ms gameService.ts:627:23
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
+gameService.ts:597:13
+Trial 1 hands centering debug: 
+Object { leftHandCentered: true, rightHandCentered: true, bothHandsCentered: true, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:612:19
+Trial 1: Centering duration: 1141 ms, required: 1000 ms gameService.ts:627:23
+Trial 1: Centering successful! Moving to targeting phase gameService.ts:629:25
+Set phase to targeting: 
+Object { phase: "targeting", currentFixedTargetIndex: 1, hasTarget: true, targetId: "neutral_figure8_001", fixedTargetsLength: 16, fixedTargets0: {…} }
+gameService.ts:640:25
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: null, activeHand: null }
+gameService.ts:1014:13
+MediaPipe Performance: 6 FPS, Processing: 152.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: null, activeHand: null }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: null, activeHand: null }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: null, activeHand: null }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: null, activeHand: null }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: null, activeHand: null }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: null, activeHand: null }
+gameService.ts:1014:13
+MediaPipe Performance: 6 FPS, Processing: 185.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: null, activeHand: null }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: null, activeHand: null }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: null, activeHand: null }
+gameService.ts:1014:13
+Primary hand detected on first target: LEFT gameService.ts:1053:17
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+MediaPipe Performance: 6 FPS, Processing: 174.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: false, hasRightHand: true, leftCount: 0, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 3, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 3, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+MediaPipe Performance: 7 FPS, Processing: 127.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 3, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 3, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 3, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 3, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 3, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 4, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 4, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+MediaPipe Performance: 7 FPS, Processing: 142.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 4, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 4, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 4, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 5, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 5, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 5, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 5, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 5, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+MediaPipe Performance: 8 FPS, Processing: 131.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 5, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 5, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 6, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 6, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 6, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 6, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 7, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 7, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+MediaPipe Performance: 8 FPS, Processing: 118.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 7, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 7, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 8, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 8, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 8, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 8, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 8, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 8, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+MediaPipe Performance: 8 FPS, Processing: 128.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 9, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 9, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 9, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 9, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 9, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 9, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 9, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 10, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+MediaPipe Performance: 7 FPS, Processing: 136.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 10, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 10, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 10, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 10, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 10, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 10, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 11, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 11, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+MediaPipe Performance: 8 FPS, Processing: 133.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 11, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 11, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 11, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 11, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 11, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 11, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 12, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+MediaPipe Performance: 7 FPS, Processing: 158.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 12, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 12, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 12, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 13, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 13, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 13, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 13, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+MediaPipe Performance: 7 FPS, Processing: 151.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 13, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 13, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 13, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 14, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 14, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 14, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 14, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 15, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+MediaPipe Performance: 7 FPS, Processing: 144.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 15, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 15, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 15, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 16, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 16, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 16, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+Trial 1 completed. Starting trial 2 with right hand gameService.ts:1121:15
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 2 }
+gameService.ts:597:13
+Trial 2 recentering debug: 
+Object { activeHand: "right", activeHandCentered: true, centerX: 639, centerY: 655.5, tolerance: 80 }
+gameService.ts:676:19
+MediaPipe Performance: 7 FPS, Processing: 146.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 2 }
+gameService.ts:597:13
+Trial 2 recentering debug: 
+Object { activeHand: "right", activeHandCentered: true, centerX: 639, centerY: 655.5, tolerance: 80 }
+gameService.ts:676:19
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 2 }
+gameService.ts:597:13
+Trial 2 recentering debug: 
+Object { activeHand: "right", activeHandCentered: true, centerX: 639, centerY: 655.5, tolerance: 80 }
+gameService.ts:676:19
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 2 }
+gameService.ts:597:13
+Trial 2 recentering debug: 
+Object { activeHand: "right", activeHandCentered: false, centerX: 639, centerY: 655.5, tolerance: 80 }
+gameService.ts:676:19
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 2 }
+gameService.ts:597:13
+Trial 2 recentering debug: 
+Object { activeHand: "right", activeHandCentered: false, centerX: 639, centerY: 655.5, tolerance: 80 }
+gameService.ts:676:19
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 2 }
+gameService.ts:597:13
+Trial 2 recentering debug: 
+Object { activeHand: "right", activeHandCentered: false, centerX: 639, centerY: 655.5, tolerance: 80 }
+gameService.ts:676:19
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 2 }
+gameService.ts:597:13
+Trial 2 recentering debug: 
+Object { activeHand: "right", activeHandCentered: true, centerX: 639, centerY: 655.5, tolerance: 80 }
+gameService.ts:676:19
+MediaPipe Performance: 6 FPS, Processing: 218.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 2 }
+gameService.ts:597:13
+Trial 2 recentering debug: 
+Object { activeHand: "right", activeHandCentered: true, centerX: 639, centerY: 655.5, tolerance: 80 }
+gameService.ts:676:19
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 2 }
+gameService.ts:597:13
+Trial 2 recentering debug: 
+Object { activeHand: "right", activeHandCentered: true, centerX: 639, centerY: 655.5, tolerance: 80 }
+gameService.ts:676:19
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 2 }
+gameService.ts:597:13
+Trial 2 recentering debug: 
+Object { activeHand: "right", activeHandCentered: true, centerX: 639, centerY: 655.5, tolerance: 80 }
+gameService.ts:676:19
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 2 }
+gameService.ts:597:13
+Trial 2 recentering debug: 
+Object { activeHand: "right", activeHandCentered: true, centerX: 639, centerY: 655.5, tolerance: 80 }
+gameService.ts:676:19
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 2 }
+gameService.ts:597:13
+Trial 2 recentering debug: 
+Object { activeHand: "right", activeHandCentered: true, centerX: 639, centerY: 655.5, tolerance: 80 }
+gameService.ts:676:19
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 2 }
+gameService.ts:597:13
+Trial 2 recentering debug: 
+Object { activeHand: "right", activeHandCentered: true, centerX: 639, centerY: 655.5, tolerance: 80 }
+gameService.ts:676:19
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 2 }
+gameService.ts:597:13
+Trial 2 recentering debug: 
+Object { activeHand: "right", activeHandCentered: true, centerX: 639, centerY: 655.5, tolerance: 80 }
+gameService.ts:676:19
+MediaPipe Performance: 7 FPS, Processing: 164.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+MediaPipe Performance: 7 FPS, Processing: 131.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+MediaPipe Performance: 7 FPS, Processing: 141.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 3, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+MediaPipe Performance: 7 FPS, Processing: 144.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 3, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 3, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 3, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 3, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 3, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 4, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 4, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+MediaPipe Performance: 7 FPS, Processing: 136.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 4, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 4, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 4, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 4, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 5, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 5, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 5, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 5, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+MediaPipe Performance: 7 FPS, Processing: 144.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 6, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 6, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 6, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 7, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 7, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 7, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 7, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+MediaPipe Performance: 6 FPS, Processing: 179.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: false, hasRightHand: true, leftCount: 0, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 8, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: false, hasRightHand: true, leftCount: 0, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 8, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 8, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 8, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 9, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 9, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+MediaPipe Performance: 6 FPS, Processing: 163.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 9, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 9, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 9, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 9, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 10, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 10, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 10, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+MediaPipe Performance: 6 FPS, Processing: 149.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 10, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 10, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 10, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 10, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 11, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 11, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 11, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+MediaPipe Performance: 7 FPS, Processing: 135.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 11, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 11, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 11, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 12, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 12, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 12, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 12, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+MediaPipe Performance: 6 FPS, Processing: 144.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 12, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 12, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 13, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 13, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 13, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 13, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 13, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+MediaPipe Performance: 6 FPS, Processing: 180.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 14, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 14, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 14, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 14, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 14, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 15, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+MediaPipe Performance: 6 FPS, Processing: 190.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 15, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 15, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 16, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 16, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 16, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 16, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+MediaPipe Performance: 6 FPS, Processing: 159.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 16, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+Both hand trials completed gameService.ts:1136:15
+Game completed, dispatching gameEnded event WebcamNative.svelte:303:13
+Game ended! 
+Object { finalScore: 320, scoreBreakdown: {…} }
++page.svelte:541:11
+Calling gameFlowService.onGameCompleted() +page.svelte:546:12
+Game completed: hands-fixed gameFlowService.ts:67:13
+Flow: Ending game 2: hands-fixed +page.svelte:397:13
+Starting delay: 10s until next game (head-fixed) gameFlowService.ts:123:15
+Flow: Starting 10s delay before head-fixed +page.svelte:409:13
+Next game will be: head-fixed +page.svelte:410:13
+Updated gameFlowState: 
+Object { currentGameIndex: 1, currentGame: "hands-fixed", phase: "delay", isActive: true, delayStartTime: 1753375791348, delayRemaining: 10000 }
++page.svelte:549:12
+MediaPipe Performance: 6 FPS, Processing: 135.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 170.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 159.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 199.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 143.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 171.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 167.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 168.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 119.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+Starting game 3/4: head-fixed gameFlowService.ts:108:13
+Flow: Starting game 3: head-fixed +page.svelte:381:13
+Setting currentGameMode to: head-fixed +page.svelte:382:13
+Calling webcamNativeComponent.startGame() +page.svelte:388:14
+GameService.startGame() called for mode: hands-fixed gameService.ts:348:13
+Initializing HANDS_FIXED game mode gameService.ts:381:17
+Hands centering state after init: 
+Object { phase: "centering", currentTrial: 1, primaryHand: null, activeHand: null, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:390:17
+Generated fixedTargets for hands game: 
+Object { count: 16, firstTarget: {…}, firstTargetId: "neutral_figure8_001" }
+gameService.ts:400:17
+Game started! 
+Object { score: 0, scoreBreakdown: {…} }
++page.svelte:525:11
+GameService.updateGameMode() called: 
+Object { oldMode: "hands-fixed", newMode: "head-fixed", willReset: true }
+gameService.ts:1434:13
+Game state reset due to mode change gameService.ts:1442:15
+Generated fixedTargets for head game after mode change: 
+Object { count: 12 }
+gameService.ts:1462:17
+After state reset and target regeneration - fixedTargets length: 12 gameService.ts:1444:15
+MediaPipe Performance: 8 FPS, Processing: 121.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 8 FPS, Processing: 147.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 127.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 8 FPS, Processing: 135.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 8 FPS, Processing: 120.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 8 FPS, Processing: 123.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 8 FPS, Processing: 118.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 139.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+Game completed, dispatching gameEnded event WebcamNative.svelte:303:13
+Game ended! 
+Object { finalScore: 12, scoreBreakdown: {…} }
++page.svelte:541:11
+Calling gameFlowService.onGameCompleted() +page.svelte:546:12
+Game completed: head-fixed gameFlowService.ts:67:13
+Flow: Ending game 3: head-fixed +page.svelte:397:13
+Starting delay: 10s until next game (random) gameFlowService.ts:123:15
+Flow: Starting 10s delay before random +page.svelte:409:13
+Next game will be: random +page.svelte:410:13
+Updated gameFlowState: 
+Object { currentGameIndex: 2, currentGame: "head-fixed", phase: "delay", isActive: true, delayStartTime: 1753375809666, delayRemaining: 10000 }
++page.svelte:549:12
+MediaPipe Performance: 8 FPS, Processing: 152.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 8 FPS, Processing: 122.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 130.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 8 FPS, Processing: 123.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 144.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 128.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 123.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 8 FPS, Processing: 118.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 129.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+Starting game 4/4: random gameFlowService.ts:108:13
+Flow: Starting game 4: random +page.svelte:381:13
+Setting currentGameMode to: random +page.svelte:382:13
+Calling webcamNativeComponent.startGame() +page.svelte:388:14
+GameService.startGame() called for mode: head-fixed gameService.ts:348:13
+Game started! 
+Object { score: 0, scoreBreakdown: {…} }
++page.svelte:525:11
+Starting 1-minute timer for random game +page.svelte:472:11
+GameService.updateGameMode() called: 
+Object { oldMode: "head-fixed", newMode: "random", willReset: true }
+gameService.ts:1434:13
+Game state reset due to mode change gameService.ts:1442:15
+After state reset and target regeneration - fixedTargets length: 0 gameService.ts:1444:15
+MediaPipe Performance: 7 FPS, Processing: 146.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 149.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 138.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 177.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 229.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 5 FPS, Processing: 178.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 5 FPS, Processing: 199.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 5 FPS, Processing: 168.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 123.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 198.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 5 FPS, Processing: 169.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 178.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 167.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 199.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 143.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 5 FPS, Processing: 148.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 143.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 182.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 131.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 184.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 217.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 5 FPS, Processing: 209.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 156.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 158.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 155.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 172.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 5 FPS, Processing: 187.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 135.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 170.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 136.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 5 FPS, Processing: 220.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 138.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 7 FPS, Processing: 139.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 189.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 6 FPS, Processing: 162.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+MediaPipe Performance: 5 FPS, Processing: 188.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13

@@ -547,6 +547,7 @@ export class GameService {
 
   // Game initialization
   public startGame(): void {
+    console.log('GameService.startGame() called for mode:', this.gameMode);
     this.state.gameScore = 0;
     this.state.hitTargetIds.clear();
     this.state.scoreBreakdown = { hand: 0, head: 0, knee: 0 };
@@ -582,6 +583,7 @@ export class GameService {
         break;
         
       case GAME_MODES.HANDS_FIXED:
+        console.log('Initializing HANDS_FIXED game mode');
         // Reset trial state
         this.state.handsCenteringState.currentTrial = 1;
         this.state.handsCenteringState.primaryHand = null;
@@ -592,8 +594,23 @@ export class GameService {
         this.state.handsCenteringState.isCentered = false;
         this.state.handsCenteringState.centeringStartTime = null;
         
+        console.log('Hands centering state after init:', {
+          phase: this.state.handsCenteringState.phase,
+          currentTrial: this.state.handsCenteringState.currentTrial,
+          primaryHand: this.state.handsCenteringState.primaryHand,
+          activeHand: this.state.handsCenteringState.activeHand,
+          leftCenter: { x: this.state.handsCenteringState.leftCenterX, y: this.state.handsCenteringState.leftCenterY },
+          rightCenter: { x: this.state.handsCenteringState.rightCenterX, y: this.state.handsCenteringState.rightCenterY },
+          tolerance: this.state.handsCenteringState.centeringTolerance
+        });
+        
         // Generate targets with first target as grey (neutral color)
         this.state.fixedTargets = this.generateNeutralFirstTargets();
+        console.log('Generated fixedTargets for hands game:', {
+          count: this.state.fixedTargets.length,
+          firstTarget: this.state.fixedTargets[0],
+          firstTargetId: this.state.fixedTargets[0]?.id
+        });
         this.state.currentFixedTargetIndex = 0;
         this.state.currentTarget = null;
         this.createHandsCenteringData();
@@ -871,16 +888,17 @@ export class GameService {
   }
 
   private checkHandsCenteringCollisions(data: PoseData): { hit: boolean; hitType?: string; modeProgress?: any; playSound?: boolean } {
+    const handsState = this.state.handsCenteringState;
     console.log('checkHandsCenteringCollisions called with:', {
       hasLeftHand: !!data.leftHandLandmarks,
       hasRightHand: !!data.rightHandLandmarks,
       leftCount: data.leftHandLandmarks?.length || 0,
-      rightCount: data.rightHandLandmarks?.length || 0
+      rightCount: data.rightHandLandmarks?.length || 0,
+      currentPhase: handsState.phase,
+      currentTrial: handsState.currentTrial
     });
     
     if (!data.leftHandLandmarks && !data.rightHandLandmarks) return { hit: false };
-    
-    const handsState = this.state.handsCenteringState;
     
     switch (handsState.phase) {
       case 'centering':
@@ -903,9 +921,12 @@ export class GameService {
             if (!handsState.isCentered) {
               handsState.isCentered = true;
               handsState.centeringStartTime = Date.now();
+              console.log('Trial 1: Started centering timer at', handsState.centeringStartTime);
             } else {
               const centeringDuration = Date.now() - (handsState.centeringStartTime || 0);
+              console.log('Trial 1: Centering duration:', centeringDuration, 'ms, required:', handsState.centeringTimeRequired, 'ms');
               if (centeringDuration >= handsState.centeringTimeRequired) {
+                console.log('Trial 1: Centering successful! Moving to targeting phase');
                 // Complete centering phase
                 if (this.state.currentTargetData) {
                   this.state.currentTargetData.status = 'obtained';
@@ -920,6 +941,14 @@ export class GameService {
                 handsState.phase = 'targeting';
                 this.state.currentFixedTargetIndex = 1;
                 this.state.currentTarget = this.state.fixedTargets[0];
+                console.log('Set phase to targeting:', {
+                  phase: handsState.phase,
+                  currentFixedTargetIndex: this.state.currentFixedTargetIndex,
+                  hasTarget: !!this.state.currentTarget,
+                  targetId: this.state.currentTarget?.id,
+                  fixedTargetsLength: this.state.fixedTargets?.length,
+                  fixedTargets0: this.state.fixedTargets?.[0]
+                });
                 this.createTargetData();
                 
                 return {
@@ -930,12 +959,15 @@ export class GameService {
                     completed: 1, 
                     total: this.state.fixedTargets.length + 1,
                     currentTrial: handsState.currentTrial,
-                    activeHand: handsState.activeHand
+                    activeHand: handsState.activeHand || 'both' // Default to 'both' for trial 1 centering
                   }
                 };
               }
             }
           } else {
+            if (handsState.isCentered) {
+              console.log('Trial 1: Lost centering, resetting timer');
+            }
             handsState.isCentered = false;
             handsState.centeringStartTime = null;
           }
@@ -1003,6 +1035,7 @@ export class GameService {
         break;
         
       case 'targeting':
+        console.log('Hands targeting phase - checking for target collisions');
         return this.checkHandSpecificTargetCollisions(data);
         
       case 'completed':
@@ -1277,11 +1310,11 @@ export class GameService {
           const leftKnee = data.poseLandmarks[25];
           const rightKnee = data.poseLandmarks[26];
           
-          if (leftKnee && this.checkDistance(leftKnee.x * this.width, leftKnee.y * this.height, targetX, targetY)) {
+          if (leftKnee && this.checkDistanceForKnee(leftKnee.x * this.width, leftKnee.y * this.height, targetX, targetY)) {
             targetHit = true;
             hitKeypoint = 'pose_25';
           }
-          if (!targetHit && rightKnee && this.checkDistance(rightKnee.x * this.width, rightKnee.y * this.height, targetX, targetY)) {
+          if (!targetHit && rightKnee && this.checkDistanceForKnee(rightKnee.x * this.width, rightKnee.y * this.height, targetX, targetY)) {
             targetHit = true;
             hitKeypoint = 'pose_26';
           }
@@ -1369,7 +1402,19 @@ export class GameService {
   private checkHandSpecificTargetCollisions(data: PoseData): { hit: boolean; hitType?: string; modeProgress?: any; playSound?: boolean; hitKeypoint?: string } {
     const handsState = this.state.handsCenteringState;
     
-    if (!this.state.currentTarget) return { hit: false };
+    console.log('checkHandSpecificTargetCollisions called:', {
+      phase: handsState.phase,
+      currentTrial: handsState.currentTrial,
+      hasCurrentTarget: !!this.state.currentTarget,
+      currentFixedTargetIndex: this.state.currentFixedTargetIndex,
+      primaryHand: handsState.primaryHand,
+      activeHand: handsState.activeHand
+    });
+    
+    if (!this.state.currentTarget) {
+      console.log('No current target available');
+      return { hit: false };
+    }
     
     const target = this.state.currentTarget;
     let hitKeypoint: string | null = null;
@@ -1607,6 +1652,12 @@ export class GameService {
     return distance <= this.state.targetRadius;
   }
 
+  private checkDistanceForKnee(x1: number, y1: number, x2: number, y2: number): boolean {
+    const distance = Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
+    // Use triple the target radius for knee collision detection to make it easier to hit
+    return distance <= (this.state.targetRadius * 3);
+  }
+
   // Target data management
   private createTargetData(): void {
     if (!this.state.currentTarget) return;
@@ -1782,17 +1833,29 @@ export class GameService {
     // Create a virtual target for the hands centering phase with trial information
     const activeHand = handsState.activeHand;
     const currentTrial = handsState.currentTrial;
-    const centerX = activeHand === 'left' ? handsState.leftCenterX : handsState.rightCenterX;
-    const centerY = activeHand === 'left' ? handsState.leftCenterY : handsState.rightCenterY;
+    
+    // For trial 1 (primary hand selection), use center between both crosses
+    // For trial 2 (secondary hand), use the specific hand's center
+    const centerX = activeHand === null 
+      ? (handsState.leftCenterX + handsState.rightCenterX) / 2 // Trial 1: center between crosses
+      : (activeHand === 'left' ? handsState.leftCenterX : handsState.rightCenterX);
+    const centerY = activeHand === null 
+      ? handsState.leftCenterY // Same Y for both crosses
+      : (activeHand === 'left' ? handsState.leftCenterY : handsState.rightCenterY);
+    
     const primaryText = handsState.primaryHand === null ? 'detection' : (activeHand === handsState.primaryHand ? 'primary' : 'secondary');
     
     const virtualTarget = {
       id: `hands-centering-trial${currentTrial}-${primaryText}-${this.formatTrialNumber(currentTrial)}`,
       type: 'centering' as any,
-      x: centerX || (handsState.leftCenterX + handsState.rightCenterX) / 2, // Fallback to midpoint
-      y: centerY || handsState.leftCenterY,
+      x: centerX,
+      y: centerY,
       color: (() => {
         const themeColors = getThemeColors();
+        // For trial 1 (no active hand), use a neutral color
+        if (activeHand === null) {
+          return themeColors[TARGET_TYPES.HAND]; // Neutral hand color
+        }
         const targetType = activeHand === 'left' ? TARGET_TYPES.HAND_LEFT : TARGET_TYPES.HAND_RIGHT;
         return themeColors[targetType];
       })()
@@ -1863,9 +1926,54 @@ export class GameService {
 
   // Update game mode
   public updateGameMode(gameMode: GameMode): void {
-    this.gameMode = gameMode;
-    // Reset game state when switching modes to prevent stale data
-    this.state = this.initializeGameState();
+    console.log('GameService.updateGameMode() called:', { 
+      oldMode: this.gameMode, 
+      newMode: gameMode,
+      willReset: this.gameMode !== gameMode 
+    });
+    
+    // Only reset state if the game mode actually changed
+    if (this.gameMode !== gameMode) {
+      this.gameMode = gameMode;
+      // Reset game state when switching modes to prevent stale data
+      this.state = this.initializeGameState();
+      console.log('Game state reset due to mode change');
+      
+      // Regenerate mode-specific targets after state reset
+      this.initializeModeSpecificTargets();
+      console.log('After state reset and target regeneration - fixedTargets length:', this.state.fixedTargets?.length);
+    } else {
+      console.log('No mode change, skipping state reset');
+    }
+  }
+
+  // Initialize mode-specific targets after state reset
+  private initializeModeSpecificTargets(): void {
+    switch (this.gameMode) {
+      case GAME_MODES.HANDS_FIXED:
+        // Generate targets with first target as grey (neutral color)
+        this.state.fixedTargets = this.generateNeutralFirstTargets();
+        console.log('Generated fixedTargets for hands game after mode change:', {
+          count: this.state.fixedTargets.length,
+          firstTarget: this.state.fixedTargets[0],
+          firstTargetId: this.state.fixedTargets[0]?.id
+        });
+        break;
+        
+      case GAME_MODES.HEAD_FIXED:
+        this.state.fixedTargets = this.generateCircleTargets();
+        console.log('Generated fixedTargets for head game after mode change:', {
+          count: this.state.fixedTargets.length
+        });
+        break;
+        
+      case GAME_MODES.HIPS_SWAY:
+      case GAME_MODES.RANDOM:
+      default:
+        // These modes don't use fixed targets
+        this.state.fixedTargets = [];
+        break;
+    }
   }
 
   // Explosion management

@@ -187,7 +187,7 @@
   
   function startCountdown() {
     isCountdownActive = true;
-    countdownRemaining = 15; // 15 second countdown
+    countdownRemaining = 10; // 10 second countdown
     
     countdownTimer = setInterval(() => {
       countdownRemaining--;
@@ -204,6 +204,12 @@
         if (webcamNativeComponent) {
           webcamNativeComponent.startGame();
         }
+        
+        // Start timer for random games in manual mode
+        if (currentGameMode === 'random') {
+          startRandomGameTimer();
+        }
+        
         console.log('Game started after countdown');
       }
     }, 1000);
@@ -227,6 +233,14 @@
     if (webcamNativeComponent) {
       webcamNativeComponent.stopGame();
     }
+    
+    // Clean up random game timer for manual mode
+    if (randomGameTimer) {
+      clearInterval(randomGameTimer);
+      randomGameTimer = null;
+      randomGameTimeRemaining = 0;
+    }
+    
     console.log('Game stopped');
   }
   
@@ -283,18 +297,22 @@
   function initializeGameFlow() {
     gameFlowService = new GameFlowService({
       games: [GAME_MODES.HIPS_SWAY, GAME_MODES.HANDS_FIXED, GAME_MODES.HEAD_FIXED, GAME_MODES.RANDOM] as GameMode[],
-      delayBetweenGames: 15000, // 15 seconds (countdown timer)
+      delayBetweenGames: 10000, // 10 seconds (countdown timer)
       autoStartRecording: isDataCollectionMode
     });
     
     gameFlowService.setCallbacks({
       onGameStart: (gameMode, gameIndex) => {
         console.log(`Flow: Starting game ${gameIndex + 1}: ${gameMode}`);
+        console.log('Setting currentGameMode to:', gameMode);
         currentGameMode = gameMode;
         isGameActive = true;
         resetGameModeProgress();
         
         if (webcamNativeComponent) {
+          // Ensure game mode is updated before starting the game
+          webcamNativeComponent.updateGameMode(gameMode);
+          console.log('Calling webcamNativeComponent.startGame()');
           webcamNativeComponent.startGame();
         }
         
@@ -308,10 +326,7 @@
         isGameActive = false;
         currentTargetType = null;
         
-        if (webcamNativeComponent) {
-          webcamNativeComponent.stopGame();
-        }
-        
+        // Clean up random game timer if needed
         if (randomGameTimer) {
           clearInterval(randomGameTimer);
           randomGameTimer = null;
@@ -321,11 +336,12 @@
       
       onDelayStart: (nextGame, delayTime) => {
         console.log(`Flow: Starting ${delayTime / 1000}s delay before ${nextGame}`);
+        console.log('Next game will be:', nextGame);
         isGameActive = false;
         currentTargetType = null;
       },
       
-      onDelayUpdate: (remaining) => {
+      onDelayUpdate: (_remaining) => {
         gameFlowState = gameFlowService!.getState();
       },
       
@@ -379,8 +395,8 @@
   }
   
   function startRandomGameTimer() {
-    randomGameTimeRemaining = 60;
-    console.log('Starting 1-minute timer for random game');
+    randomGameTimeRemaining = 30;
+    console.log('Starting 30-second timer for random game');
     
     randomGameTimer = setInterval(() => {
       randomGameTimeRemaining--;
@@ -392,8 +408,12 @@
         randomGameTimeRemaining = 0;
         
         if (gameFlowService) {
+          // Flow mode: let the game flow service handle the timeout
           gameFlowService.onRandomGameTimeout();
           gameFlowState = gameFlowService.getState();
+        } else {
+          // Manual mode: stop the game directly
+          stopGame();
         }
       }
     }, 1000);
@@ -448,8 +468,10 @@
     currentTargetType = null;
     
     if (isFlowMode && gameFlowService) {
+      console.log('Calling gameFlowService.onGameCompleted()');
       gameFlowService.onGameCompleted();
       gameFlowState = gameFlowService.getState();
+      console.log('Updated gameFlowState:', gameFlowState);
     }
   }
 
@@ -675,10 +697,6 @@
         {isWebcamActive ? '📵 Stop Camera' : '📷 Start Camera'}
       </button>
       
-      <!-- Version toggle -->
-      <a href="{base}/ar" class="header-btn version-switch">
-        🔄 Switch to AR Version
-      </a>
       
       <!-- Pose Visibility Toggle -->
       <button class="header-btn" class:active={showPoseOverlay} on:click={() => showPoseOverlay = !showPoseOverlay}>
@@ -895,15 +913,6 @@
     transform: translateY(-1px);
   }
 
-  .version-switch {
-    background: rgba(0, 255, 136, 0.1);
-    border-color: rgba(0, 255, 136, 0.3);
-    color: #00ff88;
-  }
-
-  .version-switch:hover {
-    background: rgba(0, 255, 136, 0.2);
-  }
 
   .header-select {
     background: rgba(255, 255, 255, 0.1);

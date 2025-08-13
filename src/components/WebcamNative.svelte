@@ -743,30 +743,36 @@
     if (gameMode === GAME_MODES.HANDS_FIXED) {
       const handsState = gameService.getHandsCenteringState();
       
-      // Convert coordinates to scaled video area
-      const leftX = offsetX + (handsState.leftCenterX / width) * displayWidth;
-      const leftY = offsetY + (handsState.leftCenterY / height) * displayHeight;
-      const rightX = offsetX + (handsState.rightCenterX / width) * displayWidth;
-      const rightY = offsetY + (handsState.rightCenterY / height) * displayHeight;
-      const crossSize = Math.min(displayWidth, displayHeight) * 0.06; // Dynamic cross size
-      
-      // Draw left center cross
-      drawCross(leftX, leftY, crossSize);
-      
-      // Draw right center cross
-      drawCross(rightX, rightY, crossSize);
+      // Only draw centering targets during the centering phase
+      if (handsState.phase === 'centering') {
+        // Convert coordinates to scaled video area
+        const leftX = offsetX + (handsState.leftCenterX / width) * displayWidth;
+        const leftY = offsetY + (handsState.leftCenterY / height) * displayHeight;
+        const rightX = offsetX + (handsState.rightCenterX / width) * displayWidth;
+        const rightY = offsetY + (handsState.rightCenterY / height) * displayHeight;
+        const crossSize = Math.min(displayWidth, displayHeight) * 0.06; // Dynamic cross size
+        
+        // Draw left center cross
+        drawCross(leftX, leftY, crossSize);
+        
+        // Draw right center cross
+        drawCross(rightX, rightY, crossSize);
+      }
     }
 
     if (gameMode === GAME_MODES.HEAD_FIXED) {
       const headState = gameService.getHeadCenteringState();
       
-      // Convert coordinates to scaled video area
-      const centerX = offsetX + (headState.centerX / width) * displayWidth;
-      const centerY = offsetY + (headState.centerY / height) * displayHeight;
-      const crossSize = Math.min(displayWidth, displayHeight) * 0.06; // Dynamic cross size
-      
-      // Draw head center cross
-      drawCross(centerX, centerY, crossSize);
+      // Only draw centering targets during the centering phase
+      if (headState.phase === 'centering') {
+        // Convert coordinates to scaled video area
+        const centerX = offsetX + (headState.centerX / width) * displayWidth;
+        const centerY = offsetY + (headState.centerY / height) * displayHeight;
+        const crossSize = Math.min(displayWidth, displayHeight) * 0.06; // Dynamic cross size
+        
+        // Draw head center cross
+        drawCross(centerX, centerY, crossSize);
+      }
     }
   }
 
@@ -774,23 +780,28 @@
     if (!overlayCtx) return;
 
     overlayCtx.save();
-    overlayCtx.strokeStyle = '#4169E1'; // Royal blue
-    overlayCtx.lineWidth = 4; // Thicker lines for better visibility
-    overlayCtx.lineCap = 'round';
     
-    // Draw cross
-    overlayCtx.beginPath();
-    overlayCtx.moveTo(x - size/2, y);
-    overlayCtx.lineTo(x + size/2, y);
-    overlayCtx.moveTo(x, y - size/2);
-    overlayCtx.lineTo(x, y + size/2);
-    overlayCtx.stroke();
+    // Set semi-transparency for the entire centering target
+    overlayCtx.globalAlpha = 0.7; // 70% opacity
     
-    // Add circle around cross for better visibility
-    overlayCtx.strokeStyle = '#4169E1';
-    overlayCtx.lineWidth = 2;
+    // Draw filled blue circle background
+    overlayCtx.fillStyle = '#4169E1'; // Royal blue
     overlayCtx.beginPath();
     overlayCtx.arc(x, y, size * 0.8, 0, 2 * Math.PI);
+    overlayCtx.fill();
+    
+    // Draw white "+" symbol on top
+    overlayCtx.strokeStyle = '#FFFFFF'; // White
+    overlayCtx.lineWidth = 4; // Thick lines for visibility
+    overlayCtx.lineCap = 'round';
+    
+    // Draw the "+" symbol (slightly smaller than the circle)
+    const crossSize = size * 0.6;
+    overlayCtx.beginPath();
+    overlayCtx.moveTo(x - crossSize/2, y);
+    overlayCtx.lineTo(x + crossSize/2, y);
+    overlayCtx.moveTo(x, y - crossSize/2);
+    overlayCtx.lineTo(x, y + crossSize/2);
     overlayCtx.stroke();
     
     overlayCtx.restore();
@@ -1075,6 +1086,11 @@
   }
 
   // Game control functions
+  export function updateGameMode(newGameMode: GameMode) {
+    if (!gameService) return;
+    gameService.updateGameMode(newGameMode);
+  }
+
   export function startGame() {
     if (!gameService) return;
     
