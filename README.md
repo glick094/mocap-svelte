@@ -2,6 +2,16 @@
 
 A real-time motion capture game platform that combines MediaPipe pose detection with an interactive target-hitting game. Players use their body movements to hit targets with different body parts while comprehensive data is recorded for research and analysis.
 
+## Recent Updates (Data Collection Focus)
+
+The interface has been streamlined for optimal data collection:
+
+- **Simplified UI**: Removed version badges and non-essential elements
+- **Hidden Pose Overlay**: Pose visualization is hidden by default for cleaner video recording
+- **Keyboard Shortcuts**: Added CTRL+ENTER (start) and CTRL+ESC (stop) for hands-free control
+- **Real-time Status**: Bottom status bar shows live system state with reactive updates
+- **Right-aligned Status**: Status indicators positioned on the right for better visibility
+
 ## Quickstart
 
 ### Prerequisites
@@ -24,24 +34,40 @@ npm run dev -- --open
 
 1. **Start Camera**: Click "📷 Start Camera" to enable webcam
 2. **Participant Setup**: Enter participant ID manually or scan QR code with demographics
-3. **Begin Game**: Click "🎮 Start Game" to spawn targets
+3. **Begin Games**: Click "▶️ Play games" or press **CTRL+ENTER** to start the game sequence
 4. **Hit Targets**: Move your body to hit colored targets:
    - 🔴 **Red targets**: Hit with hands
    - 🟢 **Green targets**: Hit with head/face
    - 🔵 **Blue targets**: Hit with knees
-5. **Record Data**: Click "🔴 Record Data" to capture motion and game data
-6. **View Progress**: Check your score breakdown in the side panel
+5. **End Games**: Click "⏹️ Stop games" or press **CTRL+ESC** to end at any time
+6. **Monitor Status**: Check system status in the bottom status bar
 
 ## Game Window Overview
 
-The interface consists of three main areas:
+The simplified interface focuses on data collection with streamlined controls:
 
 ### Header Controls
 
 - **Camera Toggle**: Enable/disable webcam feed
-- **Recording**: Start/stop data capture (exports CSV + video)
-- **Game Controls**: Start/stop target game with live score display
-- **Settings**: Configure capture quality, smoothing, and canvas dimensions
+- **Pose Visibility**: Show/hide pose overlay (default: hidden for cleaner data collection)
+- **Mode Toggle**: Switch between Default (automatic game sequence) and Manual modes
+- **Game Controls**: Start/stop games with live score display
+- **Settings**: Configure capture quality, smoothing, and canvas dimensions (accessible via CTRL+click or settings modal)
+
+### Keyboard Shortcuts
+
+- **CTRL+ENTER**: Start games when inactive
+- **CTRL+ESC**: End games immediately (works in any game state)
+
+### Bottom Status Bar
+
+Real-time system monitoring with right-aligned status indicators:
+
+- **Data Mode**: Shows "Data Mode" or "Practice Mode"
+- **Camera Status**: Active/Inactive camera state
+- **MediaPipe Status**: Ready/Loading pose detection system
+- **FPS Counter**: Live frame rate from pose detection
+- **Game Status**: Active/Inactive game state
 
 ### Main Canvas ([ThreeJSCanvas.svelte](src/components/ThreeJSCanvas.svelte))
 

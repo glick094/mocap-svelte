@@ -1122,18 +1122,32 @@
     overlayCtx.textBaseline = 'middle';
     overlayCtx.fillText(secondsRemaining.toString(), centerX, centerY);
     
-    // Draw next game mode text
-    const nextGameText = getGameDisplayName(nextGame);
-    overlayCtx.fillStyle = '#ffffff';
+    // Draw next game mode text with blue outline
+    const nextGameText = `Next game: ${getGameDisplayName(nextGame)}`;
     overlayCtx.font = 'bold 48px Arial';
     overlayCtx.textAlign = 'center';
-    overlayCtx.fillText(`Next: ${nextGameText}`, centerX, centerY - radius - 100);
     
-    // Draw task description
+    // Draw blue outline first
+    overlayCtx.strokeStyle = '#4169E1';
+    overlayCtx.lineWidth = 4;
+    overlayCtx.strokeText(nextGameText, centerX, centerY - radius - 100);
+    
+    // Draw white fill on top
+    overlayCtx.fillStyle = '#FFFFFF';
+    overlayCtx.fillText(nextGameText, centerX, centerY - radius - 100);
+    
+    // Draw task description with blue outline
     const taskDescription = getTaskDescription(nextGame);
-    overlayCtx.fillStyle = '#cccccc';
     overlayCtx.font = '32px Arial';
     overlayCtx.textAlign = 'center';
+    
+    // Draw blue outline first
+    overlayCtx.strokeStyle = '#4169E1';
+    overlayCtx.lineWidth = 3;
+    overlayCtx.strokeText(taskDescription, centerX, centerY - radius - 50);
+    
+    // Draw white fill on top
+    overlayCtx.fillStyle = '#FFFFFF';
     overlayCtx.fillText(taskDescription, centerX, centerY - radius - 50);
     
     overlayCtx.restore();
@@ -1150,6 +1164,7 @@
         return 'Head';
       case GAME_MODES.RANDOM:
         return 'Random';
+        // return 'Head, Hands, and Knees';
       default:
         return gameMode;
     }
@@ -1158,13 +1173,17 @@
   function getTaskDescription(gameMode: GameMode): string {
     switch (gameMode) {
       case GAME_MODES.HIPS_SWAY:
+        // return 'Sway your hips left and right';
         return 'Sway your hips left and right';
       case GAME_MODES.HANDS_FIXED:
-        return 'Move your hands in a figure-8 pattern';
+        // return 'Move your hands in a figure-8 pattern';
+        return 'Move one hand to hit the targets';
       case GAME_MODES.HEAD_FIXED:
-        return 'Move your head in a circle';
+        // return 'Move your head in a circle';
+        return 'Move your head to hit the targets';
       case GAME_MODES.RANDOM:
-        return 'Hit the random targets';
+        // return 'Hit the random targets';
+        return 'Move your head, hands, and knees to hit the targets';
       default:
         return 'Follow the on-screen instructions';
     }
@@ -1211,17 +1230,32 @@
     overlayCtx.textBaseline = 'middle';
     overlayCtx.fillText(secondsRemaining.toString(), centerX, centerY);
     
-    // Draw current game mode text
-    overlayCtx.fillStyle = '#ffffff';
+    // Draw current game mode text with blue outline
+    const gameModeText = `Starting game: ${getGameDisplayName(gameMode)}`;
     overlayCtx.font = 'bold 48px Arial';
     overlayCtx.textAlign = 'center';
-    overlayCtx.fillText(`Starting: ${getGameDisplayName(gameMode)}`, centerX, centerY - radius - 100);
     
-    // Draw task description
+    // Draw blue outline first
+    overlayCtx.strokeStyle = '#4169E1';
+    overlayCtx.lineWidth = 4;
+    overlayCtx.strokeText(gameModeText, centerX, centerY - radius - 100);
+    
+    // Draw white fill on top
+    overlayCtx.fillStyle = '#FFFFFF';
+    overlayCtx.fillText(gameModeText, centerX, centerY - radius - 100);
+    
+    // Draw task description with blue outline
     const taskDescription = getTaskDescription(gameMode);
-    overlayCtx.fillStyle = '#cccccc';
     overlayCtx.font = '32px Arial';
     overlayCtx.textAlign = 'center';
+    
+    // Draw blue outline first
+    overlayCtx.strokeStyle = '#4169E1';
+    overlayCtx.lineWidth = 3;
+    overlayCtx.strokeText(taskDescription, centerX, centerY - radius - 50);
+    
+    // Draw white fill on top
+    overlayCtx.fillStyle = '#FFFFFF';
     overlayCtx.fillText(taskDescription, centerX, centerY - radius - 50);
     
     overlayCtx.restore();
