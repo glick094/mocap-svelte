@@ -1042,9 +1042,10 @@
     if (!overlayCtx) return;
 
     // Draw FPS counter
-    overlayCtx.fillStyle = '#ffffff';
-    overlayCtx.font = '16px Arial';
-    overlayCtx.fillText(`FPS: ${currentFps}`, 10, 30);
+    // FPS display moved to bottom status area
+    // overlayCtx.fillStyle = '#ffffff';
+    // overlayCtx.font = '16px Arial';
+    // overlayCtx.fillText(`FPS: ${currentFps}`, 10, 30);
 
     // Draw participant info
     if (participantInfo.participantId) {
@@ -1052,16 +1053,16 @@
     }
 
     // Draw mode indicator
-    overlayCtx.font = '18px Arial';
-    overlayCtx.fillStyle = isDataCollectionMode ? '#00ff88' : '#ff8800';
-    overlayCtx.fillText(isDataCollectionMode ? '📊 Data Collection' : '🏃 Practice Mode', 10, 80);
+    // overlayCtx.font = '18px Arial';
+    // overlayCtx.fillStyle = isDataCollectionMode ? '#00ff88' : '#ff8800';
+    // overlayCtx.fillText(isDataCollectionMode ? '📊 Data Collection' : '🏃 Practice Mode', 10, 80);
 
-    // Draw game score if active
-    if (gameActive) {
-      overlayCtx.font = '24px Arial';
-      overlayCtx.fillStyle = '#ffffff';
-      overlayCtx.fillText(`Score: ${gameScore}`, 10, 110);
-    }
+    // // Draw game score if active
+    // if (gameActive) {
+    //   overlayCtx.font = '24px Arial';
+    //   overlayCtx.fillStyle = '#ffffff';
+    //   overlayCtx.fillText(`Score: ${gameScore}`, 10, 110);
+    // }
   }
 
   function drawDelayVisuals() {
@@ -1254,6 +1255,20 @@
     return gameService.getTargetHistory();
   }
 
+  // Export method to get current FPS for status display
+  export function getCurrentFPS() {
+    return currentFps;
+  }
+
+  // Export methods to get status indicators for bottom status bar
+  export function getStatusIndicators() {
+    return {
+      isMediaPipeLoaded,
+      hasVideoStream: !!videoStream,
+      isGameActive: gameActive
+    };
+  }
+
   // Reactive statements
   $: if (gameService && gameMode) {
     gameService.updateGameMode(gameMode);
@@ -1300,18 +1315,7 @@
     {height}
   ></canvas>
 
-  <!-- Status indicators -->
-  <div class="status-indicators">
-    <div class="status-item" class:active={isMediaPipeLoaded}>
-      📊 MediaPipe: {isMediaPipeLoaded ? 'Ready' : 'Loading...'}
-    </div>
-    <div class="status-item" class:active={!!videoStream}>
-      📹 Camera: {videoStream ? 'Active' : 'Inactive'}
-    </div>
-    <div class="status-item" class:active={gameActive}>
-      🎮 Game: {gameActive ? 'Active' : 'Inactive'}
-    </div>
-  </div>
+  <!-- Status indicators moved to main page bottom status bar -->
 </div>
 
 <style>
@@ -1337,30 +1341,6 @@
     z-index: 1;
   }
 
-  .status-indicators {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    z-index: 2;
-  }
 
-  .status-item {
-    background: rgba(0, 0, 0, 0.7);
-    color: #fff;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-family: monospace;
-    opacity: 0.7;
-    transition: opacity 0.3s ease;
-  }
 
-  .status-item.active {
-    opacity: 1;
-    background: rgba(0, 255, 136, 0.3);
-    border: 1px solid rgba(0, 255, 136, 0.5);
-  }
 </style>

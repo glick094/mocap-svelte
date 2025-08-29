@@ -59,7 +59,7 @@
   let gameScore = 0;
   let currentTargetType: string | null = null;
   let scoreBreakdown = { hand: 0, head: 0, knee: 0 };
-  let showPoseOverlay = true; // Toggle for pose visibility
+  let showPoseOverlay = false; // Toggle for pose visibility
   let isDataCollectionMode = true; // Toggle for data collection vs practice mode
   
   // Game flow state
@@ -75,6 +75,11 @@
   let isFlowMode = true;
   let randomGameTimer: number | null = null;
   let randomGameTimeRemaining = 0;
+
+  // Reactive status indicators
+  let mediaPipeLoaded = false;
+  let cameraActive = false;
+  let currentFps = 0;
   
   // Manual game countdown state
   let isCountdownActive = false;
@@ -160,6 +165,7 @@
     
     if (!isWebcamActive) {
       videoStream = null;
+      cameraActive = false; // Update reactive camera status
     }
     
     isWebcamActive = !isWebcamActive;
@@ -455,6 +461,7 @@
   // Event handlers
   function handleStreamReady(event: CustomEvent) {
     videoStream = event.detail;
+    cameraActive = true; // Update reactive camera status
     console.log('Video stream ready for recording:', {
       streamId: videoStream?.id,
       active: videoStream?.active,
@@ -779,6 +786,38 @@
     updateCanvasSize();
     window.addEventListener('resize', updateCanvasSize);
     
+    // Keyboard event handler for CTRL+ENTER to start games and CTRL+ESC to end games
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.key === 'Enter') {
+        // Only activate if game is not already active
+        if (!isGameActive && !gameFlowState.isActive && isWebcamActive && !isCountdownActive) {
+          event.preventDefault();
+          console.log('CTRL+ENTER pressed - starting games');
+          toggleGame();
+        }
+      } else if (event.ctrlKey && event.key === 'Escape') {
+        // End games if any are active
+        if (isGameActive || gameFlowState.isActive || isCountdownActive) {
+          event.preventDefault();
+          console.log('CTRL+ESC pressed - ending games');
+          
+          if (isFlowMode && gameFlowState.isActive) {
+            // End game flow
+            stopGameFlow();
+          } else if (isGameActive || isCountdownActive) {
+            // End manual game or cancel countdown
+            if (isCountdownActive) {
+              cancelCountdown();
+            } else {
+              stopGame();
+            }
+          }
+        }
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    
     const flowUpdateInterval = setInterval(() => {
       if (gameFlowService) {
         gameFlowService.update();
@@ -786,9 +825,33 @@
       }
     }, 100);
     
+    // Status indicators update interval
+    const statusUpdateInterval = setInterval(() => {
+      if (webcamNativeComponent && isWebcamActive) {
+        try {
+          const status = webcamNativeComponent.getStatusIndicators();
+          mediaPipeLoaded = status.isMediaPipeLoaded;
+          // Keep cameraActive updated from stream events, but also check component status
+          if (!cameraActive && status.hasVideoStream) {
+            cameraActive = status.hasVideoStream;
+          }
+          currentFps = webcamNativeComponent.getCurrentFPS();
+        } catch (error) {
+          console.warn('Error updating status indicators:', error);
+        }
+      } else if (!isWebcamActive) {
+        // Reset status when camera is inactive
+        mediaPipeLoaded = false;
+        cameraActive = false;
+        currentFps = 0;
+      }
+    }, 500); // Update every 500ms
+    
     return () => {
       window.removeEventListener('resize', updateCanvasSize);
+      window.removeEventListener('keydown', handleKeyDown);
       clearInterval(flowUpdateInterval);
+      clearInterval(statusUpdateInterval);
       
       // Clean up countdown timer
       if (countdownTimer) {
@@ -816,22 +879,20 @@
 <div class="app-container">
   <!-- Header -->
   <header class="app-header">
-    <h1>Play2Move <span class="version-badge">Reality</span></h1>
+    <h1>Play2Move</h1>
     <div class="header-buttons">
-      <button class="header-btn" class:active={isWebcamActive} on:click={toggleWebcam}>
+      <!-- <button class="header-btn" class:active={isWebcamActive} on:click={toggleWebcam}> -->
+      <button class="header-btn" on:click={toggleWebcam}>
         {isWebcamActive ? '📵 Stop Camera' : '📷 Start Camera'}
       </button>
       
       
       <!-- Pose Visibility Toggle -->
-      <button class="header-btn" class:active={showPoseOverlay} on:click={() => showPoseOverlay = !showPoseOverlay}>
-        {showPoseOverlay ? '👤 Hide Pose' : '👤 Show Pose'}
+      <!-- <button class="header-btn" class:active={showPoseOverlay} on:click={() => showPoseOverlay = !showPoseOverlay}> -->
+      <button class="header-btn" on:click={() => showPoseOverlay = !showPoseOverlay}>
+        {showPoseOverlay ? 'Hide Pose' : '👤 Show Pose'}
       </button>
       
-      <!-- Data Collection/Practice Mode Toggle -->
-      <button class="header-btn" class:active={isDataCollectionMode} on:click={() => isDataCollectionMode = !isDataCollectionMode}>
-        {isDataCollectionMode ? '📊 Collect Data' : '🏃 Practice'}
-      </button>
       
       <!-- Mode Toggle Switch -->
       <div class="toggle-switch" class:disabled={isGameActive || gameFlowState.isActive}>
@@ -947,13 +1008,34 @@
     {:else}
       <div class="webcam-inactive">
         <div class="camera-icon">📷</div>
-        <h2>Reality Mode</h2>
+        <h2>Please enable webcam</h2>
         <p>Camera is currently inactive</p>
-        <p>This version draws pose tracking and game elements directly on the webcam feed</p>
-        <small>Use the camera button in the header to start</small>
+        <p>Click the camera button in the header to start</p>
+        <small>Ensure your webcam is connected and accessible</small>
       </div>
     {/if}
   </main>
+
+  <!-- Bottom Status Bar -->
+  <div class="bottom-status">
+    <div class="status-left">
+      <span class="status-item" class:active={isDataCollectionMode}>
+        📊 {isDataCollectionMode ? 'Data Mode' : 'Practice Mode'}
+      </span>
+      <span class="status-item" class:active={cameraActive}>
+        📹 Camera: {cameraActive ? 'Active' : 'Inactive'}
+      </span>
+      <span class="status-item" class:active={mediaPipeLoaded}>
+        📊 MediaPipe: {mediaPipeLoaded ? 'Ready' : 'Loading...'}
+      </span>
+      <span class="status-item">
+        🎥 FPS: {currentFps}
+      </span>
+      <span class="status-item" class:active={isGameActive || gameFlowState.isActive}>
+        🎮 Game: {(isGameActive || gameFlowState.isActive) ? 'Active' : 'Inactive'}
+      </span>
+    </div>
+  </div>
 
   <!-- Settings Modal -->
   {#if showSettings}
@@ -1005,20 +1087,15 @@
     gap: 0.5rem;
   }
 
-  .version-badge {
-    background: rgba(255, 136, 0, 0.2);
-    border: 1px solid rgba(255, 136, 0, 0.5);
-    color: #ff8800;
-    padding: 0.2rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.7rem;
-    font-weight: 500;
-  }
 
   .header-buttons {
     display: flex;
     gap: 1rem;
     align-items: center;
+  }
+
+  .settings-btn {
+    display: none; /* Hide settings button while keeping functionality */
   }
 
   .header-btn {
@@ -1147,6 +1224,48 @@
   }
 
   .flow-complete {
+    color: #00ff88;
+  }
+
+  .bottom-status {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    z-index: 10;
+  }
+
+  .status-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: auto; /* Right-justify the status items */
+  }
+
+  .status-item {
+    display: flex;
+    align-items: center;
+    padding: 0.3rem 0.6rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #fff;
+    opacity: 0.7;
+    transition: opacity 0.3s ease, background 0.3s ease;
+  }
+
+  .status-item.active {
+    opacity: 1;
+    background: rgba(0, 255, 136, 0.3);
+    border: 1px solid rgba(0, 255, 136, 0.5);
     color: #00ff88;
   }
 
