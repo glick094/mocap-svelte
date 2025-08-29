@@ -205,12 +205,11 @@
     const { Holistic } = mediaPipeModule;
     const { Camera } = cameraModule;
 
-    // Initialize basic Holistic
-    holistic = new Holistic({
-      locateFile: (file: string) => {
-        return `https://cdn.jsdelivr.net/npm/@mediapipe/holistic/${file}`;
-      }
-    });
+    // Initialize basic Holistic with offline-first model loading
+    const { getMediaPipeLocateFile } = await import('../services/offlineModelService.js');
+    const locateFile = await getMediaPipeLocateFile();
+    
+    holistic = new Holistic({ locateFile });
 
     holistic.setOptions({
       modelComplexity: mediaPipeConfig?.modelComplexity || 0,

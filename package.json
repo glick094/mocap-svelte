@@ -14,7 +14,9 @@
 		"lint": "prettier --check . && eslint .",
 		"test:unit": "vitest",
 		"test": "npm run test:unit -- --run && npm run test:e2e",
-		"test:e2e": "playwright test"
+		"test:e2e": "playwright test",
+		"setup-offline": "node scripts/setup-offline.js",
+		"launch": "node launch-app.js"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",
