@@ -156,3 +156,6 @@ dist
 
 # Svelte
 .svelte-kit/
+
+# MediaPipe offline models (large files - download with npm run setup-offline)
+static/models/
