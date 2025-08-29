@@ -1023,10 +1023,10 @@
         📊 {isDataCollectionMode ? 'Data Mode' : 'Practice Mode'}
       </span>
       <span class="status-item" class:active={cameraActive}>
-        📷 Camera: {cameraActive ? 'Active' : 'Inactive'}
+        📹 Camera: {cameraActive ? 'Active' : 'Inactive'}
       </span>
       <span class="status-item" class:active={mediaPipeLoaded}>
-        👤 MediaPipe: {mediaPipeLoaded ? 'Ready' : 'Loading...'}
+        📊 MediaPipe: {mediaPipeLoaded ? 'Ready' : 'Loading...'}
       </span>
       <span class="status-item">
         🎥 FPS: {currentFps}
