@@ -412,7 +412,36 @@
         randomGameTimeRemaining = 0;
         
         if (gameFlowService) {
-          // Flow mode: let the game flow service handle the timeout
+          // Flow mode: Collect any remaining targets from the random game before timeout
+          if (webcamNativeComponent && isRecording) {
+            try {
+              const currentGameTargets = webcamNativeComponent.getTargetHistory();
+              if (currentGameTargets && currentGameTargets.length > 0) {
+                // Filter out targets that were already collected (avoid duplicates)
+                const newTargets = currentGameTargets.filter(target => 
+                  !sessionTargetHistory.some(existing => 
+                    existing.targetId === target.targetId && existing.startTime === target.startTime
+                  )
+                );
+                if (newTargets.length > 0) {
+                  sessionTargetHistory.push(...newTargets);
+                  console.log(`Collected ${newTargets.length} random game targets before timeout. Total session targets: ${sessionTargetHistory.length}`);
+                  
+                  // Log specific info for random targets
+                  const randomTargets = newTargets.filter(t => t.gameMode === 'random');
+                  if (randomTargets.length > 0) {
+                    console.log(`*** TIMEOUT: Collected ${randomTargets.length} RANDOM targets:`, randomTargets.map(t => t.targetId));
+                  }
+                } else {
+                  console.log(`No new random targets to collect before timeout. Total session targets: ${sessionTargetHistory.length}`);
+                }
+              }
+            } catch (error) {
+              console.warn('Could not collect random game targets before timeout:', error);
+            }
+          }
+          
+          // Let the game flow service handle the timeout
           gameFlowService.onRandomGameTimeout();
           gameFlowState = gameFlowService.getState();
         } else {
@@ -476,8 +505,24 @@
       try {
         const currentGameTargets = webcamNativeComponent.getTargetHistory();
         if (currentGameTargets && currentGameTargets.length > 0) {
-          sessionTargetHistory.push(...currentGameTargets);
-          console.log(`Collected ${currentGameTargets.length} targets from game. Total session targets: ${sessionTargetHistory.length}`);
+          // Filter out targets that were already collected (avoid duplicates)
+          const newTargets = currentGameTargets.filter(target => 
+            !sessionTargetHistory.some(existing => 
+              existing.targetId === target.targetId && existing.startTime === target.startTime
+            )
+          );
+          if (newTargets.length > 0) {
+            sessionTargetHistory.push(...newTargets);
+            console.log(`Collected ${newTargets.length} new targets from game (${event.detail.gameMode || 'unknown mode'}). Total session targets: ${sessionTargetHistory.length}`);
+            
+            // Log specific info for random targets
+            const randomTargets = newTargets.filter(t => t.gameMode === 'random');
+            if (randomTargets.length > 0) {
+              console.log(`*** IMPORTANT: Collected ${randomTargets.length} RANDOM targets:`, randomTargets.map(t => t.targetId));
+            }
+          } else {
+            console.log(`No new targets to collect from completed game (${event.detail.gameMode || 'unknown mode'}). Total session targets: ${sessionTargetHistory.length}`);
+          }
         }
       } catch (error) {
         console.warn('Could not collect target history from completed game:', error);
@@ -626,20 +671,57 @@
     const blob = new Blob([recordingSession.csvContent], { type: 'text/csv' });
     downloadFile(blob, recordingSession.filename);
 
+    // Collect any remaining targets from the current game before stopping
+    if (webcamNativeComponent && isRecording) {
+      try {
+        const currentGameTargets = webcamNativeComponent.getTargetHistory();
+        if (currentGameTargets && currentGameTargets.length > 0) {
+          // Filter out targets that were already collected (avoid duplicates)
+          const newTargets = currentGameTargets.filter(target => 
+            !sessionTargetHistory.some(existing => 
+              existing.targetId === target.targetId && existing.startTime === target.startTime
+            )
+          );
+          if (newTargets.length > 0) {
+            sessionTargetHistory.push(...newTargets);
+            console.log(`Collected ${newTargets.length} remaining targets from current game. Total session targets: ${sessionTargetHistory.length}`);
+          }
+        }
+      } catch (error) {
+        console.warn('Could not collect remaining targets from current game:', error);
+      }
+    }
+
     // Export game timestamps CSV if we have accumulated target history from session
     if (sessionTargetHistory && sessionTargetHistory.length > 0) {
       try {
+        // Log breakdown of targets by game mode before export
+        const targetsByMode = sessionTargetHistory.reduce((acc, target) => {
+          const mode = target.gameMode || 'unknown';
+          acc[mode] = (acc[mode] || 0) + 1;
+          return acc;
+        }, {} as Record<string, number>);
+        console.log('*** EXPORT: Target breakdown by game mode:', targetsByMode);
+        
+        const randomTargets = sessionTargetHistory.filter(t => t.gameMode === 'random');
+        if (randomTargets.length > 0) {
+          console.log(`*** EXPORT: ${randomTargets.length} RANDOM targets being exported:`, randomTargets.map(t => t.targetId));
+        } else {
+          console.warn('*** EXPORT: NO RANDOM TARGETS found in sessionTargetHistory!');
+        }
+        
         const timestampResult = exportGameTimestamps(
           sessionTargetHistory,
           { participantId: recordingSession.participantId }, // Use same participantId as pose_data_native
           recordingSession.timestamp || generateTimestamp(),
-          recordingSession.sessionUUID || generateUUID(), // Include matching session UUID
-          gameScore
+          recordingSession.sessionUUID || generateUUID() // Include matching session UUID
         );
         console.log('Game timestamps exported:', timestampResult.filename, `(${timestampResult.rowCount} events from ${sessionTargetHistory.length} targets)`);
       } catch (error) {
         console.warn('Could not export game timestamps:', error);
       }
+    } else {
+      console.warn('*** EXPORT: No sessionTargetHistory to export!');
     }
 
     console.log('Stopped recording. Pose data file downloaded:', recordingSession.filename);

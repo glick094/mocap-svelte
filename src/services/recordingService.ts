@@ -248,9 +248,16 @@ export function downloadFile(content, filename, mimeType = 'text/csv') {
 }
 
 /**
- * Export game timestamps CSV with stimuli start/stop events
+ * Export game timestamps CSV with stimuli start/stop events.
+ * 
+ * The gameService creates multiple entries per target with different statuses:
+ * - 'start': When target first appears (stimuli_start event)
+ * - 'obtained': When target is successfully hit (stimuli_stop event)
+ * - 'unobtained'/'end': When target times out without being hit (stimuli_stop event)
+ * 
+ * This function filters these to create clean start/stop event pairs.
  */
-export function exportGameTimestamps(targetHistory: any[], participantInfo: any, sessionTimestamp: string, sessionUUID: string, gameScore: number) {
+export function exportGameTimestamps(targetHistory: any[], participantInfo: any, sessionTimestamp: string, sessionUUID: string) {
   const headers = [
     'participant_id',
     'session_timestamp', 
@@ -275,10 +282,12 @@ export function exportGameTimestamps(targetHistory: any[], participantInfo: any,
   
   for (let i = 0; i < targetHistory.length; i++) {
     const target = targetHistory[i];
-    const nextTarget = targetHistory[i + 1];
     
-    // Stimuli START event - when a new target appears
-    if (target.targetType && target.startTime) {
+    // Only process targets with proper target types (skip centering targets without specific types)
+    if (!target.targetType) continue;
+    
+    // Stimuli START event - only record when status is 'start' (target appears)
+    if (target.status === 'start' && target.startTime) {
       sessionTargetIndex++; // Increment session-wide target index
       
       const startRow = [
@@ -301,16 +310,38 @@ export function exportGameTimestamps(targetHistory: any[], participantInfo: any,
       rows.push(startRow.join(','));
     }
     
-    // Stimuli STOP event - when target is hit or disappears
-    if (target.targetType && (target.hitTime || target.status === 'completed')) {
-      if (target.hitTime) currentScore++; // Only increment score if actually hit
+    // Stimuli STOP event - record when target is obtained (hit) or ends/times out
+    if (target.status === 'obtained' && target.hitTime) {
+      currentScore++; // Increment score for successful hits
       
-      const stopTimestamp = target.hitTime || target.startTime; // Use hit time or fallback to start time
       const stopRow = [
         participantInfo.participantId || 'unknown', 
         sessionTimestamp,
         sessionUUID, // Include session UUID for linking files
-        stopTimestamp?.toString() || Date.now().toString(),
+        target.hitTime.toString(),
+        'stimuli_stop',
+        target.gameMode || '',
+        target.gamePhase || '',
+        target.targetId || '',
+        target.targetType || '',
+        target.targetX?.toString() || '',
+        target.targetY?.toString() || '',
+        target.targetPixelX?.toString() || '',
+        target.targetPixelY?.toString() || '',
+        sessionTargetIndex.toString(), // Use same session-wide index for stop event
+        currentScore.toString()
+      ];
+      rows.push(stopRow.join(','));
+    }
+    // Handle target timeout/miss - when status is 'unobtained' or 'end' without hitTime
+    else if ((target.status === 'unobtained' || target.status === 'end') && !target.hitTime && target.startTime) {
+      const timeoutTimestamp = target.startTime + 10000; // 10 second timeout as defined in gameService
+      
+      const stopRow = [
+        participantInfo.participantId || 'unknown', 
+        sessionTimestamp,
+        sessionUUID, // Include session UUID for linking files
+        timeoutTimestamp.toString(),
         'stimuli_stop',
         target.gameMode || '',
         target.gamePhase || '',
