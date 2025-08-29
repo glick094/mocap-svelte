@@ -69,6 +69,11 @@
   let frameCount = 0;
   let lastFpsTime = performance.now();
   let currentFps = 0;
+  let avgGameLogicTime = 0;
+  let gameLogicSamples: number[] = [];
+  
+  // Frame skipping for performance
+  let frameSkipCounter = 0;
 
   // Hip sway animation state
   let lastHipHitTime = 0;
@@ -144,10 +149,19 @@
       mediaPipeConfig = {
         width: width,
         height: height,
-        downsampleFactor: 0.5, // Process at half resolution for better performance
-        useGPU: true, // Try GPU acceleration
-        modelComplexity: 0, // Start with lightweight model
+        downsampleFactor: 0.3, // Aggressive downsampling for CPU systems (was 0.5)
+        useGPU: false, // Disable GPU for CPU-only systems to avoid overhead
+        modelComplexity: 0, // Lightest model
         enableOptimizations: true
+      };
+      
+      // Additional performance settings stored separately
+      const performanceSettings = {
+        frameSkipping: 2, // Process every 2nd frame for 2x speed boost
+        reducedTracking: true, // Reduce tracking quality for performance
+        disableSegmentation: true, // Disable segmentation completely
+        minDetectionConfidence: 0.7, // Higher threshold = fewer false detections = faster
+        minTrackingConfidence: 0.3 // Lower threshold = less re-detection = faster
       };
       
       console.log('Initializing optimized MediaPipe with config:', mediaPipeConfig);
@@ -199,12 +213,12 @@
     });
 
     holistic.setOptions({
-      modelComplexity: 0, // Use lightweight model for fallback
-      smoothLandmarks: true,
-      enableSegmentation: false,
+      modelComplexity: mediaPipeConfig?.modelComplexity || 0,
+      smoothLandmarks: false, // Disable smoothing for better performance
+      enableSegmentation: false, // Always disable segmentation for performance
       smoothSegmentation: false,
-      minDetectionConfidence: 0.5,
-      minTrackingConfidence: 0.5,
+      minDetectionConfidence: 0.7, // Higher threshold = fewer false detections
+      minTrackingConfidence: 0.3, // Lower threshold = less re-detection
       selfieMode: true
     });
 
@@ -215,7 +229,12 @@
       camera = new Camera(videoElement, {
         onFrame: async () => {
           if (holistic && videoElement) {
-            await holistic.send({ image: videoElement });
+            // Implement frame skipping for performance (process every 2nd frame)
+            frameSkipCounter++;
+            
+            if (frameSkipCounter % 2 === 0) {
+              await holistic.send({ image: videoElement });
+            }
           }
         },
         width: width,
@@ -232,22 +251,45 @@
   }
 
   function onPoseResults(results: PoseResults) {
+    const mediaPipeEndTime = performance.now();
+    const mediaPipeInferenceTime = processingStartTime > 0 ? mediaPipeEndTime - processingStartTime : 0;
+    
     currentPoseData = results;
     frameCount++;
     
+    // Start timing game logic
+    const gameLogicStartTime = performance.now();
+    
     // Calculate FPS and processing time
     const now = performance.now();
-    const processingTime = processingStartTime > 0 ? now - processingStartTime : 0;
     
     if (now - lastFpsTime >= 1000) {
       currentFps = Math.round((frameCount * 1000) / (now - lastFpsTime));
       frameCount = 0;
       lastFpsTime = now;
       
-      // Log performance metrics
-      if (mediaPipeConfig?.enableOptimizations) {
-        console.log(`MediaPipe Performance: ${currentFps} FPS, Processing: ${processingTime.toFixed(1)}ms, Downsampling: ${mediaPipeConfig.downsampleFactor}x`);
-      }
+      // Calculate average game logic time
+      avgGameLogicTime = gameLogicSamples.length > 0 
+        ? gameLogicSamples.reduce((a, b) => a + b, 0) / gameLogicSamples.length 
+        : 0;
+      
+      // Enhanced performance logging (commented out for production)
+      // console.log(`🔍 Performance Breakdown (OPTIMIZED CPU MODE):
+      //   📊 FPS: ${currentFps} (Target: 15+ for CPU, 30+ for GPU)
+      //   🧠 MediaPipe Inference: ${mediaPipeInferenceTime.toFixed(1)}ms
+      //   🎯 Game Logic: ${avgGameLogicTime.toFixed(1)}ms
+      //   ⚙️  Model Complexity: ${mediaPipeConfig?.modelComplexity || 0} (0=fastest, 2=most accurate)
+      //   📉 Downsampling: ${mediaPipeConfig?.downsampleFactor || 1.0}x (lower = faster)
+      //   ⏭️  Frame Skipping: Every 2nd frame (2x speed boost)
+      //   🎮 Game Active: ${gameActive}
+      //   💾 GPU Enabled: ${mediaPipeConfig?.useGPU || false}
+      //   🚫 Smoothing: Disabled
+      //   🎯 Detection Confidence: 0.7 (higher = faster)
+      //   
+      //   💡 Bottleneck Analysis:
+      //   ${mediaPipeInferenceTime > 60 ? '⚠️  MediaPipe inference still slow (>60ms)' : '✅ MediaPipe inference optimized'}
+      //   ${avgGameLogicTime > 10 ? '⚠️  Game logic is slow (>10ms)' : '✅ Game logic OK'}
+      //   ${currentFps < 10 ? '🔴 FPS critically low' : currentFps < 15 ? '🟡 FPS could be better' : '🟢 FPS good for CPU'}`);
     }
     
     processingStartTime = now; // Mark start of next processing cycle
@@ -258,6 +300,11 @@
     // Handle game logic if game is active
     if (gameActive && gameService) {
       const collision = gameService.checkCollisions(results);
+      const gameLogicTime = performance.now() - gameLogicStartTime;
+      
+      // Collect game logic timing samples
+      gameLogicSamples.push(gameLogicTime);
+      if (gameLogicSamples.length > 10) gameLogicSamples.shift(); // Keep last 10 samples
       if (collision.hit) {
         gameScore = gameService.getGameScore();
         scoreBreakdown = gameService.getScoreBreakdown();
@@ -1200,6 +1247,11 @@
     
     gameService.stopGame();
     dispatch('gameEnded', { finalScore: gameScore, scoreBreakdown });
+  }
+
+  export function getTargetHistory() {
+    if (!gameService) return [];
+    return gameService.getTargetHistory();
   }
 
   // Reactive statements

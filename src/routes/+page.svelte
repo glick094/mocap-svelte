@@ -13,7 +13,9 @@
     startRecordingSession,
     downloadFile,
     startVideoRecording,
-    stopVideoRecording
+    stopVideoRecording,
+    exportGameTimestamps,
+    generateUUID
   } from '../services/recordingService.js';
 
   // Type definitions
@@ -47,6 +49,7 @@
     performanceStartTime: number;
     timestamp?: string;
     participantId?: string;
+    sessionUUID?: string;
   }
 
   // App state
@@ -119,6 +122,7 @@
   let recordingSession: RecordingSession | null = null;
   let poseDataBuffer: any[] = [];
   let mediaRecorder: MediaRecorder | null = null;
+  let sessionTargetHistory: any[] = []; // Accumulate target history across all games in session
   let videoStream: MediaStream | null = null;
 
   // WebcamNative component reference
@@ -436,7 +440,7 @@
     if (isRecording && recordingSession && isDataCollectionMode) {
       const unixTimestamp = Date.now();
       const preciseFrameTime = performance.now() - recordingSession.performanceStartTime;
-      const csvRow = formatPoseDataForCSV(rawPoseData, unixTimestamp, preciseFrameTime);
+      const csvRow = formatPoseDataForCSV(rawPoseData, unixTimestamp, preciseFrameTime, recordingSession.sessionUUID || generateUUID());
       recordingSession.csvContent += csvRow;
       poseDataBuffer.push({
         timestamp: unixTimestamp,
@@ -467,6 +471,19 @@
     gameScore = event.detail.finalScore;
     currentTargetType = null;
     
+    // Collect target history from this game before it gets cleared
+    if (webcamNativeComponent && isRecording) {
+      try {
+        const currentGameTargets = webcamNativeComponent.getTargetHistory();
+        if (currentGameTargets && currentGameTargets.length > 0) {
+          sessionTargetHistory.push(...currentGameTargets);
+          console.log(`Collected ${currentGameTargets.length} targets from game. Total session targets: ${sessionTargetHistory.length}`);
+        }
+      } catch (error) {
+        console.warn('Could not collect target history from completed game:', error);
+      }
+    }
+    
     if (isFlowMode && gameFlowService) {
       console.log('Calling gameFlowService.onGameCompleted()');
       gameFlowService.onGameCompleted();
@@ -495,10 +512,12 @@
 
     const participant = generateParticipantId(userSettings);
     const timestamp = generateTimestamp();
+    const sessionUUID = generateUUID();
     
     recordingSession = {
       participantId: participant,
       timestamp: timestamp,
+      sessionUUID: sessionUUID,
       filename: `pose_data_native_${participant}_${timestamp}.csv`,
       csvContent: createCSVHeader(),
       startTime: Date.now(),
@@ -507,6 +526,7 @@
 
     isRecording = true;
     poseDataBuffer = [];
+    sessionTargetHistory = []; // Clear session target history for new recording
 
     const videoStarted = startLocalVideoRecording(participant, timestamp);
     if (!videoStarted) {
@@ -602,14 +622,32 @@
       mediaRecorder = null;
     }
     
+    // Export main pose data CSV
     const blob = new Blob([recordingSession.csvContent], { type: 'text/csv' });
     downloadFile(blob, recordingSession.filename);
+
+    // Export game timestamps CSV if we have accumulated target history from session
+    if (sessionTargetHistory && sessionTargetHistory.length > 0) {
+      try {
+        const timestampResult = exportGameTimestamps(
+          sessionTargetHistory,
+          { participantId: recordingSession.participantId }, // Use same participantId as pose_data_native
+          recordingSession.timestamp || generateTimestamp(),
+          recordingSession.sessionUUID || generateUUID(), // Include matching session UUID
+          gameScore
+        );
+        console.log('Game timestamps exported:', timestampResult.filename, `(${timestampResult.rowCount} events from ${sessionTargetHistory.length} targets)`);
+      } catch (error) {
+        console.warn('Could not export game timestamps:', error);
+      }
+    }
 
     console.log('Stopped recording. Pose data file downloaded:', recordingSession.filename);
     console.log('Total data points recorded:', poseDataBuffer.length);
     
     recordingSession = null;
     poseDataBuffer = [];
+    sessionTargetHistory = []; // Clear session target history
   }
 
   function toggleRecording() {

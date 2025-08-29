@@ -1,167 +1,524 @@
-Trying MediaPipe initialization with CDN: https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5.1675471629 mediaPipeService.ts:112:15
-Hardware capabilities: 
-Object { supportsGPU: true, supportsWASM: true }
-mediaPipeService.ts:177:13
-MediaPipe settings: GPU=true, Model Complexity=0 mediaPipeService.ts:188:11
-Initializing optimized MediaPipe with config: 
-Object { width: 2130, height: 1311, downsampleFactor: 0.5, useGPU: true, modelComplexity: 0, enableOptimizations: true }
-WebcamNative.svelte:172:12
-Trying MediaPipe initialization with CDN: https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5.1675471629 mediaPipeService.ts:112:15
-Hardware capabilities: 
-Object { supportsGPU: true, supportsWASM: true }
-mediaPipeService.ts:177:13
-MediaPipe settings: GPU=true, Model Complexity=0 mediaPipeService.ts:188:11
-Video stream ready for recording: 
-Object { streamId: "{7e7c2f1b-6087-4b51-bf33-371625b43016}", active: true, videoTracks: 1, audioTracks: 0 }
-+page.svelte:498:11
-Initializing optimized MediaPipe with config: 
-Object { width: 2130, height: 1311, downsampleFactor: 0.5, useGPU: true, modelComplexity: 0, enableOptimizations: true }
-WebcamNative.svelte:172:12
-Trying MediaPipe initialization with CDN: https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5.1675471629 mediaPipeService.ts:112:15
-Hardware capabilities: 
-Object { supportsGPU: true, supportsWASM: true }
-mediaPipeService.ts:177:13
-MediaPipe settings: GPU=true, Model Complexity=0 mediaPipeService.ts:188:11
-Downsampling enabled: 2130x1311 -> 1065x656 mediaPipeService.ts:266:15
-MediaPipe initialization completed with optimizations WebcamNative.svelte:189:14
-GameService.updateGameMode() called: 
-Object { oldMode: "random", newMode: "random", willReset: false }
-gameService.ts:1434:13
-No mode change, skipping state reset gameService.ts:1446:15
 [vite] connecting... client:789:9
 [vite] connected. client:912:15
 Video stream ready for recording: 
-Object { streamId: "{093a84d3-90a5-4a10-b078-3609c6a3ff8c}", active: true, videoTracks: 1, audioTracks: 0 }
-+page.svelte:498:11
+Object { streamId: "{bf363c47-ac20-4ded-8d81-dda39fecf73c}", active: true, videoTracks: 1, audioTracks: 0 }
++page.svelte:516:11
 Initializing optimized MediaPipe with config: 
-Object { width: 2130, height: 1311, downsampleFactor: 0.5, useGPU: true, modelComplexity: 0, enableOptimizations: true }
-WebcamNative.svelte:172:12
+Object { width: 2144, height: 955, downsampleFactor: 0.5, useGPU: true, modelComplexity: 0, enableOptimizations: true }
+WebcamNative.svelte:174:12
 Trying MediaPipe initialization with CDN: https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5.1675471629 mediaPipeService.ts:112:15
 Hardware capabilities: 
 Object { supportsGPU: true, supportsWASM: true }
 mediaPipeService.ts:177:13
 MediaPipe settings: GPU=true, Model Complexity=0 mediaPipeService.ts:188:11
-Downsampling enabled: 2130x1311 -> 1065x656 mediaPipeService.ts:266:15
-MediaPipe initialization completed with optimizations WebcamNative.svelte:189:14
+Downsampling enabled: 2144x955 -> 1072x478 mediaPipeService.ts:266:15
+MediaPipe initialization completed with optimizations WebcamNative.svelte:191:14
 GameService.updateGameMode() called: 
 Object { oldMode: "hips-sway", newMode: "hips-sway", willReset: false }
-gameService.ts:1434:13
-No mode change, skipping state reset gameService.ts:1446:15
+gameService.ts:1438:13
+No mode change, skipping state reset gameService.ts:1450:15
 Uncaught (in promise) DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
-    O camera_utils.js:22
-    node_modules @mediapipe_camera_utils.js:424
-    promise callback*node_modules/ @mediapipe_camera_utils.js:423
-    H camera_utils.js:12
-    node_modules NextJS
-    node_modules @mediapipe_camera_utils.js:177
-    J camera_utils.js:13
-    node_modules @mediapipe_camera_utils.js:420
-    initializeMediaPipe WebcamNative.svelte:167
-    WebcamNative WebcamNative.svelte:84
-    run utils.js:39
-    fns lifecycle.js:51
-    untrack runtime.js:883
-    init lifecycle.js:51
-    update_reaction runtime.js:279
-    update_effect runtime.js:446
-    flush_queued_effects runtime.js:569
-    flush_queued_root_effects runtime.js:541
-    flushSync runtime.js:702
-    Svelte4Component legacy-client.js:124
-    <anonymous> legacy-client.js:52
-    initialize client.js:480
-    navigate client.js:1593
-    start client.js:327
-    async* (index):24
-    promise callback* (index):23
+    O http://localhost:5173/node_modules/.vite/deps/@mediapipe_camera_utils.js?v=cfc7cffb:440
+    node_modules mediapipe/camera_utils/camera_utils.js/</N.prototype.start/</<@http://localhost:5173/node_modules/.vite/deps/@mediapipe_camera_utils.js?v=cfc7cffb:424
 @mediapipe_camera_utils.js:440
-I0000 00:00:1753375720.662000       1 gl_context_webgl.cc:151] Successfully created a WebGL context with major version 3 and handle 3 client.js:2976:15
-I0000 00:00:1753375720.664000       1 gl_context.cc:359] GL version: 3.0 (OpenGL ES 3.0 (WebGL 2.0)) client.js:2976:15
-W0000 00:00:1753375720.665000       1 gl_context.cc:1000] OpenGL error checking is disabled client.js:2976:15
-MediaPipe Performance: 0 FPS, Processing: 0.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-Starting game flow +page.svelte:331:11
-Creating MediaRecorder with options: 
-Object { mimeType: "video/webm;codecs=vp8", videoBitsPerSecond: 2500000 }
-+page.svelte:630:12
-Video recording started for participant P2598 +page.svelte:663:12
-Started recording pose data: pose_data_native_P2598_2025-07-24T16-48-42.csv +page.svelte:597:11
-Starting game flow with config: 
-Object { games: (4) […], delayBetweenGames: 10000, autoStartRecording: true }
-gameFlowService.ts:48:13
-Starting delay: 10s until next game (hips-sway) gameFlowService.ts:123:15
-Flow: Starting 10s delay before hips-sway +page.svelte:409:13
-Next game will be: hips-sway +page.svelte:410:13
+I0000 00:00:1755098341.001000       1 gl_context_webgl.cc:151] Successfully created a WebGL context with major version 3 and handle 3 client.js:2976:15
+I0000 00:00:1755098341.002000       1 gl_context.cc:359] GL version: 3.0 (OpenGL ES 3.0 (WebGL 2.0)) client.js:2976:15
+W0000 00:00:1755098341.004000       1 gl_context.cc:1000] OpenGL error checking is disabled client.js:2976:15
+🔍 Performance Breakdown:
+        📊 FPS: 0 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 0.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ✅ MediaPipe inference OK
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
 WebGL warning: drawArraysInstanced: Tex image TEXTURE_2D level 0 is incurring lazy initialization. 8
-MediaPipe Performance: 6 FPS, Processing: 143.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 157.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 172.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 198.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 155.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 177.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 185.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 203.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 8 FPS, Processing: 120.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-Starting game 1/4: hips-sway gameFlowService.ts:108:13
-Flow: Starting game 1: hips-sway +page.svelte:381:13
-Setting currentGameMode to: hips-sway +page.svelte:382:13
-Calling webcamNativeComponent.startGame() +page.svelte:388:14
-GameService.startGame() called for mode: hips-sway gameService.ts:348:13
-Game started! 
-Object { score: 0, scoreBreakdown: {…} }
-+page.svelte:525:11
-MediaPipe Performance: 8 FPS, Processing: 158.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 144.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 130.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 8 FPS, Processing: 125.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 140.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 148.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 139.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 142.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 127.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 137.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 134.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 144.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 167.0ms, Downsampling: 0.5x 2 WebcamNative.svelte:267:13
-Game completed, dispatching gameEnded event WebcamNative.svelte:303:13
-Game ended! 
-Object { finalScore: 10, scoreBreakdown: {…} }
-+page.svelte:541:11
-Calling gameFlowService.onGameCompleted() +page.svelte:546:12
-Game completed: hips-sway gameFlowService.ts:67:13
-Flow: Ending game 1: hips-sway +page.svelte:397:13
-Starting delay: 10s until next game (hands-fixed) gameFlowService.ts:123:15
-Flow: Starting 10s delay before hands-fixed +page.svelte:409:13
-Next game will be: hands-fixed +page.svelte:410:13
-Updated gameFlowState: 
-Object { currentGameIndex: 0, currentGame: "hips-sway", phase: "delay", isActive: true, delayStartTime: 1753375748290, delayRemaining: 10000 }
-+page.svelte:549:12
-MediaPipe Performance: 5 FPS, Processing: 258.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 165.0ms, Downsampling: 0.5x 2 WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 163.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 161.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 134.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 172.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 160.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 172.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 122.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-Starting game 2/4: hands-fixed gameFlowService.ts:108:13
-Flow: Starting game 2: hands-fixed +page.svelte:381:13
-Setting currentGameMode to: hands-fixed +page.svelte:382:13
-Calling webcamNativeComponent.startGame() +page.svelte:388:14
-GameService.startGame() called for mode: hips-sway gameService.ts:348:13
-Game started! 
-Object { score: 0, scoreBreakdown: {…} }
-+page.svelte:525:11
+🔍 Performance Breakdown:
+        📊 FPS: 7 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 148.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 121.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 111.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 102.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 101.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 119.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 126.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 102.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 115.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 122.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 10 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 102.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 10 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 103.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 141.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 126.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 104.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 125.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 96.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 153.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+Game mode changed to: hands-fixed +page.svelte:461:11
 GameService.updateGameMode() called: 
 Object { oldMode: "hips-sway", newMode: "hands-fixed", willReset: true }
-gameService.ts:1434:13
-Game state reset due to mode change gameService.ts:1442:15
+gameService.ts:1438:13
+Game state reset due to mode change gameService.ts:1446:15
 Generated fixedTargets for hands game after mode change: 
 Object { count: 16, firstTarget: {…}, firstTargetId: "neutral_figure8_001" }
-gameService.ts:1454:17
-After state reset and target regeneration - fixedTargets length: 16 gameService.ts:1444:15
+gameService.ts:1458:17
+After state reset and target regeneration - fixedTargets length: 16 gameService.ts:1448:15
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 163.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+Starting 15-second countdown for manual game +page.svelte:297:11
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 126.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 105.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 116.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 111.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 158.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 100.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 120.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 137.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 120.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 137.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 10 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 101.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+GameService.startGame() called for mode: hands-fixed gameService.ts:348:13
+Initializing HANDS_FIXED game mode gameService.ts:381:17
+Hands centering state after init: 
+Object { phase: "centering", currentTrial: 1, primaryHand: null, activeHand: null, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:390:17
+Generated fixedTargets for hands game: 
+Object { count: 16, firstTarget: {…}, firstTargetId: "neutral_figure8_001" }
+gameService.ts:400:17
+Game started! 
+Object { score: 0, scoreBreakdown: {…} }
++page.svelte:543:11
+Game started after countdown +page.svelte:291:14
 checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
+Object { hasLeftHand: false, hasRightHand: true, leftCount: 0, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
+gameService.ts:597:13
+Trial 1 hands centering debug: 
+Object { leftHandCentered: false, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:612:19
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: false, hasRightHand: true, leftCount: 0, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
+gameService.ts:597:13
+Trial 1 hands centering debug: 
+Object { leftHandCentered: false, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:612:19
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: false, hasRightHand: true, leftCount: 0, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
+gameService.ts:597:13
+Trial 1 hands centering debug: 
+Object { leftHandCentered: false, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:612:19
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: false, hasRightHand: true, leftCount: 0, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
+gameService.ts:597:13
+Trial 1 hands centering debug: 
+Object { leftHandCentered: false, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:612:19
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: false, hasRightHand: true, leftCount: 0, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
+gameService.ts:597:13
+Trial 1 hands centering debug: 
+Object { leftHandCentered: false, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:612:19
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: false, hasRightHand: true, leftCount: 0, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
+gameService.ts:597:13
+Trial 1 hands centering debug: 
+Object { leftHandCentered: false, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:612:19
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: false, hasRightHand: true, leftCount: 0, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
+gameService.ts:597:13
+Trial 1 hands centering debug: 
+Object { leftHandCentered: false, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:612:19
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: false, hasRightHand: true, leftCount: 0, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
+gameService.ts:597:13
+Trial 1 hands centering debug: 
+Object { leftHandCentered: false, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:612:19
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: false, hasRightHand: true, leftCount: 0, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
+gameService.ts:597:13
+Trial 1 hands centering debug: 
+Object { leftHandCentered: false, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:612:19
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 97.0ms
+        🎯 Game Logic: 0.2ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: true
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: false, hasRightHand: true, leftCount: 0, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
 gameService.ts:597:13
 Trial 1 hands centering debug: 
 Object { leftHandCentered: false, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
@@ -170,50 +527,19 @@ checkHandsCenteringCollisions called with:
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
 gameService.ts:597:13
 Trial 1 hands centering debug: 
-Object { leftHandCentered: false, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+Object { leftHandCentered: true, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
 gameService.ts:612:19
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
 gameService.ts:597:13
 Trial 1 hands centering debug: 
-Object { leftHandCentered: false, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+Object { leftHandCentered: true, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
 gameService.ts:612:19
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
 gameService.ts:597:13
 Trial 1 hands centering debug: 
-Object { leftHandCentered: false, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
-gameService.ts:612:19
-MediaPipe Performance: 6 FPS, Processing: 159.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
-gameService.ts:597:13
-Trial 1 hands centering debug: 
-Object { leftHandCentered: false, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
-gameService.ts:612:19
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "centering", currentTrial: 1 }
-gameService.ts:597:13
-Trial 1 hands centering debug: 
-Object { leftHandCentered: false, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
-gameService.ts:612:19
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
-gameService.ts:597:13
-Trial 1 hands centering debug: 
-Object { leftHandCentered: false, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
-gameService.ts:612:19
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
-gameService.ts:597:13
-Trial 1 hands centering debug: 
-Object { leftHandCentered: false, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
-gameService.ts:612:19
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
-gameService.ts:597:13
-Trial 1 hands centering debug: 
-Object { leftHandCentered: false, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+Object { leftHandCentered: true, rightHandCentered: false, bothHandsCentered: false, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
 gameService.ts:612:19
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
@@ -221,50 +547,83 @@ gameService.ts:597:13
 Trial 1 hands centering debug: 
 Object { leftHandCentered: true, rightHandCentered: true, bothHandsCentered: true, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
 gameService.ts:612:19
-Trial 1: Started centering timer at 1753375760077 gameService.ts:624:23
+Trial 1: Started centering timer at 1755098375567 gameService.ts:624:23
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
 gameService.ts:597:13
 Trial 1 hands centering debug: 
 Object { leftHandCentered: true, rightHandCentered: true, bothHandsCentered: true, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
 gameService.ts:612:19
-Trial 1: Centering duration: 149 ms, required: 1000 ms gameService.ts:627:23
-MediaPipe Performance: 6 FPS, Processing: 236.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+Trial 1: Centering duration: 144 ms, required: 1000 ms gameService.ts:627:23
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
 gameService.ts:597:13
 Trial 1 hands centering debug: 
 Object { leftHandCentered: true, rightHandCentered: true, bothHandsCentered: true, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
 gameService.ts:612:19
-Trial 1: Centering duration: 386 ms, required: 1000 ms gameService.ts:627:23
+Trial 1: Centering duration: 264 ms, required: 1000 ms gameService.ts:627:23
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
 gameService.ts:597:13
 Trial 1 hands centering debug: 
 Object { leftHandCentered: true, rightHandCentered: true, bothHandsCentered: true, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
 gameService.ts:612:19
-Trial 1: Centering duration: 581 ms, required: 1000 ms gameService.ts:627:23
+Trial 1: Centering duration: 374 ms, required: 1000 ms gameService.ts:627:23
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
 gameService.ts:597:13
 Trial 1 hands centering debug: 
 Object { leftHandCentered: true, rightHandCentered: true, bothHandsCentered: true, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
 gameService.ts:612:19
-Trial 1: Centering duration: 758 ms, required: 1000 ms gameService.ts:627:23
+Trial 1: Centering duration: 479 ms, required: 1000 ms gameService.ts:627:23
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 120.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: true
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
 gameService.ts:597:13
 Trial 1 hands centering debug: 
 Object { leftHandCentered: true, rightHandCentered: true, bothHandsCentered: true, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
 gameService.ts:612:19
-Trial 1: Centering duration: 940 ms, required: 1000 ms gameService.ts:627:23
+Trial 1: Centering duration: 599 ms, required: 1000 ms gameService.ts:627:23
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
 gameService.ts:597:13
 Trial 1 hands centering debug: 
 Object { leftHandCentered: true, rightHandCentered: true, bothHandsCentered: true, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
 gameService.ts:612:19
-Trial 1: Centering duration: 1141 ms, required: 1000 ms gameService.ts:627:23
+Trial 1: Centering duration: 707 ms, required: 1000 ms gameService.ts:627:23
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
+gameService.ts:597:13
+Trial 1 hands centering debug: 
+Object { leftHandCentered: true, rightHandCentered: true, bothHandsCentered: true, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:612:19
+Trial 1: Centering duration: 826 ms, required: 1000 ms gameService.ts:627:23
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
+gameService.ts:597:13
+Trial 1 hands centering debug: 
+Object { leftHandCentered: true, rightHandCentered: true, bothHandsCentered: true, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:612:19
+Trial 1: Centering duration: 952 ms, required: 1000 ms gameService.ts:627:23
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 1 }
+gameService.ts:597:13
+Trial 1 hands centering debug: 
+Object { leftHandCentered: true, rightHandCentered: true, bothHandsCentered: true, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
+gameService.ts:612:19
+Trial 1: Centering duration: 1083 ms, required: 1000 ms gameService.ts:627:23
 Trial 1: Centering successful! Moving to targeting phase gameService.ts:629:25
 Set phase to targeting: 
 Object { phase: "targeting", currentFixedTargetIndex: 1, hasTarget: true, targetId: "neutral_figure8_001", fixedTargetsLength: 16, fixedTargets0: {…} }
@@ -276,7 +635,33 @@ Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
 Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: null, activeHand: null }
 gameService.ts:1014:13
-MediaPipe Performance: 6 FPS, Processing: 152.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: null, activeHand: null }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: null, activeHand: null }
+gameService.ts:1014:13
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 125.0ms
+        🎯 Game Logic: 0.3ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: true
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
 gameService.ts:597:13
@@ -300,35 +685,6 @@ Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFix
 gameService.ts:1014:13
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: null, activeHand: null }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: null, activeHand: null }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: null, activeHand: null }
-gameService.ts:1014:13
-MediaPipe Performance: 6 FPS, Processing: 185.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: null, activeHand: null }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 1 }
 gameService.ts:597:13
 Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
@@ -357,15 +713,34 @@ checkHandSpecificTargetCollisions called:
 Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "left" }
 gameService.ts:1014:13
 checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 1 }
 gameService.ts:597:13
 Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
 Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "left" }
 gameService.ts:1014:13
-MediaPipe Performance: 6 FPS, Processing: 174.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 129.0ms
+        🎯 Game Logic: 0.2ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: true
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
 checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 1 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "left" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 1 }
 gameService.ts:597:13
 Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
@@ -383,27 +758,6 @@ Object { hasLeftHand: false, hasRightHand: true, leftCount: 0, rightCount: 21, c
 gameService.ts:597:13
 Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
 Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 3, primaryHand: "left", activeHand: "left" }
 gameService.ts:1014:13
 checkHandsCenteringCollisions called with: 
@@ -413,57 +767,6 @@ Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
 Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 3, primaryHand: "left", activeHand: "left" }
 gameService.ts:1014:13
-MediaPipe Performance: 7 FPS, Processing: 127.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 3, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 3, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 3, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 3, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 3, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 4, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 4, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-MediaPipe Performance: 7 FPS, Processing: 142.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
 gameService.ts:597:13
@@ -490,37 +793,21 @@ Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, c
 gameService.ts:597:13
 Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 5, primaryHand: "left", activeHand: "left" }
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 4, primaryHand: "left", activeHand: "left" }
 gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 5, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 5, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 5, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 5, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-MediaPipe Performance: 8 FPS, Processing: 131.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 148.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: true
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
 gameService.ts:597:13
@@ -577,28 +864,19 @@ Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
 Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 7, primaryHand: "left", activeHand: "left" }
 gameService.ts:1014:13
-MediaPipe Performance: 8 FPS, Processing: 118.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 7, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 7, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 8, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 120.0ms
+        🎯 Game Logic: 0.4ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: true
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
 gameService.ts:597:13
@@ -625,21 +903,6 @@ Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, c
 gameService.ts:597:13
 Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 8, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 8, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-MediaPipe Performance: 8 FPS, Processing: 128.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
 Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 9, primaryHand: "left", activeHand: "left" }
 gameService.ts:1014:13
 checkHandsCenteringCollisions called with: 
@@ -670,6 +933,19 @@ Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
 Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 9, primaryHand: "left", activeHand: "left" }
 gameService.ts:1014:13
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 115.0ms
+        🎯 Game Logic: 0.5ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: true
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
 gameService.ts:597:13
@@ -682,7 +958,7 @@ Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, c
 gameService.ts:597:13
 Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 9, primaryHand: "left", activeHand: "left" }
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 10, primaryHand: "left", activeHand: "left" }
 gameService.ts:1014:13
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
@@ -691,16 +967,8 @@ Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
 Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 10, primaryHand: "left", activeHand: "left" }
 gameService.ts:1014:13
-MediaPipe Performance: 7 FPS, Processing: 136.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
 checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 10, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 1 }
 gameService.ts:597:13
 Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
@@ -714,21 +982,7 @@ checkHandSpecificTargetCollisions called:
 Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 10, primaryHand: "left", activeHand: "left" }
 gameService.ts:1014:13
 checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 10, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 10, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
+Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 1 }
 gameService.ts:597:13
 Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
@@ -748,7 +1002,6 @@ Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
 Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 11, primaryHand: "left", activeHand: "left" }
 gameService.ts:1014:13
-MediaPipe Performance: 8 FPS, Processing: 133.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
 gameService.ts:597:13
@@ -756,63 +1009,19 @@ Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
 Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 11, primaryHand: "left", activeHand: "left" }
 gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 11, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 11, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 11, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 11, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 11, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 12, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-MediaPipe Performance: 7 FPS, Processing: 158.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 12, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 12, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 139.0ms
+        🎯 Game Logic: 0.4ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: true
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
 gameService.ts:597:13
@@ -825,30 +1034,8 @@ Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, c
 gameService.ts:597:13
 Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 13, primaryHand: "left", activeHand: "left" }
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 12, primaryHand: "left", activeHand: "left" }
 gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 13, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 13, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 13, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-MediaPipe Performance: 7 FPS, Processing: 151.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
 gameService.ts:597:13
@@ -871,25 +1058,18 @@ checkHandSpecificTargetCollisions called:
 Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 13, primaryHand: "left", activeHand: "left" }
 gameService.ts:1014:13
 checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 1 }
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
 gameService.ts:597:13
 Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 14, primaryHand: "left", activeHand: "left" }
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 13, primaryHand: "left", activeHand: "left" }
 gameService.ts:1014:13
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
 gameService.ts:597:13
 Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 14, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 14, primaryHand: "left", activeHand: "left" }
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 13, primaryHand: "left", activeHand: "left" }
 gameService.ts:1014:13
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
@@ -903,25 +1083,23 @@ Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, c
 gameService.ts:597:13
 Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 15, primaryHand: "left", activeHand: "left" }
+Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 14, primaryHand: "left", activeHand: "left" }
 gameService.ts:1014:13
-MediaPipe Performance: 7 FPS, Processing: 144.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 109.0ms
+        🎯 Game Logic: 0.0ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: true
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
 checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 15, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 1 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFixedTargetIndex: 15, primaryHand: "left", activeHand: "left" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 1 }
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 1 }
 gameService.ts:597:13
 Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
@@ -950,92 +1128,90 @@ Object { phase: "targeting", currentTrial: 1, hasCurrentTarget: true, currentFix
 gameService.ts:1014:13
 Trial 1 completed. Starting trial 2 with right hand gameService.ts:1121:15
 checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 2 }
+Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "centering", currentTrial: 2 }
 gameService.ts:597:13
 Trial 2 recentering debug: 
-Object { activeHand: "right", activeHandCentered: true, centerX: 639, centerY: 655.5, tolerance: 80 }
-gameService.ts:676:19
-MediaPipe Performance: 7 FPS, Processing: 146.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 2 }
-gameService.ts:597:13
-Trial 2 recentering debug: 
-Object { activeHand: "right", activeHandCentered: true, centerX: 639, centerY: 655.5, tolerance: 80 }
+Object { activeHand: "right", activeHandCentered: false, centerX: 643.2, centerY: 477.5, tolerance: 80 }
 gameService.ts:676:19
 checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 2 }
+Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "centering", currentTrial: 2 }
 gameService.ts:597:13
 Trial 2 recentering debug: 
-Object { activeHand: "right", activeHandCentered: true, centerX: 639, centerY: 655.5, tolerance: 80 }
+Object { activeHand: "right", activeHandCentered: false, centerX: 643.2, centerY: 477.5, tolerance: 80 }
 gameService.ts:676:19
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 2 }
 gameService.ts:597:13
 Trial 2 recentering debug: 
-Object { activeHand: "right", activeHandCentered: false, centerX: 639, centerY: 655.5, tolerance: 80 }
+Object { activeHand: "right", activeHandCentered: true, centerX: 643.2, centerY: 477.5, tolerance: 80 }
 gameService.ts:676:19
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 2 }
 gameService.ts:597:13
 Trial 2 recentering debug: 
-Object { activeHand: "right", activeHandCentered: false, centerX: 639, centerY: 655.5, tolerance: 80 }
+Object { activeHand: "right", activeHandCentered: true, centerX: 643.2, centerY: 477.5, tolerance: 80 }
 gameService.ts:676:19
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 2 }
 gameService.ts:597:13
 Trial 2 recentering debug: 
-Object { activeHand: "right", activeHandCentered: false, centerX: 639, centerY: 655.5, tolerance: 80 }
+Object { activeHand: "right", activeHandCentered: true, centerX: 643.2, centerY: 477.5, tolerance: 80 }
+gameService.ts:676:19
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 127.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: true
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 2 }
+gameService.ts:597:13
+Trial 2 recentering debug: 
+Object { activeHand: "right", activeHandCentered: true, centerX: 643.2, centerY: 477.5, tolerance: 80 }
 gameService.ts:676:19
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 2 }
 gameService.ts:597:13
 Trial 2 recentering debug: 
-Object { activeHand: "right", activeHandCentered: true, centerX: 639, centerY: 655.5, tolerance: 80 }
-gameService.ts:676:19
-MediaPipe Performance: 6 FPS, Processing: 218.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 2 }
-gameService.ts:597:13
-Trial 2 recentering debug: 
-Object { activeHand: "right", activeHandCentered: true, centerX: 639, centerY: 655.5, tolerance: 80 }
+Object { activeHand: "right", activeHandCentered: true, centerX: 643.2, centerY: 477.5, tolerance: 80 }
 gameService.ts:676:19
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 2 }
 gameService.ts:597:13
 Trial 2 recentering debug: 
-Object { activeHand: "right", activeHandCentered: true, centerX: 639, centerY: 655.5, tolerance: 80 }
+Object { activeHand: "right", activeHandCentered: true, centerX: 643.2, centerY: 477.5, tolerance: 80 }
 gameService.ts:676:19
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 2 }
 gameService.ts:597:13
 Trial 2 recentering debug: 
-Object { activeHand: "right", activeHandCentered: true, centerX: 639, centerY: 655.5, tolerance: 80 }
+Object { activeHand: "right", activeHandCentered: true, centerX: 643.2, centerY: 477.5, tolerance: 80 }
 gameService.ts:676:19
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 2 }
 gameService.ts:597:13
 Trial 2 recentering debug: 
-Object { activeHand: "right", activeHandCentered: true, centerX: 639, centerY: 655.5, tolerance: 80 }
+Object { activeHand: "right", activeHandCentered: true, centerX: 643.2, centerY: 477.5, tolerance: 80 }
 gameService.ts:676:19
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 2 }
 gameService.ts:597:13
 Trial 2 recentering debug: 
-Object { activeHand: "right", activeHandCentered: true, centerX: 639, centerY: 655.5, tolerance: 80 }
+Object { activeHand: "right", activeHandCentered: true, centerX: 643.2, centerY: 477.5, tolerance: 80 }
 gameService.ts:676:19
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 2 }
 gameService.ts:597:13
 Trial 2 recentering debug: 
-Object { activeHand: "right", activeHandCentered: true, centerX: 639, centerY: 655.5, tolerance: 80 }
+Object { activeHand: "right", activeHandCentered: true, centerX: 643.2, centerY: 477.5, tolerance: 80 }
 gameService.ts:676:19
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "centering", currentTrial: 2 }
-gameService.ts:597:13
-Trial 2 recentering debug: 
-Object { activeHand: "right", activeHandCentered: true, centerX: 639, centerY: 655.5, tolerance: 80 }
-gameService.ts:676:19
-MediaPipe Performance: 7 FPS, Processing: 164.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
 gameService.ts:597:13
@@ -1050,6 +1226,19 @@ Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
 Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: "left", activeHand: "right" }
 gameService.ts:1014:13
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 103.0ms
+        🎯 Game Logic: 0.2ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: true
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
 gameService.ts:597:13
@@ -1064,28 +1253,6 @@ Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
 Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: "left", activeHand: "right" }
 gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 1, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-MediaPipe Performance: 7 FPS, Processing: 131.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
 gameService.ts:597:13
@@ -1135,28 +1302,19 @@ Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
 Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "right" }
 gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-MediaPipe Performance: 7 FPS, Processing: 141.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 126.0ms
+        🎯 Game Logic: 0.2ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: true
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
 gameService.ts:597:13
@@ -1184,35 +1342,6 @@ gameService.ts:597:13
 Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
 Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 2, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 3, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-MediaPipe Performance: 7 FPS, Processing: 144.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 3, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 3, primaryHand: "left", activeHand: "right" }
 gameService.ts:1014:13
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
@@ -1249,34 +1378,25 @@ Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
 Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 4, primaryHand: "left", activeHand: "right" }
 gameService.ts:1014:13
-MediaPipe Performance: 7 FPS, Processing: 136.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 116.0ms
+        🎯 Game Logic: 0.4ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: true
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
 gameService.ts:597:13
 Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 4, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 4, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 4, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 4, primaryHand: "left", activeHand: "right" }
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 5, primaryHand: "left", activeHand: "right" }
 gameService.ts:1014:13
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
@@ -1306,63 +1426,67 @@ Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
 Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 5, primaryHand: "left", activeHand: "right" }
 gameService.ts:1014:13
-MediaPipe Performance: 7 FPS, Processing: 144.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 6, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 6, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 6, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 7, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 7, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 7, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 7, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-MediaPipe Performance: 6 FPS, Processing: 179.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: false, hasRightHand: true, leftCount: 0, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
 gameService.ts:597:13
 Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 8, primaryHand: "left", activeHand: "right" }
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 6, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: false, hasRightHand: true, leftCount: 0, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 6, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: false, hasRightHand: true, leftCount: 0, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 7, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 122.0ms
+        🎯 Game Logic: 0.3ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: true
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: false, hasRightHand: true, leftCount: 0, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 7, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: false, hasRightHand: true, leftCount: 0, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 7, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 7, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: false, hasRightHand: true, leftCount: 0, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 7, primaryHand: "left", activeHand: "right" }
 gameService.ts:1014:13
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: false, hasRightHand: true, leftCount: 0, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
@@ -1390,37 +1514,28 @@ Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, c
 gameService.ts:597:13
 Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 9, primaryHand: "left", activeHand: "right" }
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 8, primaryHand: "left", activeHand: "right" }
 gameService.ts:1014:13
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
 gameService.ts:597:13
 Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 9, primaryHand: "left", activeHand: "right" }
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 8, primaryHand: "left", activeHand: "right" }
 gameService.ts:1014:13
-MediaPipe Performance: 6 FPS, Processing: 163.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 9, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 9, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 9, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 110.0ms
+        🎯 Game Logic: 0.4ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: true
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
 gameService.ts:597:13
@@ -1433,6 +1548,41 @@ Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, c
 gameService.ts:597:13
 Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 9, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 9, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 9, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 9, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
+Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 10, primaryHand: "left", activeHand: "right" }
+gameService.ts:1014:13
+checkHandsCenteringCollisions called with: 
+Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
+gameService.ts:597:13
+Hands targeting phase - checking for target collisions gameService.ts:721:17
+checkHandSpecificTargetCollisions called: 
 Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 10, primaryHand: "left", activeHand: "right" }
 gameService.ts:1014:13
 checkHandsCenteringCollisions called with: 
@@ -1449,35 +1599,19 @@ Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
 Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 10, primaryHand: "left", activeHand: "right" }
 gameService.ts:1014:13
-MediaPipe Performance: 6 FPS, Processing: 149.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 10, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: false, leftCount: 21, rightCount: 0, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 10, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 10, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 10, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 116.0ms
+        🎯 Game Logic: 0.3ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: true
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
 gameService.ts:597:13
@@ -1499,57 +1633,6 @@ Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
 Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 11, primaryHand: "left", activeHand: "right" }
 gameService.ts:1014:13
-MediaPipe Performance: 7 FPS, Processing: 135.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 11, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 11, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 11, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 12, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 12, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 12, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 12, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-MediaPipe Performance: 6 FPS, Processing: 144.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
 gameService.ts:597:13
@@ -1592,34 +1675,25 @@ Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
 Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 13, primaryHand: "left", activeHand: "right" }
 gameService.ts:1014:13
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 128.0ms
+        🎯 Game Logic: 0.2ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: true
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
 gameService.ts:597:13
 Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
 Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 13, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-MediaPipe Performance: 6 FPS, Processing: 180.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 14, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 14, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 14, primaryHand: "left", activeHand: "right" }
 gameService.ts:1014:13
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
@@ -1642,7 +1716,6 @@ Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
 Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 15, primaryHand: "left", activeHand: "right" }
 gameService.ts:1014:13
-MediaPipe Performance: 6 FPS, Processing: 190.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
 gameService.ts:597:13
@@ -1650,42 +1723,6 @@ Hands targeting phase - checking for target collisions gameService.ts:721:17
 checkHandSpecificTargetCollisions called: 
 Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 15, primaryHand: "left", activeHand: "right" }
 gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 15, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 16, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 16, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 16, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-checkHandsCenteringCollisions called with: 
-Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
-gameService.ts:597:13
-Hands targeting phase - checking for target collisions gameService.ts:721:17
-checkHandSpecificTargetCollisions called: 
-Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 16, primaryHand: "left", activeHand: "right" }
-gameService.ts:1014:13
-MediaPipe Performance: 6 FPS, Processing: 159.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
 checkHandsCenteringCollisions called with: 
 Object { hasLeftHand: true, hasRightHand: true, leftCount: 21, rightCount: 21, currentPhase: "targeting", currentTrial: 2 }
 gameService.ts:597:13
@@ -1694,128 +1731,580 @@ checkHandSpecificTargetCollisions called:
 Object { phase: "targeting", currentTrial: 2, hasCurrentTarget: true, currentFixedTargetIndex: 16, primaryHand: "left", activeHand: "right" }
 gameService.ts:1014:13
 Both hand trials completed gameService.ts:1136:15
-Game completed, dispatching gameEnded event WebcamNative.svelte:303:13
+Game completed, dispatching gameEnded event WebcamNative.svelte:326:13
 Game ended! 
 Object { finalScore: 320, scoreBreakdown: {…} }
-+page.svelte:541:11
-Calling gameFlowService.onGameCompleted() +page.svelte:546:12
-Game completed: hands-fixed gameFlowService.ts:67:13
-Flow: Ending game 2: hands-fixed +page.svelte:397:13
-Starting delay: 10s until next game (head-fixed) gameFlowService.ts:123:15
-Flow: Starting 10s delay before head-fixed +page.svelte:409:13
-Next game will be: head-fixed +page.svelte:410:13
-Updated gameFlowState: 
-Object { currentGameIndex: 1, currentGame: "hands-fixed", phase: "delay", isActive: true, delayStartTime: 1753375791348, delayRemaining: 10000 }
-+page.svelte:549:12
-MediaPipe Performance: 6 FPS, Processing: 135.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 170.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 159.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 199.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 143.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 171.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 167.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 168.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 119.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-Starting game 3/4: head-fixed gameFlowService.ts:108:13
-Flow: Starting game 3: head-fixed +page.svelte:381:13
-Setting currentGameMode to: head-fixed +page.svelte:382:13
-Calling webcamNativeComponent.startGame() +page.svelte:388:14
-GameService.startGame() called for mode: hands-fixed gameService.ts:348:13
-Initializing HANDS_FIXED game mode gameService.ts:381:17
-Hands centering state after init: 
-Object { phase: "centering", currentTrial: 1, primaryHand: null, activeHand: null, leftCenter: {…}, rightCenter: {…}, tolerance: 80 }
-gameService.ts:390:17
-Generated fixedTargets for hands game: 
-Object { count: 16, firstTarget: {…}, firstTargetId: "neutral_figure8_001" }
-gameService.ts:400:17
-Game started! 
-Object { score: 0, scoreBreakdown: {…} }
-+page.svelte:525:11
-GameService.updateGameMode() called: 
-Object { oldMode: "hands-fixed", newMode: "head-fixed", willReset: true }
-gameService.ts:1434:13
-Game state reset due to mode change gameService.ts:1442:15
-Generated fixedTargets for head game after mode change: 
-Object { count: 12 }
-gameService.ts:1462:17
-After state reset and target regeneration - fixedTargets length: 12 gameService.ts:1444:15
-MediaPipe Performance: 8 FPS, Processing: 121.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 8 FPS, Processing: 147.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 127.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 8 FPS, Processing: 135.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 8 FPS, Processing: 120.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 8 FPS, Processing: 123.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 8 FPS, Processing: 118.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 139.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-Game completed, dispatching gameEnded event WebcamNative.svelte:303:13
-Game ended! 
-Object { finalScore: 12, scoreBreakdown: {…} }
-+page.svelte:541:11
-Calling gameFlowService.onGameCompleted() +page.svelte:546:12
-Game completed: head-fixed gameFlowService.ts:67:13
-Flow: Ending game 3: head-fixed +page.svelte:397:13
-Starting delay: 10s until next game (random) gameFlowService.ts:123:15
-Flow: Starting 10s delay before random +page.svelte:409:13
-Next game will be: random +page.svelte:410:13
-Updated gameFlowState: 
-Object { currentGameIndex: 2, currentGame: "head-fixed", phase: "delay", isActive: true, delayStartTime: 1753375809666, delayRemaining: 10000 }
-+page.svelte:549:12
-MediaPipe Performance: 8 FPS, Processing: 152.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 8 FPS, Processing: 122.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 130.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 8 FPS, Processing: 123.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 144.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 128.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 123.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 8 FPS, Processing: 118.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 129.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-Starting game 4/4: random gameFlowService.ts:108:13
-Flow: Starting game 4: random +page.svelte:381:13
-Setting currentGameMode to: random +page.svelte:382:13
-Calling webcamNativeComponent.startGame() +page.svelte:388:14
-GameService.startGame() called for mode: head-fixed gameService.ts:348:13
-Game started! 
-Object { score: 0, scoreBreakdown: {…} }
-+page.svelte:525:11
-Starting 1-minute timer for random game +page.svelte:472:11
-GameService.updateGameMode() called: 
-Object { oldMode: "head-fixed", newMode: "random", willReset: true }
-gameService.ts:1434:13
-Game state reset due to mode change gameService.ts:1442:15
-After state reset and target regeneration - fixedTargets length: 0 gameService.ts:1444:15
-MediaPipe Performance: 7 FPS, Processing: 146.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 149.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 138.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 177.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 229.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 5 FPS, Processing: 178.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 5 FPS, Processing: 199.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 5 FPS, Processing: 168.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 123.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 198.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 5 FPS, Processing: 169.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 178.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 167.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 199.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 143.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 5 FPS, Processing: 148.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 143.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 182.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 131.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 184.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 217.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 5 FPS, Processing: 209.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 156.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 158.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 155.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 172.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 5 FPS, Processing: 187.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 135.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 170.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 136.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 5 FPS, Processing: 220.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 138.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 7 FPS, Processing: 139.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 189.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 6 FPS, Processing: 162.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
-MediaPipe Performance: 5 FPS, Processing: 188.0ms, Downsampling: 0.5x WebcamNative.svelte:267:13
++page.svelte:559:11
+Manual mode: Game completed, deactivating game button +page.svelte:570:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 112.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 120.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 156.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 118.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 110.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 101.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 124.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 108.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 117.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 7 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 152.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 134.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 122.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 98.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 101.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 7 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 139.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 138.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 124.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 95.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 93.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 7 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 162.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 137.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 135.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 113.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 102.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 107.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 105.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 112.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 107.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 114.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 10 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 103.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 10 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 99.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 103.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 94.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 122.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 130.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 105.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 127.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 124.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 10 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 99.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 10 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 117.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 8 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 107.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 92.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 9 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 97.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
+🔍 Performance Breakdown:
+        📊 FPS: 10 (Target: 30+ for smooth experience)
+        🧠 MediaPipe Inference: 113.0ms
+        🎯 Game Logic: 0.1ms
+        ⚙️  Model Complexity: 0 (0=fastest, 2=most accurate)
+        📉 Downsampling: 0.5x (lower = faster)
+        🎮 Game Active: false
+        💾 GPU Enabled: true
+        
+        💡 Bottleneck Analysis:
+        ⚠️  MediaPipe inference is slow (>80ms)
+        ✅ Game logic OK
+        🔴 FPS critically low WebcamNative.svelte:274:12
