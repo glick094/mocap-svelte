@@ -19,33 +19,22 @@ export async function checkLocalModelsAvailable(): Promise<boolean> {
   }
 }
 
-// Check if internet connection is available by testing CDN access
+// Check if internet connection is available by testing a lightweight endpoint
 async function checkInternetConnection(): Promise<boolean> {
-  const cdnOptions = [
-    'https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5.1675471629',
-    'https://cdn.jsdelivr.net/npm/@mediapipe/holistic',
-    'https://unpkg.com/@mediapipe/holistic@0.5.1675471629'
-  ];
-  
-  for (const cdnUrl of cdnOptions) {
-    try {
-      const testUrl = `${cdnUrl}/holistic.binarypb`;
-      const response = await fetch(testUrl, { 
-        method: 'HEAD', 
-        cache: 'no-cache',
-        mode: 'no-cors', // Allow cross-origin requests for connectivity test
-        signal: AbortSignal.timeout(5000) // 5 second timeout
-      });
-      console.log(`✅ Internet connection available - CDN accessible: ${cdnUrl}`);
-      return true;
-    } catch (error) {
-      console.log(`❌ CDN test failed: ${cdnUrl}`);
-      continue;
-    }
+  try {
+    // Use a much faster connectivity test with a lightweight endpoint
+    await fetch('https://httpbin.org/status/200', { 
+      method: 'HEAD', 
+      cache: 'no-cache',
+      mode: 'no-cors',
+      signal: AbortSignal.timeout(1500) // 1.5 second timeout for fast response
+    });
+    console.log('✅ Internet connection available');
+    return true;
+  } catch (error) {
+    console.log('🌐 No internet connection detected (fast test)');
+    return false;
   }
-  
-  console.log('🌐 No internet connection detected');
-  return false;
 }
 
 // Get the appropriate locateFile function - WEB FIRST, offline fallback
