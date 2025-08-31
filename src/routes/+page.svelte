@@ -80,6 +80,7 @@
   let mediaPipeLoaded = false;
   let cameraActive = false;
   let currentFps = 0;
+  let mediaPipeMode = 'web'; // 'web', 'offline', 'failed'
   
   // Manual game countdown state
   let isCountdownActive = false;
@@ -299,6 +300,12 @@
     isGameActive = false;
     currentTargetType = null;
     
+    // Perform cleanup when manually stopping game flow
+    if (webcamNativeComponent) {
+      console.log('[+page] Performing cleanup after stopping game flow');
+      webcamNativeComponent.clearTargetHistory(); // Prevent ghost targets
+    }
+    
     if (isRecording) {
       stopRecording();
     }
@@ -364,6 +371,13 @@
           clearInterval(randomGameTimer);
           randomGameTimer = null;
           randomGameTimeRemaining = 0;
+        }
+        
+        // Perform comprehensive cleanup after completing all 4 games
+        if (webcamNativeComponent) {
+          console.log('[+page] Performing session cleanup after completing all 4 games');
+          webcamNativeComponent.resetSession(); // Clear game state and target history
+          webcamNativeComponent.clearTargetHistory(); // Ensure no ghost targets
         }
         
         if (isRecording) {
@@ -734,6 +748,12 @@
     console.log('Stopped recording. Pose data file downloaded:', recordingSession.filename);
     console.log('Total data points recorded:', poseDataBuffer.length);
     
+    // Perform memory cleanup after recording session ends
+    if (webcamNativeComponent) {
+      console.log('[+page] Performing memory cleanup after recording session');
+      webcamNativeComponent.resetSession(); // Clear all game state and resources
+    }
+    
     recordingSession = null;
     poseDataBuffer = [];
     sessionTargetHistory = []; // Clear session target history
@@ -745,6 +765,43 @@
     } else {
       startPoseDataRecording();
     }
+  }
+
+  // Manual cleanup function for between participants
+  function performManualCleanup() {
+    console.log('[+page] Performing manual cleanup for new participant');
+    
+    // Stop any active games or recordings
+    if (isGameActive || gameFlowState.isActive) {
+      if (isFlowMode && gameFlowState.isActive) {
+        stopGameFlow();
+      } else if (isGameActive || isCountdownActive) {
+        if (isCountdownActive) {
+          cancelCountdown();
+        } else {
+          stopGame();
+        }
+      }
+    }
+    
+    if (isRecording) {
+      stopRecording();
+    }
+    
+    // Perform comprehensive cleanup
+    if (webcamNativeComponent) {
+      webcamNativeComponent.fullCleanup(); // Full MediaPipe and game state cleanup
+    }
+    
+    // Reset UI state
+    gameScore = 0;
+    currentTargetType = null;
+    scoreBreakdown = { hand: 0, head: 0, knee: 0 };
+    resetGameModeProgress();
+    sessionTargetHistory = [];
+    poseDataBuffer = [];
+    
+    console.log('[+page] Manual cleanup complete - ready for new participant');
   }
 
   function updateCanvasSize() {
@@ -786,7 +843,7 @@
     updateCanvasSize();
     window.addEventListener('resize', updateCanvasSize);
     
-    // Keyboard event handler for CTRL+ENTER to start games and CTRL+ESC to end games
+    // Keyboard event handler for CTRL+ENTER to start games, CTRL+ESC to end games, CTRL+SHIFT+R to reset between participants
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.ctrlKey && event.key === 'Enter') {
         // Only activate if game is not already active
@@ -813,6 +870,11 @@
             }
           }
         }
+      } else if (event.ctrlKey && event.shiftKey && event.key === 'R') {
+        // Manual cleanup between participants (CTRL+SHIFT+R)
+        event.preventDefault();
+        console.log('CTRL+SHIFT+R pressed - performing manual cleanup between participants');
+        performManualCleanup();
       }
     };
     
@@ -836,6 +898,9 @@
             cameraActive = status.hasVideoStream;
           }
           currentFps = webcamNativeComponent.getCurrentFPS();
+          
+          // Update MediaPipe mode from global flag
+          mediaPipeMode = (globalThis as any).mediaPipeMode || 'web';
         } catch (error) {
           console.warn('Error updating status indicators:', error);
         }
@@ -1026,7 +1091,8 @@
         📹 Camera: {cameraActive ? 'Active' : 'Inactive'}
       </span>
       <span class="status-item" class:active={mediaPipeLoaded}>
-        📊 MediaPipe: {mediaPipeLoaded ? 'Ready' : 'Loading...'}
+        👤 MediaPipe: {mediaPipeLoaded ? 'Ready' : 'Loading...'} 
+        {mediaPipeMode === 'offline' ? '🔌' : mediaPipeMode === 'web' ? '🌐' : '⚠️'}
       </span>
       <span class="status-item">
         🎥 FPS: {currentFps}
