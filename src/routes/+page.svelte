@@ -80,6 +80,7 @@
   let mediaPipeLoaded = false;
   let cameraActive = false;
   let currentFps = 0;
+  let mediaPipeMode = 'web'; // 'web', 'offline', 'failed'
   
   // Manual game countdown state
   let isCountdownActive = false;
@@ -836,6 +837,9 @@
             cameraActive = status.hasVideoStream;
           }
           currentFps = webcamNativeComponent.getCurrentFPS();
+          
+          // Update MediaPipe mode from global flag
+          mediaPipeMode = (globalThis as any).mediaPipeMode || 'web';
         } catch (error) {
           console.warn('Error updating status indicators:', error);
         }
@@ -1026,7 +1030,8 @@
         📷 Camera: {cameraActive ? 'Active' : 'Inactive'}
       </span>
       <span class="status-item" class:active={mediaPipeLoaded}>
-        👤 MediaPipe: {mediaPipeLoaded ? 'Ready' : 'Loading...'}
+        👤 MediaPipe: {mediaPipeLoaded ? 'Ready' : 'Loading...'} 
+        {mediaPipeMode === 'offline' ? '🔌' : mediaPipeMode === 'web' ? '🌐' : '⚠️'}
       </span>
       <span class="status-item">
         🎥 FPS: {currentFps}
