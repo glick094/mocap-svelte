@@ -2118,4 +2118,115 @@ export class GameService {
     const remaining = Math.max(0, this.state.targetTimeoutMs - elapsed);
     return Math.ceil(remaining / 1000); // Return seconds remaining
   }
+
+  // Comprehensive cleanup methods for long-running sessions
+
+  /**
+   * Clear all target history and reset counters (call between participants/sessions)
+   */
+  public clearAllTargetHistory(): void {
+    console.log(`[GameService] Clearing target history (${this.state.targetHistory.length} targets)`);
+    this.state.targetHistory = [];
+    this.randomTargetCounter = 1; // Reset target counter
+    
+    // Clear current target data to prevent ghost targets
+    this.state.currentTargetData = null;
+    
+    // Clear global target data reference
+    if ((globalThis as any).currentTargetData) {
+      (globalThis as any).currentTargetData = null;
+    }
+    
+    console.log('[GameService] Target history cleared and counters reset');
+  }
+
+  /**
+   * Deep reset of all game state (call between participants)
+   */
+  public resetGameState(): void {
+    console.log('[GameService] Performing deep game state reset');
+    
+    // Clear all timers
+    this.clearTargetTimeout();
+    
+    // Reset all state to initial values
+    this.state.gameScore = 0;
+    this.state.currentTarget = null;
+    this.state.currentTargetData = null;
+    this.state.hitTargetIds.clear();
+    this.state.scoreBreakdown = { hand: 0, head: 0, knee: 0 };
+    this.state.activeExplosions = [];
+    
+    // Clear target history
+    this.clearAllTargetHistory();
+    
+    // Reset game-specific states
+    this.state.hipSwayState = {
+      phase: 'centering',
+      currentTrial: 0,
+      targetSide: null,
+      leftSideHits: 0,
+      rightSideHits: 0,
+      isCentered: false,
+      centeringStartTime: null,
+      inTargetRegion: false,
+      trialCompleted: false,
+      animation: {
+        isAnimating: false,
+        animationStartTime: null,
+        velocityX: 0,
+        velocityY: 0,
+        animationDuration: 800
+      },
+      lastHipPosition: null
+    };
+    
+    // Reset hands and head centering states
+    const centerX = this.width * 0.5;
+    const centerY = this.height * 0.5;
+    const radiusX = Math.min(this.width, this.height) * 0.3;
+    
+    this.state.handsCenteringState = {
+      phase: 'centering',
+      isCentered: false,
+      centeringStartTime: null,
+      centeringTolerance: 80,
+      centeringTimeRequired: 1000,
+      leftCenterX: centerX - radiusX * 0.5,
+      leftCenterY: centerY,
+      rightCenterX: centerX + radiusX * 0.5,
+      rightCenterY: centerY,
+      currentTrial: 1,
+      primaryHand: null,
+      activeHand: null,
+      trial1Completed: false,
+      trial2Completed: false
+    };
+    
+    this.state.headCenteringState = {
+      phase: 'centering',
+      isCentered: false,
+      centeringStartTime: null,
+      centeringTolerance: 100,
+      centeringTimeRequired: 1000,
+      centerX: centerX,
+      centerY: this.height * 0.3
+    };
+    
+    // Reset fixed target index
+    this.state.currentFixedTargetIndex = 0;
+    
+    console.log('[GameService] Deep game state reset complete');
+  }
+
+  /**
+   * Get memory usage statistics for monitoring
+   */
+  public getMemoryStats(): { targetHistorySize: number; explosionsActive: number; timersActive: number } {
+    return {
+      targetHistorySize: this.state.targetHistory.length,
+      explosionsActive: this.state.activeExplosions.length,
+      timersActive: this.timeoutTimer ? 1 : 0
+    };
+  }
 }

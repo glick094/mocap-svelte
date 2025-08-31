@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, createEventDispatcher } from 'svelte';
+  import { onMount, onDestroy, createEventDispatcher } from 'svelte';
   import { get } from 'svelte/store';
   import type { PoseResults, MediaPipeConfig } from '../services/mediaPipeService.js';
   import { initializeMediaPipe as initializeOptimizedMediaPipe, createOptimizedMediaPipeCamera } from '../services/mediaPipeService.js';
@@ -89,6 +89,11 @@
     await initializeMediaPipe();
     initializeGame();
     startRenderLoop();
+  });
+
+  onDestroy(() => {
+    console.log('[WebcamNative] Component destroying - cleaning up resources');
+    fullCleanup();
   });
 
   async function initializeWebcam() {
@@ -1300,6 +1305,106 @@
       hasVideoStream: !!videoStream,
       isGameActive: gameActive
     };
+  }
+
+  // Comprehensive cleanup methods for long-running sessions
+
+  /**
+   * Clear all target history and reset game state (call between participants)
+   */
+  export function clearTargetHistory() {
+    if (gameService) {
+      gameService.clearAllTargetHistory();
+      console.log('[WebcamNative] Target history cleared');
+    }
+  }
+
+  /**
+   * Deep reset of all game and MediaPipe resources (call between participants)
+   */
+  export function resetSession() {
+    console.log('[WebcamNative] Starting session reset for memory management');
+    
+    // Reset game state
+    if (gameService) {
+      gameService.resetGameState();
+      console.log('[WebcamNative] Game state reset complete');
+    }
+    
+    // Clear pose data
+    currentPoseData = null;
+    
+    // Clear global target data
+    if ((globalThis as any).currentTargetData) {
+      (globalThis as any).currentTargetData = null;
+    }
+    
+    // Reset performance counters
+    frameCount = 0;
+    lastFpsTime = performance.now();
+    currentFps = 0;
+    
+    console.log('[WebcamNative] Session reset complete');
+  }
+
+  /**
+   * Dispose MediaPipe resources (call when switching participants or long sessions)
+   */
+  export function disposeMediaPipeResources() {
+    console.log('[WebcamNative] Disposing MediaPipe resources');
+    
+    try {
+      // Stop camera first
+      if (camera) {
+        camera.stop();
+        camera = null;
+        console.log('[WebcamNative] Camera stopped');
+      }
+      
+      // Dispose MediaPipe holistic
+      if (holistic) {
+        if (typeof holistic.close === 'function') {
+          holistic.close();
+          console.log('[WebcamNative] MediaPipe holistic closed');
+        }
+        holistic = null;
+      }
+      
+      // Reset MediaPipe status
+      isMediaPipeLoaded = false;
+      
+      // Clear pose data
+      currentPoseData = null;
+      
+      console.log('[WebcamNative] MediaPipe resources disposed');
+      
+    } catch (error) {
+      console.warn('[WebcamNative] Error disposing MediaPipe resources:', error);
+    }
+  }
+
+  /**
+   * Full component cleanup for memory management
+   */
+  export function fullCleanup() {
+    console.log('[WebcamNative] Starting full component cleanup');
+    
+    // Dispose MediaPipe resources
+    disposeMediaPipeResources();
+    
+    // Reset session data
+    resetSession();
+    
+    // Stop video stream
+    if (videoStream) {
+      videoStream.getTracks().forEach(track => {
+        track.stop();
+        console.log(`[WebcamNative] Stopped ${track.kind} track`);
+      });
+      videoStream = null;
+    }
+    
+    console.log('[WebcamNative] Full cleanup complete');
   }
 
   // Reactive statements
